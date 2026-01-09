@@ -2305,34 +2305,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Notes -->
-        <h2>Implementation Notes</h2>
-        <div class="card">
-            <h4>Development Approach</h4>
-            <ul style="padding-left: 20px; margin-bottom: 16px;">
-                <li>Built on industry-agnostic PMS architecture (reusable for other clients)</li>
-                <li>MVP focuses on SPLIT transformation pattern (client's primary use case)</li>
-                <li>COMBINE and COMPLEX BOMs available in architecture, enabled as needed</li>
-                <li>Flexible JSONB attributes allow client-specific fields without schema changes</li>
-            </ul>
-
-            <h4>Client Data Migration</h4>
-            <ul style="padding-left: 20px; margin-bottom: 16px;">
-                <li>Import ~180 items from client Excel (RM, SFG, FG)</li>
-                <li>Set up ~15-20 BOMs for grading and sorting workflows</li>
-                <li>Configure yield percentages based on client's historical data</li>
-            </ul>
-
-            <h4>Assumptions</h4>
-            <ul style="padding-left: 20px;">
-                <li>Team of 2-3 developers familiar with the tech stack</li>
-                <li>Auth microservice already available (from main PMS project)</li>
-                <li>Client provides yield percentages and BOM structures</li>
-                <li>Add 20-30% buffer for testing and unexpected complexity</li>
-            </ul>
-        </div>
-
     </div>
 </body>
 </html>
