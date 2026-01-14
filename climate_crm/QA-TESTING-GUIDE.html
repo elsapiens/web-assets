@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM System - QA Testing Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 40px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1a365d;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        h2 {
+            color: #2d3748;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4299e1;
+        }
+        h3 {
+            color: #4a5568;
+            margin: 25px 0 15px 0;
+            font-size: 1.2rem;
+        }
+        h4 {
+            color: #718096;
+            margin: 20px 0 10px 0;
+            font-size: 1rem;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .toc {
+            background: #ebf8ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .toc h2 {
+            border-bottom-color: #3182ce;
+            margin-top: 0;
+        }
+        .toc ul {
+            list-style: none;
+            columns: 2;
+        }
+        .toc li {
+            padding: 5px 0;
+        }
+        .toc a {
+            color: #3182ce;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .toc ul {
+                columns: 1;
+            }
+        }
+        .test-case {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .test-case-header {
+            background: #f7fafc;
+            padding: 12px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .test-case-body {
+            padding: 20px;
+        }
+        .test-case-body ol, .test-case-body ul {
+            margin-left: 20px;
+        }
+        .test-case-body li {
+            margin-bottom: 8px;
+        }
+        .priority-high {
+            border-left: 4px solid #e53e3e;
+        }
+        .priority-high .test-case-header {
+            background: #fff5f5;
+        }
+        .priority-medium {
+            border-left: 4px solid #ed8936;
+        }
+        .priority-medium .test-case-header {
+            background: #fffaf0;
+        }
+        .priority-low {
+            border-left: 4px solid #48bb78;
+        }
+        .priority-low .test-case-header {
+            background: #f0fff4;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-high { background: #fed7d7; color: #c53030; }
+        .badge-medium { background: #feebc8; color: #c05621; }
+        .badge-low { background: #c6f6d5; color: #276749; }
+        .badge-info { background: #bee3f8; color: #2b6cb0; }
+        .expected {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-top: 10px;
+        }
+        .expected strong {
+            color: #276749;
+        }
+        .note {
+            background: #fffbeb;
+            border: 1px solid #f6e05e;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-top: 10px;
+        }
+        .note strong {
+            color: #b7791f;
+        }
+        .warning {
+            background: #fff5f5;
+            border: 1px solid #fc8181;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-top: 10px;
+        }
+        .warning strong {
+            color: #c53030;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+        th {
+            background: #4299e1;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+        code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            color: #e53e3e;
+        }
+        .flow-diagram {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px 0;
+            padding-left: 35px;
+            position: relative;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+        .checklist li::before {
+            content: '[ ]';
+            position: absolute;
+            left: 0;
+            color: #a0aec0;
+            font-family: monospace;
+        }
+        .stage-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .stage-new { background: #e2e8f0; color: #4a5568; }
+        .stage-attempted { background: #fed7aa; color: #c05621; }
+        .stage-contacted { background: #bee3f8; color: #2b6cb0; }
+        .stage-nurturing { background: #c6f6d5; color: #276749; }
+        .stage-converted { background: #9ae6b4; color: #22543d; }
+        .stage-unqualified { background: #fed7d7; color: #c53030; }
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .summary-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .summary-item {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .summary-item .number {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .summary-item .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CRM System - QA Testing Guide</h1>
+        <p class="subtitle">Comprehensive Testing Documentation for Quality Assurance Engineers</p>
+
+        <!-- Summary Stats -->
+        <div class="summary-box">
+            <h3>Testing Overview</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="number">8</div>
+                    <div class="label">Core Modules</div>
+                </div>
+                <div class="summary-item">
+                    <div class="number">6</div>
+                    <div class="label">Conversation Stages</div>
+                </div>
+                <div class="summary-item">
+                    <div class="number">10</div>
+                    <div class="label">Report Types</div>
+                </div>
+                <div class="summary-item">
+                    <div class="number">50+</div>
+                    <div class="label">Test Cases</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">1. System Overview</a></li>
+                <li><a href="#architecture">2. Data Architecture</a></li>
+                <li><a href="#conversations">3. Conversation Testing</a></li>
+                <li><a href="#stages">4. Stage Transitions</a></li>
+                <li><a href="#accounts">5. Account Management</a></li>
+                <li><a href="#contacts">6. Contact & Handle Testing</a></li>
+                <li><a href="#transfers">7. Transfer Testing</a></li>
+                <li><a href="#orders">8. Order Testing</a></li>
+                <li><a href="#reports">9. CRM Reports</a></li>
+                <li><a href="#dashboards">10. Dashboard Testing</a></li>
+                <li><a href="#checklist">11. Pre-Release Checklist</a></li>
+            </ul>
+        </div>
+
+        <!-- Section 1: System Overview -->
+        <section id="overview" class="section">
+            <h2>1. System Overview</h2>
+
+            <h3>1.1 What is the CRM System?</h3>
+            <p>The CRM (Customer Relationship Management) system tracks all customer interactions from first contact to order placement. It helps sales agents manage leads, nurture prospects, create opportunities, and close deals.</p>
+
+            <h3>1.2 Core Modules</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Purpose</th>
+                        <th>Key Features</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Conversations</strong></td>
+                        <td>Track all customer interactions</td>
+                        <td>WhatsApp messages, calls, stage tracking, follow-ups</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accounts</strong></td>
+                        <td>Business/customer profiles</td>
+                        <td>Company details, addresses, GST, contacts</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contacts</strong></td>
+                        <td>Individual contact persons</td>
+                        <td>Name, designation, phone numbers, emails</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Opportunities</strong></td>
+                        <td>Sales pipeline tracking</td>
+                        <td>Quotes, products, pricing, status</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Orders</strong></td>
+                        <td>Order management</td>
+                        <td>Products, invoicing, payment, shipping</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Follow-ups</strong></td>
+                        <td>Task scheduling</td>
+                        <td>Call/message reminders, due dates</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reports</strong></td>
+                        <td>Analytics and metrics</td>
+                        <td>Conversion rates, agent activity, revenue</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dashboards</strong></td>
+                        <td>At-a-glance performance</td>
+                        <td>KPIs, pipeline, team performance</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>1.3 User Roles</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>Access Level</th>
+                        <th>Key Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Sales Agent</strong></td>
+                        <td>Own conversations, accounts, tasks</td>
+                        <td>Send messages, make calls, create opportunities, schedule follow-ups</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sales Admin</strong></td>
+                        <td>All team data</td>
+                        <td>View all conversations, transfer between agents, view reports</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Super Admin</strong></td>
+                        <td>Full system access</td>
+                        <td>User management, settings, all reports, conflict resolution</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 2: Data Architecture -->
+        <section id="architecture" class="section">
+            <h2>2. Data Architecture</h2>
+
+            <h3>2.1 Entity Hierarchy</h3>
+            <div class="flow-diagram">
+                                    ACCOUNT (Business Profile)
+                                           |
+                        +------------------+------------------+
+                        |                  |                  |
+                    CONTACT 1          CONTACT 2          ADDRESSES
+                        |                  |                  |
+                  +-----+-----+      +-----+-----+      +-----+-----+
+                  |     |     |      |     |     |      |           |
+               Phone  Email  WA   Phone  Email  WA   Billing   Shipping
+              (Handle) (Handle)   (Handle) (Handle)
+
+                                    |
+                            CONVERSATION
+                        (linked via handle_value)
+                                    |
+                            +-------+-------+
+                            |               |
+                       OPPORTUNITY        MESSAGES
+                            |
+                          ORDER
+            </div>
+
+            <h3>2.2 Key Relationships</h3>
+            <ul>
+                <li><strong>Account</strong> can have multiple <strong>Contacts</strong></li>
+                <li>Each <strong>Contact</strong> can have multiple <strong>Handles</strong> (phone, email, WhatsApp)</li>
+                <li><strong>Conversation</strong> is created when a message/call comes in on a handle</li>
+                <li><strong>Opportunity</strong> is linked to an Account (requires account to create)</li>
+                <li><strong>Order</strong> is created from an Opportunity or directly</li>
+            </ul>
+
+            <h3>2.3 Conversation Types</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Code</th>
+                        <th>Purpose</th>
+                        <th>Created When</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Contact Conversation</strong></td>
+                        <td><code>conversation_type = 'contact'</code></td>
+                        <td>Track new leads, qualify, profile</td>
+                        <td>First message/call from a phone number</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Opportunity Conversation</strong></td>
+                        <td><code>conversation_type = 'opportunity'</code></td>
+                        <td>Track active deals until order</td>
+                        <td>When opportunity is created from contact conversation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 3: Conversation Testing -->
+        <section id="conversations" class="section">
+            <h2>3. Conversation Testing</h2>
+
+            <h3>3.1 Conversation Creation</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-CONV-001: New Lead Creates Conversation
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Phone number not in system</p>
+                    <ol>
+                        <li>Send a WhatsApp message from a new phone number</li>
+                        <li>Check that conversation appears in agent's list</li>
+                        <li>Verify conversation fields are set correctly</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>New conversation created with <code>conversation_type = 'contact'</code></li>
+                            <li><code>conversation_stage = 'new'</code></li>
+                            <li><code>status = 'open'</code></li>
+                            <li>Agent assigned via round-robin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-CONV-002: Existing Account Lead Assignment
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Phone number linked to account with account_owner_id set</p>
+                    <ol>
+                        <li>Send a WhatsApp message from the phone number</li>
+                        <li>Check which agent the conversation is assigned to</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Conversation assigned to account owner (not round-robin)
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-CONV-003: Agent on Leave - Assignment
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Account owner is on leave (full day)</p>
+                    <ol>
+                        <li>Send a WhatsApp message during the leave period</li>
+                        <li>Check agent assignment</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Conversation assigned to next available agent via round-robin (skipping agent on leave)
+                    </div>
+                </div>
+            </div>
+
+            <h3>3.2 Conversation List</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-CONV-004: Conversation List Filters
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to Conversations page</li>
+                        <li>Test each filter:
+                            <ul>
+                                <li>By Stage: New, Attempted, Contacted, Nurturing</li>
+                                <li>By Type: Contact, Opportunity</li>
+                                <li>By Priority: Hot, Warm, Cold</li>
+                                <li>By Date Range</li>
+                            </ul>
+                        </li>
+                        <li>Verify filtered results are correct</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Only matching conversations shown, counts update accordingly
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-CONV-005: Unread Count Badge
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Receive a new message on a conversation</li>
+                        <li>Check unread badge appears on conversation row</li>
+                        <li>Open the conversation</li>
+                        <li>Check unread badge clears</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Unread count increments on new message, clears when conversation opened
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Stage Transitions -->
+        <section id="stages" class="section">
+            <h2>4. Stage Transition Testing</h2>
+
+            <h3>4.1 Stage Overview</h3>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 20px 0;">
+                <span class="stage-badge stage-new">NEW</span>
+                <span style="color: #a0aec0;">&#8594;</span>
+                <span class="stage-badge stage-attempted">ATTEMPTED</span>
+                <span style="color: #a0aec0;">&#8594;</span>
+                <span class="stage-badge stage-contacted">CONTACTED</span>
+                <span style="color: #a0aec0;">&#8594;</span>
+                <span class="stage-badge stage-nurturing">NURTURING</span>
+                <span style="color: #a0aec0;">&#8594;</span>
+                <span class="stage-badge stage-converted">CONVERTED</span>
+                <span style="margin: 0 10px; color: #718096;">or</span>
+                <span class="stage-badge stage-unqualified">UNQUALIFIED</span>
+            </div>
+
+            <h3>4.2 Stage Transition Triggers</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>From Stage</th>
+                        <th>To Stage</th>
+                        <th>Trigger</th>
+                        <th>Automatic?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEW</td>
+                        <td>ATTEMPTED</td>
+                        <td>Agent sends message OR makes call</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>ATTEMPTED</td>
+                        <td>CONTACTED</td>
+                        <td>Message delivered OR call answered</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>CONTACTED</td>
+                        <td>NURTURING</td>
+                        <td>Follow-up scheduled OR account linked</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Any Open</td>
+                        <td>CONVERTED</td>
+                        <td>Opportunity created OR order placed</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Any Open</td>
+                        <td>UNQUALIFIED</td>
+                        <td>Agent marks as unqualified with reason</td>
+                        <td>Manual</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.3 Stage Transition Test Cases</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-001: NEW to ATTEMPTED via Message
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation in NEW stage</p>
+                    <ol>
+                        <li>Open the conversation</li>
+                        <li>Send a WhatsApp message to the customer</li>
+                        <li>Wait for message status to become "sent"</li>
+                        <li>Refresh and check conversation stage</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li><code>conversation_stage = 'attempted'</code></li>
+                            <li><code>attempted_at</code> timestamp set</li>
+                            <li>FRT timer stops (First Response Time calculated)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-002: NEW to ATTEMPTED via Call
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation in NEW stage</p>
+                    <ol>
+                        <li>Open the conversation</li>
+                        <li>Click "Call" button to initiate outgoing call</li>
+                        <li>Wait for call to start ringing</li>
+                        <li>Check conversation stage</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Stage moves to ATTEMPTED when call reaches "Ringing" status
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-003: ATTEMPTED to CONTACTED via Message
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation in ATTEMPTED stage</p>
+                    <ol>
+                        <li>Wait for WhatsApp message status to change to "delivered"</li>
+                        <li>Refresh and check conversation stage</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li><code>conversation_stage = 'contacted'</code></li>
+                            <li><code>contacted_at</code> timestamp set</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-004: ATTEMPTED to CONTACTED via Call Answered
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation in ATTEMPTED stage, outgoing call in progress</p>
+                    <ol>
+                        <li>Customer answers the call (call status becomes "On Call")</li>
+                        <li>Check conversation stage</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Stage moves to CONTACTED, <code>requires_followup_action = 1</code> (mandatory follow-up flag)
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-005: Mandatory Follow-up After Call Contact
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation moved to CONTACTED via call</p>
+                    <ol>
+                        <li>Try to switch to another conversation</li>
+                        <li>Verify mandatory action popup appears</li>
+                        <li>Check available options:
+                            <ul>
+                                <li>Schedule Follow-up</li>
+                                <li>Create Profile / Link Account</li>
+                                <li>Mark as Unqualified</li>
+                            </ul>
+                        </li>
+                        <li>Select an option and complete the action</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Cannot switch conversations until one of the mandatory actions is taken
+                    </div>
+                    <div class="note">
+                        <strong>Note:</strong> Mandatory popup only appears for CALL-based contact, NOT for message delivery
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-006: CONTACTED to NURTURING via Follow-up
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation in CONTACTED stage</p>
+                    <ol>
+                        <li>Click "Schedule Follow-up" button</li>
+                        <li>Select date, time, and follow-up type (Call/WhatsApp/Email)</li>
+                        <li>Add notes and submit</li>
+                        <li>Check conversation stage</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li><code>conversation_stage = 'nurturing'</code></li>
+                            <li><code>nurturing_at</code> timestamp set</li>
+                            <li>Task created in <code>tbl_followup_schedules</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-007: CONTACTED to NURTURING via Profile Creation
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation in CONTACTED stage, no account linked</p>
+                    <ol>
+                        <li>Click "Create Profile" or "Link to Existing Account"</li>
+                        <li>Fill in account details (or select existing account)</li>
+                        <li>Submit</li>
+                        <li>Check conversation stage</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li><code>conversation_stage = 'nurturing'</code></li>
+                            <li><code>account_id</code> set on conversation</li>
+                            <li>Contact linked to account</li>
+                            <li>Conversation stays OPEN (not converted)</li>
+                        </ul>
+                    </div>
+                    <div class="note">
+                        <strong>Important:</strong> Profiling (linking to account) moves to NURTURING, NOT CONVERTED. The conversation stays open for continued engagement.
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-008: Conversion via Opportunity Creation
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation with linked account (profiled)</p>
+                    <ol>
+                        <li>Click "Create Opportunity"</li>
+                        <li>Add products and pricing</li>
+                        <li>Submit opportunity</li>
+                        <li>Check original conversation and new conversations</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Contact conversation closes with <code>conversation_stage = 'converted'</code></li>
+                            <li>NEW opportunity conversation created with <code>conversation_type = 'opportunity'</code></li>
+                            <li>Opportunity record created in <code>tbl_opportunities</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-STAGE-009: Mark as Unqualified
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Open any open conversation</li>
+                        <li>Click "Mark Unqualified"</li>
+                        <li>Select disposition reason (Not Interested, Price Too High, etc.)</li>
+                        <li>Submit</li>
+                        <li>Check conversation status</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li><code>conversation_stage = 'unqualified'</code></li>
+                            <li><code>disposition_status</code> set to selected reason</li>
+                            <li><code>status = 'closed'</code></li>
+                            <li>Conversation removed from active list</li>
+                            <li>System message added to conversation history</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>4.4 RNR (Ring No Response) Flow</h3>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-STAGE-010: RNR Auto Follow-up
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation in ATTEMPTED stage</p>
+                    <ol>
+                        <li>Make outgoing call that goes unanswered (missed call)</li>
+                        <li>Check disposition_status changes to 'rnr1'</li>
+                        <li>Verify auto follow-up task is scheduled for next working day</li>
+                        <li>Repeat for second missed call (rnr2)</li>
+                        <li>On third missed call (rnr3), verify NO follow-up scheduled and tasks dropped</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>RNR 1: Auto follow-up scheduled</li>
+                            <li>RNR 2: Auto follow-up scheduled</li>
+                            <li>RNR 3: NO follow-up, all pending tasks deleted</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Account Management -->
+        <section id="accounts" class="section">
+            <h2>5. Account Management Testing</h2>
+
+            <h3>5.1 Account Creation</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-ACC-001: Create New Account
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to Accounts > Create New</li>
+                        <li>Fill required fields:
+                            <ul>
+                                <li>Account Name</li>
+                                <li>Account Type (Business/Individual)</li>
+                                <li>At least one address</li>
+                            </ul>
+                        </li>
+                        <li>Add optional fields: GST, FSSAI, Website</li>
+                        <li>Add at least one contact with phone number</li>
+                        <li>Submit</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Account created in <code>temp_tbl_accounts</code></li>
+                            <li>Contact created in <code>temp_tbl_contacts</code></li>
+                            <li>Handle created in <code>temp_tbl_contact_handles</code></li>
+                            <li>Address saved to <code>tbl_accounts_address</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-ACC-002: Link Conversation to Existing Account
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Open conversation without linked account</p>
+                    <ol>
+                        <li>Open the conversation</li>
+                        <li>Click "Link to Existing Account"</li>
+                        <li>Search for and select an existing account</li>
+                        <li>Confirm linking</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Conversation's <code>account_id</code> updated</li>
+                            <li>Contact linked to account</li>
+                            <li>Handle linked to account</li>
+                            <li>Conversation moves to NURTURING stage</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-ACC-003: Account Owner Assignment
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Open an account's details page</li>
+                        <li>Set Account Owner to a specific agent</li>
+                        <li>Save</li>
+                        <li>Have the customer send a new message from linked phone</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> New conversation assigned to account owner (not round-robin)
+                    </div>
+                </div>
+            </div>
+
+            <h3>5.2 Account Merge</h3>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-ACC-004: Request Account Merge
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Two accounts that should be merged</p>
+                    <ol>
+                        <li>Navigate to Account Merge or Conflict Resolution page</li>
+                        <li>Select source account (to be merged)</li>
+                        <li>Select target account (keep)</li>
+                        <li>Select which addresses to keep</li>
+                        <li>Submit merge request</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Merge request created with status 'pending'</li>
+                            <li>Snapshots of both accounts saved for audit</li>
+                            <li>Admin notification sent for approval</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Contact & Handle Testing -->
+        <section id="contacts" class="section">
+            <h2>6. Contact & Handle Testing</h2>
+
+            <h3>6.1 Contact Management</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-CONT-001: Add Contact to Account
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Open an account's details page</li>
+                        <li>Go to Contacts section</li>
+                        <li>Click "Add Contact"</li>
+                        <li>Enter contact name and designation</li>
+                        <li>Add at least one phone number</li>
+                        <li>Save</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Contact created in <code>temp_tbl_contacts</code></li>
+                            <li>Phone handle created in <code>temp_tbl_contact_handles</code></li>
+                            <li>Handle linked to both contact and account</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-CONT-002: Set Primary Contact
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Account with multiple contacts</p>
+                    <ol>
+                        <li>Open account's contacts section</li>
+                        <li>Click "Set as Primary" on a non-primary contact</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Selected contact marked as <code>is_primary_contact = 1</code></li>
+                            <li>Previous primary contact unmarked</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>6.2 Handle Management</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-HANDLE-001: Add Phone Handle
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Open a contact's edit page</li>
+                        <li>Add new phone number</li>
+                        <li>Select handle type (Phone/WhatsApp)</li>
+                        <li>Save</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Handle created with normalized <code>handle_value</code> (e.g., 919876543210)</li>
+                            <li><code>country_code</code> and <code>phone_number</code> parsed correctly</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-HANDLE-002: Duplicate Handle Detection
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Try to add a phone number that already exists on another contact</li>
+                        <li>Check for duplicate warning/error</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> System shows warning that phone number exists elsewhere, prevents duplicate creation
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Transfer Testing -->
+        <section id="transfers" class="section">
+            <h2>7. Conversation Transfer Testing</h2>
+
+            <h3>7.1 Transfer Flow Overview</h3>
+            <p>Transfers use a "Close and Create" pattern:</p>
+            <div class="flow-diagram">
+Original Conversation (Agent A)     Transfer     New Conversation (Agent B)
+        |                              |                    |
+   [OPEN]                         [Execute]           [CREATED]
+        |                              |                    |
+   [CLOSED]  <-------- closes ------   |   ----- creates ----> [OPEN]
+        |                              |                    |
+   transferred_at = NOW()              |    is_transferred_conversation = 1
+   transferred_to_agent_id = B         |    transferred_from_agent_id = A
+   transferred_to_conversation_id      |    transferred_from_conversation_id
+            </div>
+
+            <h3>7.2 Transfer Test Cases</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-TRANS-001: Basic Conversation Transfer
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Open conversation assigned to Agent A</p>
+                    <ol>
+                        <li>Open the conversation as Agent A</li>
+                        <li>Click "Transfer" button</li>
+                        <li>Select Agent B as target</li>
+                        <li>Enter transfer reason (optional)</li>
+                        <li>Select follow-up task action (Transfer/Complete/Delete)</li>
+                        <li>Submit transfer</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Original conversation CLOSED with <code>transferred_at</code> set</li>
+                            <li>NEW conversation created for Agent B</li>
+                            <li>New conversation has <code>is_transferred_conversation = 1</code></li>
+                            <li>Agent A sees conversation removed from list</li>
+                            <li>Agent B sees new conversation appear in list</li>
+                            <li>System messages added to both conversations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-TRANS-002: Transfer with Account (Cascading)
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation linked to account with account_owner</p>
+                    <ol>
+                        <li>Initiate transfer</li>
+                        <li>Verify transfer context shows "Conversation & Account will be transferred"</li>
+                        <li>Complete transfer</li>
+                        <li>Check account's <code>account_owner_id</code></li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Account ownership transferred to new agent</li>
+                            <li>All open conversations for the account transferred</li>
+                            <li>All open opportunities transferred</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-TRANS-003: Transfer Follow-up Task Handling
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation with pending follow-up tasks</p>
+                    <ol>
+                        <li>Create a follow-up task for the conversation</li>
+                        <li>Initiate transfer</li>
+                        <li>Select "Transfer follow-ups to new agent"</li>
+                        <li>Complete transfer</li>
+                        <li>Check Agent B's tasks</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Follow-up tasks reassigned to Agent B with transfer note in schedule_log
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-TRANS-004: WebSocket Notifications
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Have Agent A and Agent B both logged in</li>
+                        <li>Agent A transfers a conversation to Agent B</li>
+                        <li>Check real-time updates for both agents</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Agent A: Conversation removed from list immediately (no refresh needed)</li>
+                            <li>Agent B: New conversation appears in list immediately</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-TRANS-005: Incoming Message After Transfer
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Conversation was transferred from Agent A to Agent B</p>
+                    <ol>
+                        <li>Have customer send a new WhatsApp message</li>
+                        <li>Check which conversation receives the message</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Message goes to NEW conversation (Agent B's), not the closed original
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Order Testing -->
+        <section id="orders" class="section">
+            <h2>8. Order Testing</h2>
+
+            <h3>8.1 Order from Conversation</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-ORD-001: Create Order from Opportunity
+                </div>
+                <div class="test-case-body">
+                    <p><strong>Precondition:</strong> Opportunity conversation exists</p>
+                    <ol>
+                        <li>Open opportunity conversation</li>
+                        <li>Click "Create Order"</li>
+                        <li>Add products, quantities, pricing</li>
+                        <li>Select shipping address</li>
+                        <li>Submit order</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Order created in <code>tbl_orders</code></li>
+                            <li>Opportunity status changed to 'Closed'</li>
+                            <li>Opportunity conversation marked CONVERTED and closed</li>
+                            <li>System message: "Order #XXX created"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>8.2 Direct Order Creation</h3>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-ORD-002: Direct Order (No Conversation)
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to Orders > Create New</li>
+                        <li>Select account</li>
+                        <li>Add products and complete order</li>
+                        <li>Check opportunities table</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong>
+                        <ul>
+                            <li>Order created</li>
+                            <li>Opportunity auto-created and linked to order</li>
+                            <li>Summary tables updated via triggers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: CRM Reports -->
+        <section id="reports" class="section">
+            <h2>9. CRM Reports Testing</h2>
+
+            <h3>9.1 Report Types Overview</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Report</th>
+                        <th>Purpose</th>
+                        <th>Key Metrics</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Outcome Report</strong></td>
+                        <td>Contact to Order conversion</td>
+                        <td>Opportunities created, Orders placed, Conversion rate</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agent Activity</strong></td>
+                        <td>Agent productivity metrics</td>
+                        <td>Calls made, Messages sent, Tasks created</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Revenue Contribution</strong></td>
+                        <td>Revenue by agent/source</td>
+                        <td>Order count, Order value, New vs Existing customers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FRT Summary</strong></td>
+                        <td>First Response Time</td>
+                        <td>Avg FRT, Min FRT, Max FRT by agent</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conversation Trend</strong></td>
+                        <td>Daily conversation progression</td>
+                        <td>New, Attempted, Contacted, Converted counts by day</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conversation Funnel (Contact)</strong></td>
+                        <td>Contact conversation journey</td>
+                        <td>Funnel visualization with cohort/activity/current views</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conversation Funnel (Opportunity)</strong></td>
+                        <td>Opportunity conversation journey</td>
+                        <td>Same as contact but for opportunity type</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aging Report</strong></td>
+                        <td>Stale conversation detection</td>
+                        <td>Conversations by age buckets (0-2d, 3-7d, 8-14d, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Unqualified Analysis</strong></td>
+                        <td>Loss reason breakdown</td>
+                        <td>Count by disposition_status reason</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Source Breakdown</strong></td>
+                        <td>Lead source performance</td>
+                        <td>Conversations/conversions by lead source</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>9.2 Report View Types</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>View</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Cohort View</strong></td>
+                        <td>Track conversations created in date range to final outcome</td>
+                        <td>Jan 1-31: 100 created, 60 eventually converted (may be in Feb)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Activity View</strong></td>
+                        <td>Count all stage transitions in date range</td>
+                        <td>Jan 1-31: 80 moved to Contacted (regardless of creation date)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Current Status View</strong></td>
+                        <td>Real-time snapshot of pipeline (ignores date filter)</td>
+                        <td>Right now: 50 at New, 30 at Contacted, 20 at Nurturing</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>9.3 Report Test Cases</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-REP-001: Outcome Report Accuracy
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to Outcome Report</li>
+                        <li>Set date range to known period with test data</li>
+                        <li>Compare displayed metrics with manual database count:
+                            <ul>
+                                <li>Total opportunities created</li>
+                                <li>Total orders placed</li>
+                                <li>Conversion rate calculation</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Report numbers match database query results
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-REP-002: Agent Activity Report
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to Agent Activity Report</li>
+                        <li>Select date range</li>
+                        <li>Verify for each agent:
+                            <ul>
+                                <li>Call counts (incoming/outgoing/missed)</li>
+                                <li>Message counts</li>
+                                <li>Tasks created</li>
+                                <li>Total talk time</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Metrics match <code>crm_agent_activity_summary</code> table for date range
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-REP-003: Conversation Funnel - Cohort View
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to Contact Conversations report</li>
+                        <li>Select "Cohort View"</li>
+                        <li>Set date range</li>
+                        <li>Verify funnel numbers show conversations CREATED in range</li>
+                        <li>Verify final outcomes include conversions that happened later</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Cohort view tracks by creation date, shows eventual outcomes
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-REP-004: Conversation Funnel - Activity View
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Select "Activity View"</li>
+                        <li>Set date range</li>
+                        <li>Verify funnel numbers show stage TRANSITIONS in range</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Activity view counts transitions regardless of creation date
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-REP-005: FRT Summary Report
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to FRT Summary</li>
+                        <li>Select date range</li>
+                        <li>Verify average FRT per agent</li>
+                        <li>Check that transferred conversations use NEW conversation's allocated_at</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> FRT calculated from conversation's <code>allocated_at</code> to first agent response
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-low">
+                <div class="test-case-header">
+                    <span class="badge badge-low">LOW</span>
+                    TC-REP-006: Aging Report
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Navigate to Aging Report</li>
+                        <li>Verify conversations are grouped by age buckets correctly</li>
+                        <li>Check age calculation is based on <code>created_at</code></li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Stale conversations identified in correct age buckets
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 10: Dashboard Testing -->
+        <section id="dashboards" class="section">
+            <h2>10. Dashboard Testing</h2>
+
+            <h3>10.1 Agent Dashboard</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-DASH-001: Agent KPI Cards
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Login as sales agent</li>
+                        <li>Navigate to Dashboard</li>
+                        <li>Verify KPI cards show:
+                            <ul>
+                                <li>New Conversations (count)</li>
+                                <li>Converted (count)</li>
+                                <li>Revenue (amount)</li>
+                                <li>Avg Response Time</li>
+                            </ul>
+                        </li>
+                        <li>Verify trend indicators (up/down arrows) compared to previous period</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> KPIs reflect agent's own data for selected period
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-DASH-002: Pipeline Funnel
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Check pipeline funnel visualization</li>
+                        <li>Verify counts at each stage:
+                            <ul>
+                                <li>New</li>
+                                <li>Attempted</li>
+                                <li>Contacted</li>
+                                <li>Nurturing</li>
+                                <li>Converted/Unqualified</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Funnel shows current pipeline status accurately
+                    </div>
+                </div>
+            </div>
+
+            <h3>10.2 Admin Dashboard</h3>
+
+            <div class="test-case priority-high">
+                <div class="test-case-header">
+                    <span class="badge badge-high">HIGH</span>
+                    TC-DASH-003: Team Performance Table
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Login as admin</li>
+                        <li>Navigate to Admin Dashboard</li>
+                        <li>Check Team Performance table shows:
+                            <ul>
+                                <li>All agents with metrics</li>
+                                <li>Correct ranking by revenue</li>
+                                <li>Conversion rates per agent</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> All agents listed with accurate performance metrics
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case priority-medium">
+                <div class="test-case-header">
+                    <span class="badge badge-medium">MEDIUM</span>
+                    TC-DASH-004: Contact Sources Chart
+                </div>
+                <div class="test-case-body">
+                    <ol>
+                        <li>Check Contact Sources pie chart/list</li>
+                        <li>Verify conversation counts by source</li>
+                        <li>Check percentages add up to 100%</li>
+                    </ol>
+                    <div class="expected">
+                        <strong>Expected:</strong> Source breakdown reflects actual data from <code>tbl_contact_sources</code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 11: Pre-Release Checklist -->
+        <section id="checklist" class="section">
+            <h2>11. Pre-Release Checklist</h2>
+
+            <h3>11.1 Critical Path Testing</h3>
+            <ul class="checklist">
+                <li>New lead creates conversation correctly</li>
+                <li>Agent assignment (round-robin and account owner) works</li>
+                <li>All stage transitions trigger correctly</li>
+                <li>Mandatory follow-up popup works after call contact</li>
+                <li>Account creation/linking moves to nurturing</li>
+                <li>Opportunity creation closes contact conversation</li>
+                <li>Order creation closes opportunity conversation</li>
+                <li>Transfer creates new conversation (close-and-create)</li>
+                <li>Incoming messages route to correct (non-transferred) conversation</li>
+            </ul>
+
+            <h3>11.2 Report Accuracy</h3>
+            <ul class="checklist">
+                <li>Outcome Report numbers match database</li>
+                <li>Agent Activity metrics accurate</li>
+                <li>FRT calculations correct</li>
+                <li>Cohort vs Activity views show different perspectives correctly</li>
+                <li>Dashboard KPIs match detailed reports</li>
+            </ul>
+
+            <h3>11.3 Data Integrity</h3>
+            <ul class="checklist">
+                <li>Duplicate handle prevention works</li>
+                <li>Account merge preserves data correctly</li>
+                <li>Transfer chain links preserved (transferred_from/to_conversation_id)</li>
+                <li>System messages added for all stage changes</li>
+                <li>Audit logs created for sensitive operations</li>
+            </ul>
+
+            <h3>11.4 Edge Cases</h3>
+            <ul class="checklist">
+                <li>Agent on leave - lead assignment handled</li>
+                <li>All agents busy - round-robin fallback</li>
+                <li>RNR flow (3 missed calls)</li>
+                <li>Conversation with no account - cannot create opportunity</li>
+                <li>Multiple open conversations for same handle - only one active</li>
+            </ul>
+
+            <h3>11.5 UI/UX Validation</h3>
+            <ul class="checklist">
+                <li>Conversation list filters work correctly</li>
+                <li>Unread badges update in real-time</li>
+                <li>WebSocket notifications working (real-time updates)</li>
+                <li>Mobile responsiveness of key pages</li>
+                <li>Form validations show clear error messages</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <div style="text-align: center; color: #718096; padding: 30px; margin-top: 20px;">
+            <p><strong>CRM QA Testing Guide</strong></p>
+            <p>Version 1.0 | Created: January 2026</p>
+            <p>Climate Naturals CRM System</p>
+        </div>
+    </div>
+</body>
+</html>
