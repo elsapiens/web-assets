@@ -1,0 +1,3548 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ElAuth – Flows</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --muted2: rgba(255,255,255,0.55);
+      --accent: #7c5cff;
+      --accent2: #2de2e6;
+      --good: #42f59e;
+      --warn: #ffcc66;
+      --bad: #ff5677;
+      --shadow: 0 24px 60px rgba(0,0,0,0.45);
+      --radius: 16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+
+    html {
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 600px at 2% 0%, rgba(124,92,255,0.25), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, rgba(45,226,230,0.18), transparent 55%),
+        radial-gradient(900px 700px at 40% 100%, rgba(255,86,119,0.12), transparent 60%),
+        var(--bg);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-color: var(--bg);
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 28px 20px 46px;
+    }
+
+    header {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      letter-spacing: -0.02em;
+      font-size: clamp(26px, 3vw, 36px);
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      max-width: 92ch;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(124,92,255,0.18), rgba(45,226,230,0.10));
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .pill b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      grid-column: span 12;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .cardHeader {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.14);
+    }
+
+    .cardHeader h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .cardHeader p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 92ch;
+    }
+
+    .cardBody {
+      padding: 14px 16px 16px;
+    }
+
+    .twoCol {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 940px) {
+      .span7 { grid-column: span 7; }
+      .span5 { grid-column: span 5; }
+      .twoCol { grid-template-columns: 1fr 1fr; }
+    }
+
+    .sectionLabel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+
+    .steps { display: grid; gap: 10px; }
+
+    .step {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: rgba(255,255,255,0.88);
+      background: linear-gradient(135deg, rgba(124,92,255,0.35), rgba(45,226,230,0.18));
+      border: 1px solid rgba(255,255,255,0.12);
+      flex: none;
+    }
+
+    .stepTitle {
+      margin: 0;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.90);
+      line-height: 1.35;
+    }
+
+    .stepMeta {
+      margin: 6px 0 0;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .diagramWrap {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      border-radius: 14px;
+      padding: 12px;
+      overflow: auto;
+    }
+
+    .diagram {
+      display: inline-block;
+      min-width: 860px;
+      width: 100%;
+      max-width: 1300px;
+    }
+
+    svg { width: 100%; height: auto; display: block; }
+
+    code {
+      font-family: var(--mono);
+      font-size: 0.95em;
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 2px 6px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.10);
+    }
+
+    .tab {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12.5px;
+      line-height: 1;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .tab:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.20); }
+    .tab[aria-selected="true"] {
+      color: rgba(255,255,255,0.92);
+      border-color: rgba(124,92,255,0.55);
+      background: linear-gradient(135deg, rgba(124,92,255,0.22), rgba(45,226,230,0.10));
+    }
+
+    .tabpanel { display: none; }
+    .tabpanel.active { display: block; }
+
+    /* Sub-tabs (used inside a panel) */
+    .subtabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 0 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      margin-bottom: 12px;
+    }
+
+    .subtab {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 7px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .subtab:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.20); }
+    .subtab[aria-selected="true"] {
+      color: rgba(255,255,255,0.92);
+      border-color: rgba(124,92,255,0.55);
+      background: linear-gradient(135deg, rgba(124,92,255,0.22), rgba(45,226,230,0.10));
+    }
+
+    .subpanel { display: none; }
+    .subpanel.active { display: block; }
+
+    footer {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12.5px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* Flowchart */
+    .flowchart {
+      display: grid;
+      gap: 14px;
+    }
+
+    .fcNode {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px;
+      padding: 12px 12px;
+      position: relative;
+    }
+
+    .fcNode h3 {
+      margin: 0;
+      font-size: 13.5px;
+      letter-spacing: -0.01em;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .fcNode p {
+      margin: 6px 0 0;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .fcTag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(255,255,255,0.72);
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+    }
+
+    .fcArrow {
+      display: grid;
+      place-items: center;
+      height: 18px;
+      color: rgba(255,255,255,0.55);
+      font-family: var(--mono);
+      font-size: 12px;
+      user-select: none;
+    }
+
+    .fcDecision {
+      display: grid;
+      place-items: center;
+      padding: 18px 0 16px;
+    }
+
+    .fcDiamond {
+      width: min(160px, 30vw);
+      height: min(160px, 30vw);
+      transform: rotate(45deg);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: linear-gradient(135deg, rgba(124,92,255,0.18), rgba(45,226,230,0.08));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fcDiamondInner {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      transform: rotate(-45deg);
+      text-align: center;
+    }
+
+    .fcDiamondInner h3 {
+      margin: 0;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .fcDiamondInner p {
+      margin: 6px 0 0;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.70);
+      line-height: 1.35;
+    }
+
+    .fcBranches {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    @media (min-width: 940px) {
+      .fcBranches { grid-template-columns: 1fr 1fr; }
+    }
+
+    .fcBranchLabel {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px;
+      color: var(--muted2);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .fcChip {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.70);
+    }
+
+    /* Compact Flow Tables */
+    .flowTable {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+    .flowTable th, .flowTable td {
+      padding: 8px 10px;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .flowTable th {
+      background: rgba(124,92,255,0.15);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .flowTable td {
+      background: rgba(255,255,255,0.02);
+      color: var(--muted);
+    }
+    .flowTable tr:hover td {
+      background: rgba(255,255,255,0.04);
+    }
+    .flowTable .step-num {
+      width: 36px;
+      text-align: center;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--accent2);
+    }
+    .flowTable .component {
+      width: 100px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+    }
+    .flowTable .section-header {
+      background: rgba(45,226,230,0.08);
+      color: var(--accent2);
+      font-weight: 600;
+      text-align: center;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .flowTable code {
+      font-size: 10px;
+      padding: 1px 4px;
+    }
+
+    /* Compact Code Block */
+    .codeBlock {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text);
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .codeBlock .comment { color: var(--muted2); }
+    .codeBlock .highlight { color: var(--accent2); }
+    .codeBlock .keyword { color: var(--accent); }
+    .codeBlock .success { color: var(--good); }
+    .codeBlock .warn { color: var(--warn); }
+
+    /* Compact Grid */
+    .compactGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 768px) {
+      .compactGrid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 1024px) {
+      .compactGrid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    /* Mini Card */
+    .miniCard {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .miniCard h4 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      color: var(--accent2);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .miniCard p {
+      margin: 0;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .miniCard code {
+      font-size: 10px;
+      padding: 1px 4px;
+    }
+
+    /* Compact Steps */
+    .compactSteps {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .compactStep {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+    }
+    .compactStep .num {
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+    .compactStep .content {
+      flex: 1;
+      min-width: 0;
+    }
+    .compactStep .title {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .compactStep .desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Section Divider */
+    .sectionDivider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 12px;
+    }
+    .sectionDivider::before, .sectionDivider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    .sectionDivider span {
+      font-size: 11px;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>ElAuth – Project Overview & Flows</h1>
+        <div class="badge" title="Summarized from docs/planning/*.md">
+          <span>Planning view</span><span aria-hidden="true">•</span><span>Static HTML</span>
+        </div>
+      </div>
+      <p class="subtitle">
+        Overview first (from <code>docs/planning/elauth_flow.md</code>), then individual flows presented in tabs.
+        This is intentionally a single self-contained file (no external libraries).
+      </p>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <span class="pill"><b>Tenant</b> domain → config JSON</span>
+        <span class="pill"><b>ElAuth</b> OTP/MagicLink/JWT + auth DB + workspaces</span>
+        <span class="pill"><b>Accounts API</b> person/entity/membership</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- Overview -->
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Project Overview (Design)</h2>
+            <p>
+              ElAuth is a config-driven authentication service. It loads a tenant config based on the requesting domain,
+              builds forms accordingly, and coordinates authentication + verification with Accounts API.
+            </p>
+          </div>
+          <div class="pill"><b>Source</b> <code>elauth_flow.md</code></div>
+        </div>
+        <div class="cardBody">
+          <div class="">
+            <div>
+              <div class="sectionLabel"><span>Responsibilities</span><span class="pill"><b>Summary</b> what lives where</span></div>
+              <div class="steps">
+                <div class="step"><div class="num">E</div><div><p class="stepTitle">ElAuth (Auth Orchestration)</p><p class="stepMeta">Config-driven forms; signin/signup/recovery; OTP + magic link handling; JWT issuing; stores auth artifacts and workspace records.</p></div></div>
+                <div class="step"><div class="num">A</div><div><p class="stepTitle">Accounts API (Identity/Domain Data)</p><p class="stepMeta">Stores person/entity/membership; handle existence + verification state; memberships define relationships and tags.</p></div></div>
+                <div class="step"><div class="num">D</div><div><p class="stepTitle">Tenant Config by Domain</p><p class="stepMeta">Domain selects config JSON; config decides which fields appear in auth flows and basic behavior.</p></div></div>
+                <div class="step"><div class="num">W</div><div><p class="stepTitle">Workspace Concept</p><p class="stepMeta">Workspace is stored in ElAuth (planned: <code>workspace_id</code>, <code>shortid</code>, creator handle). Linked back to person data in Accounts API.</p></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Flows</h2>
+            <p>
+              Choose a flow tab to view the schematic steps.
+            </p>
+          </div>
+          <div class="pill"><b>Sources</b> <code>docs/planning/*.md</code></div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Flow tabs">
+          <button class="tab" role="tab" id="tab-concepts" aria-controls="panel-concepts" aria-selected="true" data-panel="panel-concepts">Concepts</button>
+          <button class="tab" role="tab" id="tab-contact-library" aria-controls="panel-contact-library" aria-selected="false" data-panel="panel-contact-library">Contact Library</button>
+          <button class="tab" role="tab" id="tab-customer" aria-controls="panel-customer" aria-selected="false" data-panel="panel-customer">End User Registration (Customer Registration)</button>
+          <button class="tab" role="tab" id="tab-reg-new" aria-controls="panel-reg-new" aria-selected="false" data-panel="panel-reg-new">Client Registration</button>
+          <button class="tab" role="tab" id="tab-signin" aria-controls="panel-signin" aria-selected="false" data-panel="panel-signin">Client Signin</button>
+          <button class="tab" role="tab" id="tab-invite" aria-controls="panel-invite" aria-selected="false" data-panel="panel-invite">Invite User</button>
+          <button class="tab" role="tab" id="tab-recovery" aria-controls="panel-recovery" aria-selected="false" data-panel="panel-recovery">Account Recovery</button>
+          <button class="tab" role="tab" id="tab-upgrade" aria-controls="panel-upgrade" aria-selected="false" data-panel="panel-upgrade">Customer → Client Upgrade</button>
+          <button class="tab" role="tab" id="tab-logout" aria-controls="panel-logout" aria-selected="false" data-panel="panel-logout">Logout</button>
+          <button class="tab" role="tab" id="tab-roles" aria-controls="panel-roles" aria-selected="false" data-panel="panel-roles">Roles & Permissions</button>
+          <button class="tab" role="tab" id="tab-tokens" aria-controls="panel-tokens" aria-selected="false" data-panel="panel-tokens">JWT Token</button>
+        </div>
+
+        <div class="cardBody">
+          <!-- Concepts -->
+          <div class="tabpanel active" id="panel-concepts" role="tabpanel" aria-labelledby="tab-concepts">
+
+            <!-- Overview -->
+            <div class="sectionDivider"><span>System Overview</span></div>
+            <div class="codeBlock"><span class="keyword">TWO-LAYER DATA ARCHITECTURE:</span>
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="highlight">ECOSYSTEM LEVEL</span>                                                            │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │  <span class="success">CONTACT LIBRARY</span>                                                      │  │
+│  │  • Single source of truth for identity                                │  │
+│  │  • One entry per person (globally unique phone/email)                 │  │
+│  │  • Tracks relationships across ALL workspaces                         │  │
+│  │  • Purpose: Cross-workspace analytics                                 │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ contact_id (reference)
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="warn">WORKSPACE LEVEL</span>                                                            │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                    │
+│  │ <span class="keyword">WORKSPACE A</span>   │  │ <span class="keyword">WORKSPACE B</span>   │  │ <span class="keyword">WORKSPACE C</span>   │                    │
+│  │ Workspace     │  │ Workspace     │  │ Workspace     │                    │
+│  │ Contact       │  │ Contact       │  │ Contact       │                    │
+│  │ ───────────── │  │ ───────────── │  │ ───────────── │                    │
+│  │ contact_id    │  │ contact_id    │  │ contact_id    │                    │
+│  │ admin_data    │  │ admin_data    │  │ admin_data    │                    │
+│  │ tag           │  │ tag           │  │ tag           │                    │
+│  └───────────────┘  └───────────────┘  └───────────────┘                    │
+│  • Workspace-specific view of a contact                                     │
+│  • Can have different data than Contact Library                             │
+│  • Purpose: Workspace operations                                            │
+└─────────────────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Core Entities -->
+            <div class="sectionDivider"><span>Core Entities</span></div>
+            <table class="flowTable">
+              <tr><th>Entity</th><th>Scope</th><th>Purpose</th><th>Key Fields</th></tr>
+              <tr>
+                <td><b>Contact Library</b></td>
+                <td>Ecosystem</td>
+                <td>Identity + Analytics</td>
+                <td><code>contact_id</code>, <code>handles[]</code>, <code>workspace_relationships[]</code></td>
+              </tr>
+              <tr>
+                <td><b>Workspace Contact</b></td>
+                <td>Per Workspace</td>
+                <td>Workspace operations</td>
+                <td><code>contact_id</code> (ref), <code>admin_data</code>, <code>tag</code></td>
+              </tr>
+              <tr>
+                <td><b>Handle</b></td>
+                <td>Contact Library</td>
+                <td>Identity verification</td>
+                <td><code>type</code>, <code>value</code>, <code>verified</code>, <code>hidden</code></td>
+              </tr>
+              <tr>
+                <td><b>Entity</b></td>
+                <td>Contact Library</td>
+                <td>Business/Individual info</td>
+                <td>Address, bank details, linked via <code>person_id</code></td>
+              </tr>
+            </table>
+
+            <!-- Tag vs Role -->
+            <div class="sectionDivider"><span>Tag vs Role</span></div>
+            <div class="codeBlock"><span class="keyword">THESE ARE DIFFERENT THINGS:</span>
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="success">TAG</span> (Fixed System Classification)                                          │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│  • Values: <span class="highlight">creator</span> | <span class="highlight">employee</span> | <span class="highlight">customer</span>  (FIXED, not configurable)         │
+│  • Purpose: Classify HOW user joined the workspace                          │
+│  • Stored in: Contact Library + Workspace Contact                           │
+│  • Used for: Data queries, filtering, analytics                             │
+│                                                                             │
+│  <span class="success">creator</span>   = Person who created the workspace                               │
+│  <span class="highlight">employee</span>  = Person invited to work in the workspace                        │
+│  <span class="warn">customer</span>  = End user of workspace's product/service                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="warn">ROLE</span> (Configurable Permission Level)                                       │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│  • Values: <span class="highlight">Workspace-defined</span> (superadmin, manager, customer, etc.)          │
+│  • Purpose: Define WHAT user can do (authorization)                         │
+│  • Stored in: <span class="warn">JWT token</span> + database                                          │
+│  • Used for: API authorization, permission checks                           │
+│                                                                             │
+│  Examples: superadmin, admin, manager, supervisor, customer, guest, etc.    │
+│  Each workspace can define their own roles with specific permissions.       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">KEY DIFFERENCE:</span>
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  TAG = WHO you are (classification)     │  ROLE = WHAT you can do (authz)   │
+│  • Fixed values                         │  • Configurable per workspace     │
+│  • Describes relationship to workspace  │  • Describes permissions          │
+│  • Set once, rarely changes             │  • Can be changed by admin        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">EXAMPLE:</span>
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  John in Workspace A:                                                       │
+│  • <span class="success">tag: "employee"</span>     (he was invited to work here)                        │
+│  • <span class="warn">role: "manager"</span>     (he can manage his team)                             │
+│                                                                             │
+│  John in Workspace B:                                                       │
+│  • <span class="success">tag: "customer"</span>     (he bought something from their store)               │
+│  • <span class="warn">role: "customer"</span>    (standard customer permissions)                      │
+│                                                                             │
+│  John in Workspace C:                                                       │
+│  • <span class="success">tag: "creator"</span>      (he created this workspace)                          │
+│  • <span class="warn">role: "superadmin"</span>  (full control)                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">WHERE STORED:</span>
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="highlight">Contact Library:</span>                                                           │
+│  workspace_relationships: [                                                 │
+│    { workspace_id: "ws-A", <span class="success">tag: "employee"</span> },                               │
+│    { workspace_id: "ws-B", <span class="success">tag: "customer"</span> },                               │
+│    { workspace_id: "ws-C", <span class="success">tag: "creator"</span> }                                 │
+│  ]                                                                          │
+│                                                                             │
+│  <span class="highlight">Workspace Contact:</span>                                                         │
+│  { contact_id: "abc", <span class="success">tag: "employee"</span> }                                     │
+│                                                                             │
+│  <span class="warn">JWT Token:</span>                                                                 │
+│  { user_id: "abc", workspace_id: "ws-A", <span class="warn">role: "manager"</span>, exp: ... }        │
+│                                                                             │
+│  <span class="highlight">Database (WORKSPACE_USER):</span>                                                 │
+│  { user_id: "abc", workspace_id: "ws-A", <span class="warn">role: "manager"</span> }                  │
+└─────────────────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Handles -->
+            <div class="sectionDivider"><span>Handles (Phone & Email)</span></div>
+            <div class="codeBlock"><span class="keyword">HANDLE STRUCTURE:</span>
+
+handles: [
+  {
+    <span class="highlight">type</span>: "phone" | "email",
+    <span class="highlight">value</span>: "+91-9876543210" | "john@example.com",
+    <span class="success">verified</span>: true | false,    <span class="muted">// Has user proven ownership?</span>
+    <span class="warn">hidden</span>: true | false        <span class="muted">// Soft-deleted by user?</span>
+  }
+]
+
+<span class="keyword">RULES:</span>
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  1. Phone and Email are <span class="success">GLOBALLY UNIQUE</span> in Contact Library                  │
+│     • One phone = one contact                                               │
+│     • One email = one contact                                               │
+│                                                                             │
+│  2. <span class="highlight">verified</span> = user proved ownership (OTP, magic link, invite click)        │
+│     • Unverified handles can exist (admin-entered, user-entered but not OTP)│
+│     • Verification is REQUIRED for certain operations                       │
+│                                                                             │
+│  3. <span class="warn">hidden</span> = soft delete (user removed, but data preserved for analytics)   │
+│     • Pre-fill forms only show hidden: false                                │
+│     • Re-entering same value restores (hidden: false)                       │
+│                                                                             │
+│  4. A contact can have <span class="success">MULTIPLE</span> handles of same type                        │
+│     • Multiple emails, multiple phones allowed                              │
+│     • Old ones can be hidden: true                                          │
+└─────────────────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Data Ownership -->
+            <div class="sectionDivider"><span>Data Ownership Rules</span></div>
+            <table class="flowTable">
+              <tr><th>Actor</th><th>Contact Library</th><th>Workspace Contact</th></tr>
+              <tr>
+                <td><b>Customer (End User)</b></td>
+                <td><span class="success">READ + WRITE</span> own data</td>
+                <td>READ only (sees partial admin_data)</td>
+              </tr>
+              <tr>
+                <td><b>Workspace Admin</b></td>
+                <td><span class="warn">NO direct writes</span> (only via verified handles)</td>
+                <td><span class="success">READ + WRITE</span> admin_data, entities</td>
+              </tr>
+              <tr>
+                <td><b>System</b></td>
+                <td>INSERT on registration, UPDATE on verification</td>
+                <td>INSERT on invite/registration</td>
+              </tr>
+            </table>
+
+            <div class="codeBlock"><span class="keyword">THE "CUSTOMER = SOURCE OF TRUTH" RULE:</span>
+
+<span class="success">WHAT IT MEANS:</span>
+• Customer-entered data in Contact Library is authoritative
+• If customer says their name is "John", that's the truth
+• Admins cannot "correct" Contact Library data directly
+
+<span class="warn">THE EXCEPTION (Admin Indirect Writes):</span>
+• Admin adds handle to Workspace Contact
+• User verifies that handle (OTP)
+• Verified handle gets pushed to Contact Library
+• <span class="highlight">This is the ONLY way admin data reaches Contact Library</span>
+
+<span class="bad">WHY THIS MATTERS:</span>
+• Prevents admin typos from corrupting ecosystem identity
+• Maintains data quality for analytics
+• User always controls their verified identity</div>
+
+            <!-- Auto-Merge -->
+            <div class="sectionDivider"><span>Auto-Merge Rules</span></div>
+            <div class="codeBlock"><span class="keyword">WHEN AUTO-MERGE HAPPENS:</span>
+
+User verifies handle (phone/email) that exists <span class="success">VERIFIED</span> under DIFFERENT contact
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="highlight">MERGE TRIGGERED</span>                                                            │
+│  Same person proved ownership of handle already owned by another contact    │
+│  → Must be same person → Merge contacts                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">MERGE DECISION (Which contact survives?):</span>
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="success">RULE 1:</span> Contact with MORE workspace_relationships SURVIVES                 │
+│  <span class="highlight">RULE 2:</span> If equal → OLDER contact survives                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">WHAT GETS MERGED:</span>
+• All handles combined
+• All workspace_relationships combined
+• All entities combined
+• All Workspace Contacts updated to use surviving contact_id
+
+<span class="bad">WHEN NO MERGE:</span>
+• Handle exists but is <span class="warn">UNVERIFIED</span> in other contact → No merge
+• Unverified = not trusted = could be different person</div>
+
+            <!-- User Types -->
+            <div class="sectionDivider"><span>User Types</span></div>
+            <table class="flowTable">
+              <tr><th>Type</th><th>Definition</th><th>How They Register</th><th>Access</th></tr>
+              <tr>
+                <td><b>Customer</b></td>
+                <td>End user of a workspace's product</td>
+                <td>Via workspace's e-commerce/app</td>
+                <td>Self-service, limited to own data</td>
+              </tr>
+              <tr>
+                <td><b>Client</b></td>
+                <td>Workspace creator (business owner)</td>
+                <td>Via ElAuth signup</td>
+                <td>Full workspace control, billing</td>
+              </tr>
+              <tr>
+                <td><b>Employee</b></td>
+                <td>Team member invited to workspace</td>
+                <td>Via admin invite</td>
+                <td>Assigned permissions only</td>
+              </tr>
+            </table>
+
+            <div class="codeBlock"><span class="keyword">ONE PERSON, MULTIPLE ROLES:</span>
+
+A single contact can be:
+• <span class="highlight">CUSTOMER</span> in Workspace A (bought something from their store)
+• <span class="highlight">MEMBER</span> in Workspace B (works there as employee)
+• <span class="highlight">OWNER</span> of Workspace C (runs their own business)
+
+All tracked via workspace_relationships[] in Contact Library
+All using SAME contact_id</div>
+
+            <!-- Verification Methods -->
+            <div class="sectionDivider"><span>Verification Methods</span></div>
+            <table class="flowTable">
+              <tr><th>Method</th><th>Works For</th><th>How It Works</th><th>Side Effect</th></tr>
+              <tr>
+                <td><b>OTP</b></td>
+                <td>Phone & Email</td>
+                <td>6-digit code, short expiry</td>
+                <td>Marks handle as verified</td>
+              </tr>
+              <tr>
+                <td><b>Magic Link</b></td>
+                <td>Email only</td>
+                <td>HMAC-signed link, single use</td>
+                <td>Marks email as verified</td>
+              </tr>
+              <tr>
+                <td><b>Invite Click</b></td>
+                <td>Email only</td>
+                <td>Click = email ownership proof</td>
+                <td>Marks email as verified</td>
+              </tr>
+            </table>
+
+            <!-- Token System -->
+            <div class="sectionDivider"><span>Token System (JWT)</span></div>
+            <div class="codeBlock"><span class="keyword">TWO-TOKEN SYSTEM:</span>
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="success">ACCESS TOKEN</span> (24 hours)                                                    │
+│  • JWT containing: user_id, workspace_id, role, exp                         │
+│  • Sent with every API request                                              │
+│  • Stored in HTTP-only cookie on .elsapiens.com                             │
+│  • Short-lived for security                                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  <span class="warn">REFRESH TOKEN</span> (30 days)                                                    │
+│  • Used ONLY to get new access token                                        │
+│  • Never sent with normal API requests                                      │
+│  • Stored separately (HTTP-only cookie)                                     │
+│  • When access token expires → use refresh token → get new access token     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">WORKSPACE SWITCHING:</span>
+• JWT contains current workspace_id
+• Switching workspace = get new JWT with different workspace_id
+• User's workspace_relationships[] determines which workspaces they can access</div>
+
+            <!-- Key Principles Summary -->
+            <div class="sectionDivider"><span>Key Principles</span></div>
+            <div class="compactGrid cols2">
+              <div class="miniCard">
+                <h4>Identity</h4>
+                <p>• Phone & email globally unique<br>
+                • contact_id links everything<br>
+                • Verified handles = trusted identity</p>
+              </div>
+              <div class="miniCard">
+                <h4>Data Flow</h4>
+                <p>• Customer writes to Contact Library<br>
+                • Admin writes to Workspace Contact<br>
+                • Verified handles bridge the gap</p>
+              </div>
+              <div class="miniCard">
+                <h4>Security</h4>
+                <p>• OTP required for sensitive operations<br>
+                • Short-lived access tokens<br>
+                • Refresh tokens for session continuity</p>
+              </div>
+              <div class="miniCard">
+                <h4>Analytics</h4>
+                <p>• Contact Library enables cross-workspace tracking<br>
+                • workspace_relationships[] = complete journey<br>
+                • Soft-delete preserves historical data</p>
+              </div>
+            </div>
+
+            <div class="hint">
+              <b>Use This Tab As Reference:</b> Other tabs assume you understand these concepts. If something is unclear in a flow, come back here for the authoritative definition.
+            </div>
+          </div>
+
+          <!-- Contact Library -->
+          <div class="tabpanel" id="panel-contact-library" role="tabpanel" aria-labelledby="tab-contact-library">
+            <!-- What is Contact Library -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>What is Contact Library?</h4>
+                <p><b>Ecosystem-level</b> single source of truth for all contacts across all workspaces</p>
+              </div>
+              <div class="miniCard">
+                <h4>Primary Purpose</h4>
+                <p><b>Data Analytics</b> - Track a person's journey across the entire ecosystem</p>
+              </div>
+              <div class="miniCard">
+                <h4>Unique Identifiers</h4>
+                <p><b>Phone & Email</b> are globally unique. One contact = one person</p>
+              </div>
+            </div>
+
+            <!-- Purpose: Data Analytics -->
+            <div class="sectionDivider"><span>Purpose: Enabling Data Analytics</span></div>
+            <div class="codeBlock"><span class="keyword">WHY Contact Library exists:</span>
+
+┌─────────────────────────────────────────────────────────────┐
+│  <span class="highlight">PROBLEM without Contact Library:</span>                           │
+│                                                             │
+│  Workspace A: "John" (customer)                             │
+│  Workspace B: "John D." (employee)                          │
+│  Workspace C: "J. Doe" (customer)                           │
+│                                                             │
+│  → Are these the same person? <span class="warn">NO WAY TO KNOW!</span>               │
+│  → Cannot track journey across ecosystem                    │
+│  → Analytics limited to single workspace                    │
+└─────────────────────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
+│  <span class="success">SOLUTION with Contact Library:</span>                             │
+│                                                             │
+│  Contact Library: contact_id = "abc123"                     │
+│    • phone: +91-9876543210 (VERIFIED)                       │
+│    • email: john@example.com                                │
+│    • <span class="highlight">workspace_relationships: [</span>                             │
+│        { workspace_id: ws-A, role: OWNER },                 │
+│        { workspace_id: ws-B, role: MEMBER },                │
+│        { workspace_id: ws-C, role: CUSTOMER }               │
+│      <span class="highlight">]</span>                                                      │
+│                                                             │
+│  Workspace A: contact_id = "abc123", <span class="warn">tag: creator</span>           │
+│  Workspace B: contact_id = "abc123", <span class="warn">tag: employee</span>          │
+│  Workspace C: contact_id = "abc123", <span class="warn">tag: customer</span>          │
+│                                                             │
+│  → <span class="success">SAME contact_id = SAME PERSON!</span>                           │
+│  → Track complete journey across ecosystem                  │
+│  → Rich analytics at ecosystem level                        │
+└─────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Data Structure -->
+            <div class="sectionDivider"><span>Contact Library Data Structure</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Field</th><th>Description</th></tr>
+              <tr><td class="step-num">1</td><td><code>contact_id</code></td><td>Unique identifier - <b>the key for analytics</b></td></tr>
+              <tr><td class="step-num">2</td><td><code>handles[]</code></td><td>Array of {type: phone/email, value, verified: true/false} - <span class="warn">Only customer can add/update</span></td></tr>
+              <tr><td class="step-num">3</td><td><code>basic_info</code></td><td>Name and other basic details - <span class="warn">Only customer can update</span></td></tr>
+              <tr><td class="step-num">4</td><td><code><span class="highlight">entities[]</span></code></td><td>Array of {type: business/home, name, address, bank, GST} - <span class="warn">Only customer can update</span></td></tr>
+              <tr><td class="step-num">5</td><td><code>imported_data{}</code></td><td>Ecosystem-level imports (before workspace assignment) - <span class="muted">System only</span></td></tr>
+              <tr><td class="step-num">6</td><td><code><span class="success">workspace_relationships[]</span></code></td><td>Array of {workspace_id, role: OWNER/ADMIN/MEMBER/CUSTOMER, status, joined_at}</td></tr>
+              <tr><td class="step-num">7</td><td><code>merge_history[]</code></td><td>Array of {merged_contact_id, merged_at, reason, handle} - tracks merged contacts</td></tr>
+            </table>
+
+            <!-- Golden Rules -->
+            <div class="sectionDivider"><span>Contact Library Golden Rules</span></div>
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>1. One Verified Handle = One Contact</h4>
+                <p>Same <b>VERIFIED</b> handle cannot exist in multiple contacts. Merge only when verifying a handle that already exists <b>verified</b> elsewhere.</p>
+              </div>
+              <div class="miniCard">
+                <h4>2. All WS Contacts Have ID</h4>
+                <p>Every Workspace Contact <b>MUST</b> have a <code>contact_id</code> reference to Contact Library</p>
+              </div>
+              <div class="miniCard">
+                <h4>3. Customer = Source of Truth</h4>
+                <p>Only <b>customer</b> can update Contact Library data (entities, basic_info). Admin cannot.</p>
+              </div>
+            </div>
+
+            <!-- Who Can Update What -->
+            <div class="sectionDivider"><span>Who Can Update What</span></div>
+            <table class="flowTable">
+              <tr><th>Action</th><th>Customer</th><th>Admin</th><th>System</th></tr>
+              <tr><td colspan="4" class="section-header">Contact Library</td></tr>
+              <tr><td>Insert new contact (skeleton)</td><td><span class="success">✓</span></td><td><span class="success">✓</span></td><td><span class="success">✓</span></td></tr>
+              <tr><td>Add verified handle</td><td><span class="success">✓</span></td><td><span class="success">✓</span></td><td><span class="success">✓</span></td></tr>
+              <tr><td>Update handles[] (add new unverified)</td><td><span class="success">✓</span></td><td><span class="warn">✗</span></td><td><span class="warn">✗</span></td></tr>
+              <tr><td>Update entities[]</td><td><span class="success">✓</span></td><td><span class="warn">✗</span></td><td><span class="warn">✗</span></td></tr>
+              <tr><td>Update basic_info</td><td><span class="success">✓</span></td><td><span class="warn">✗</span></td><td><span class="warn">✗</span></td></tr>
+              <tr><td>Update imported_data</td><td><span class="warn">✗</span></td><td><span class="warn">✗</span></td><td><span class="success">✓</span></td></tr>
+              <tr><td colspan="4" class="section-header">Workspace Contact</td></tr>
+              <tr><td>Update admin_data</td><td><span class="success">✓</span></td><td><span class="success">✓</span></td><td><span class="warn">✗</span></td></tr>
+              <tr><td>Update entities[]</td><td><span class="success">✓</span></td><td><span class="success">✓</span></td><td><span class="warn">✗</span></td></tr>
+            </table>
+
+            <!-- Data Flow Rules -->
+            <div class="sectionDivider"><span>Data Flow Rules</span></div>
+            <div class="codeBlock"><span class="keyword">WHERE DATA GOES:</span>
+
+┌─────────────────────────────────────────────────────────────────┐
+│ <span class="success">CUSTOMER updates</span> (in workspace context)                         │
+│ → Contact Library: <span class="success">ALWAYS</span> updated                               │
+│ → Workspace Contact: <span class="highlight">ONLY current workspace</span>                     │
+│   (other workspaces NOT auto-updated)                           │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ <span class="highlight">ADMIN update</span> data                                               │
+│ → Workspace Contact: <span class="success">YES</span>                                        │
+│ → Contact Library: <span class="warn">NO</span> (not pushed)                              │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ <span class="keyword">ECOSYSTEM import</span>                                                │
+│ → Contact Library.imported_data: <span class="success">YES</span>                            │
+│   (before any workspace relationship)                           │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ <span class="warn">HANDLE verified</span>                                                 │
+│ → Contact Library.handles[].verified = true                     │
+│ → If handle not in CL: INSERT with verified = true              │
+│ → If verified handle in DIFFERENT contact: <span class="warn">AUTO-MERGE</span>           │
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Customer Update Context -->
+            <div class="sectionDivider"><span>Customer Update - Workspace Context</span></div>
+            <div class="codeBlock"><span class="keyword">EXAMPLE:</span> Customer "John" exists in Workspace A, B, C
+
+John updates address in <span class="highlight">Workspace A's</span> ecommerce store:
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Contact Library: <span class="success">UPDATE</span> (new address)      ← ALWAYS            │
+│  Workspace Contact A: <span class="success">UPDATE</span> (new address)  ← CURRENT WS        │
+│  Workspace Contact B: <span class="muted">NO CHANGE</span>              ← NOT UPDATED      │
+│  Workspace Contact C: <span class="muted">NO CHANGE</span>              ← NOT UPDATED      │
+└─────────────────────────────────────────────────────────────────┘
+
+Later, John visits <span class="highlight">Workspace B</span>:
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  <span class="success">Auto-fill from Contact Library</span> (latest data)                   │
+│  If John confirms/saves → Workspace Contact B gets updated      │
+└─────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">KEY:</span> Workspace Contacts can have DIFFERENT data
+     Contact Library = latest customer-entered data (source of truth)</div>
+
+            <!-- Workspace Relationships Detail -->
+            <div class="sectionDivider"><span>Workspace Relationships Structure</span></div>
+            <div class="codeBlock"><span class="keyword">workspace_relationships[]</span> - Tracks which workspaces a contact belongs to
+
+<span class="highlight">CONTACT LIBRARY</span>
+{
+  contact_id: "abc123",
+  handles: [...],
+  basic_info: { name: "John Doe" },
+
+  <span class="success">workspace_relationships: [</span>
+    {
+      workspace_id: "ws-001",
+      <span class="keyword">role: "OWNER"</span>,           // Created this workspace
+      status: "ACTIVE",
+      joined_at: "2024-01-15"
+    },
+    {
+      workspace_id: "ws-002",
+      <span class="keyword">role: "MEMBER"</span>,          // Employee in this workspace
+      status: "ACTIVE",
+      joined_at: "2024-02-20"
+    },
+    {
+      workspace_id: "ws-003",
+      <span class="keyword">role: "CUSTOMER"</span>,        // Customer of this workspace
+      status: "ACTIVE",
+      joined_at: "2024-03-10"
+    }
+  <span class="success">]</span>
+}
+
+<span class="highlight">ANALYTICS QUERIES ENABLED:</span>
+→ "Show all contacts who are MEMBER in workspace ws-002"
+→ "Find contacts who are CUSTOMER in one workspace and OWNER in another"
+→ "Track role progression: CUSTOMER → MEMBER → OWNER"</div>
+
+            <!-- How Data is Inserted -->
+            <div class="sectionDivider"><span>How Data is Inserted</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Who Inserts</th><th>Data Source</th></tr>
+              <tr><td class="step-num">1</td><td><b>Client Registration</b></td><td>System</td><td>User-entered data during registration</td></tr>
+              <tr><td class="step-num">2</td><td><b>Customer Registration</b></td><td>System</td><td>Customer-entered data (customer = source of truth)</td></tr>
+              <tr><td class="step-num">3</td><td><b>Admin Invites User</b> (contact doesn't exist)</td><td>System</td><td>Admin-entered data pushed to Contact Library</td></tr>
+            </table>
+
+            <!-- How Data is Updated -->
+            <div class="sectionDivider"><span>How Data is Updated</span></div>
+            <div class="codeBlock"><span class="keyword">CRITICAL RULE: Verified handles MUST be pushed to Contact Library</span>
+
+When ANY handle gets verified (OTP, magic link, invite click):
+  → <span class="success">MUST update Contact Library</span> with handle.verified = true
+  → This ensures analytics can track verified identities across ecosystem</div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Contact Library Update</th><th>Workspace Contact Update</th></tr>
+              <tr><td class="step-num">1</td><td><b>Handle Verification</b></td><td>handle.verified = true</td><td>-</td></tr>
+              <tr><td class="step-num">2</td><td><b>Accept Invite</b></td><td>workspace_relationships[]: {workspace_id, role: MEMBER}</td><td><span class="warn">tag: employee</span></td></tr>
+              <tr><td class="step-num">3</td><td><b>Create Workspace</b></td><td>workspace_relationships[]: {workspace_id, role: OWNER}</td><td><span class="warn">tag: creator</span></td></tr>
+              <tr><td class="step-num">4</td><td><b>Customer Registration</b></td><td>workspace_relationships[]: {workspace_id, role: CUSTOMER}</td><td><span class="warn">tag: customer</span></td></tr>
+              <tr><td class="step-num">5</td><td><b>Role Change</b></td><td>Update workspace_relationships[].role</td><td>Update tag</td></tr>
+              <tr><td class="step-num">6</td><td><b>Remove from Workspace</b></td><td>workspace_relationships[].status = INACTIVE</td><td>Delete or mark inactive</td></tr>
+              <tr><td class="step-num">7</td><td><b>Customer Updates Profile</b></td><td>basic_info, handles</td><td>-</td></tr>
+              <tr><td class="step-num">8</td><td><b>Merge Contacts</b></td><td>Combine handles, workspace_relationships</td><td>Update contact_id references</td></tr>
+            </table>
+
+            <!-- Workspace Contact Relationship -->
+            <div class="sectionDivider"><span>Workspace Contact: The Reference Relationship</span></div>
+            <div class="codeBlock"><span class="keyword">How contact_id + workspace_relationships enables analytics:</span>
+
+┌─────────────────────────────────────────────────────────────┐
+│  <span class="highlight">CONTACT LIBRARY</span> (Ecosystem Level)                          │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ contact_id: "abc123"                                │    │
+│  │ handles: [phone: +91-xxx, email: john@example.com]  │    │
+│  │ <span class="success">workspace_relationships: [</span>                          │    │
+│  │   { workspace_id: ws-A, role: MEMBER },             │    │
+│  │   { workspace_id: ws-B, role: ADMIN },              │    │
+│  │   { workspace_id: ws-C, role: CUSTOMER }            │    │
+│  │ <span class="success">]</span>                                                   │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              │ contact_id reference
+          ┌───────────────────┼───────────────────┐
+          ▼                   ▼                   ▼
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│ <span class="keyword">WORKSPACE A</span>      │ │ <span class="keyword">WORKSPACE B</span>      │ │ <span class="keyword">WORKSPACE C</span>      │
+│ Workspace Contact│ │ Workspace Contact│ │ Workspace Contact│
+│ ─────────────────│ │ ─────────────────│ │ ─────────────────│
+│ contact_id: abc123││ contact_id: abc123││ contact_id: abc123│
+│ (Admin data)    │  │ (Admin data)    │  │ (Customer data) │
+│ <span class="warn">tag: employee</span>   │  │ <span class="warn">tag: admin</span>      │  │ <span class="warn">tag: customer</span>   │
+└─────────────────┘  └─────────────────┘  └─────────────────┘
+
+<span class="success">DATA MODEL:</span>
+• Contact Library: <span class="keyword">workspace_relationships[]</span> with workspace_id + role
+• Workspace Contact: <span class="warn">tag</span> for quick workspace-level identification
+
+<span class="success">ANALYTICS POWER:</span>
+→ Query by contact_id to see ALL workspaces this person is in
+→ Track: "John is OWNER of 1 workspace, MEMBER in 2, CUSTOMER in 5"
+→ Journey: "John started as CUSTOMER → became MEMBER → created own workspace (OWNER)"
+→ Cross-sell: "CUSTOMERS in Workspace A who are also in Workspace B"</div>
+
+            <!-- Analytics Use Cases -->
+            <div class="sectionDivider"><span>Analytics Use Cases Enabled by Contact Library</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Analytics Query</th><th>How contact_id Helps</th></tr>
+              <tr><td class="step-num">1</td><td><b>User Journey Tracking</b></td><td>Same contact_id across workspaces → complete journey visible</td></tr>
+              <tr><td class="step-num">2</td><td><b>Role Distribution</b></td><td>workspace_relationships[].role shows: how many OWNERs vs MEMBERs vs CUSTOMERs</td></tr>
+              <tr><td class="step-num">3</td><td><b>Cross-Workspace Activity</b></td><td>Find users active in multiple workspaces</td></tr>
+              <tr><td class="step-num">4</td><td><b>Conversion Tracking</b></td><td>Customer → Employee → Creator progression</td></tr>
+              <tr><td class="step-num">5</td><td><b>Engagement Metrics</b></td><td>One person's total engagement across ecosystem</td></tr>
+              <tr><td class="step-num">6</td><td><b>Duplicate Detection</b></td><td>Same handle appearing = same person (for merge)</td></tr>
+            </table>
+
+            <!-- Why Workspace Contact has its own data -->
+            <div class="sectionDivider"><span>Why Workspace Contact Stores Its Own Data</span></div>
+            <div class="compactGrid cols2">
+              <div class="miniCard">
+                <h4>Workspace Contact Data</h4>
+                <p>Admin-entered or context-specific data for <b>that workspace's use</b></p>
+                <p class="muted">Example: Admin may enter "John - Sales Team" for their records</p>
+              </div>
+              <div class="miniCard">
+                <h4>Contact Library Data</h4>
+                <p>User-verified data for <b>ecosystem-level analytics</b></p>
+                <p class="muted">Example: User verified as "John Doe" with verified phone</p>
+              </div>
+            </div>
+
+            <div class="codeBlock"><span class="keyword">Data Separation Logic:</span>
+
+<span class="highlight">Workspace Contact:</span>
+  • Stores what ADMIN entered (or customer entered for that workspace)
+  • Used for workspace-level operations
+  • Can differ from Contact Library data
+
+<span class="highlight">Contact Library:</span>
+  • Stores verified identity data
+  • Used for ecosystem-level analytics
+  • Single source of truth for "who is this person"
+
+<span class="success">The LINK (contact_id) connects both worlds:</span>
+  • Workspace operations use Workspace Contact data
+  • Analytics queries use Contact Library + contact_id to aggregate</div>
+
+            <!-- Handle Verification Flow -->
+            <div class="sectionDivider"><span>Handle Verification → Contact Library Update</span></div>
+            <div class="codeBlock"><span class="keyword">When ANY handle gets verified</span> (OTP, magic link, invite click):
+        │
+        ▼
+┌─────────────────────────────────────┐
+│  Check: Is this handle in Contact   │
+│  Library?                           │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="success">NOT IN CONTACT LIBRARY</span> →
+        │   INSERT handle with verified = true to current contact
+        │
+        ├── <span class="highlight">EXISTS under SAME contact</span> →
+        │   Update: handles[].verified = true
+        │
+        └── <span class="warn">EXISTS under DIFFERENT contact</span> →
+                │
+                ├── Handle is <span class="success">VERIFIED</span> in other contact →
+                │       │
+                │       ▼
+                │   ┌─────────────────────────────────────┐
+                │   │  <span class="warn">AUTO-MERGE CONTACTS</span>                │
+                │   │  Same person proven by verified     │
+                │   │  handle ownership                   │
+                │   │                                     │
+                │   │  • Merge Contact A + Contact B      │
+                │   │  • Combine all handles              │
+                │   │  • Combine all entities             │
+                │   │  • Combine workspace_relationships  │
+                │   │  • Update all Workspace Contacts    │
+                │   │    to use merged contact_id         │
+                │   └─────────────────────────────────────┘
+                │
+                └── Handle is <span class="muted">UNVERIFIED</span> in other contact →
+                        │
+                        ▼
+                ┌─────────────────────────────────────┐
+                │  <span class="success">NO MERGE</span> (unverified = not trusted) │
+                │  • Update current contact's handle  │
+                │    to verified = true               │
+                │  • Other contact keeps unverified   │
+                │    handle (may be different person) │
+                └─────────────────────────────────────┘
+
+<span class="keyword">ADMIN ADDS HANDLE SCENARIO:</span>
+┌─────────────────────────────────────────────────────────────────┐
+│  1. Admin adds new handle to Workspace Contact                  │
+│     (e.g., adds customer's second phone number)                 │
+│                                                                 │
+│  2. Handle gets verified (customer verifies via OTP)            │
+│                                                                 │
+│  3. Check Contact Library:                                      │
+│     • If handle NOT exists → INSERT with verified = true        │
+│     • If handle EXISTS under different contact with verified → AUTO-MERGE     │
+│                                                                 │
+│  <span class="highlight">This is the ONLY way admin can add data to Contact Library</span>     │
+│  (through verified handles)                                     │
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Auto-Fill Feature -->
+            <div class="sectionDivider"><span>Auto-Fill Feature (GoKwik-style)</span></div>
+            <div class="codeBlock"><span class="keyword">SCENARIO:</span> Customer visits new workspace
+
+1. Customer verifies phone in Workspace B
+2. System checks Contact Library by phone
+3. <span class="success">FOUND</span> → contact_id exists with:
+   - name: "John Doe"
+   - address: "123 Main St..."
+   - entities: [...]
+4. <span class="highlight">AUTO-FILL</span> form with Contact Library data
+5. Customer can modify → saves to BOTH:
+   - Contact Library (updates ecosystem data)
+   - Workspace Contact (workspace copy)
+
+<span class="keyword">INVITE MEMBER FLOW:</span>
+┌─────────────────────────────────────────────────────────────────┐
+│  Email click = EMAIL VERIFIED (primary)                         │
+│  Phone verification = <span class="highlight">OPTIONAL</span> (for auto-fill benefits)         │
+│                                                                 │
+│  Benefits of optional phone verification:                       │
+│  • Auto-merge if phone matches another contact                  │
+│  • Unlock Contact Library data for auto-fill                    │
+│  • Stronger identity (both email + phone verified)              │
+│  • Recovery path if email access lost                           │
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Merge Rules -->
+            <div class="sectionDivider"><span>Merge Rules</span></div>
+            <div class="codeBlock"><span class="keyword">MERGE DECISION:</span> Which contact survives?
+
+<span class="success">RULE 1 (PRIMARY):</span> Contact with MORE workspace_relationships SURVIVES
+<span class="highlight">RULE 2 (TIE-BREAKER):</span> If equal workspace count → older contact survives
+
+┌─────────────────────────────────────────────────────────────────┐
+│  <span class="keyword">EXAMPLE 1:</span> Different workspace counts                          │
+│                                                                 │
+│  Contact C1: 3 workspace_relationships                          │
+│  Contact C2: 1 workspace_relationship                           │
+│                                                                 │
+│  → <span class="success">C1 SURVIVES</span> (more workspaces)                                │
+│  → C2 MERGES INTO C1                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  <span class="keyword">EXAMPLE 2:</span> Equal workspace counts (tie-breaker)                │
+│                                                                 │
+│  Contact C1: 2 workspaces (created: 2024-01-01)                 │
+│  Contact C2: 2 workspaces (created: 2024-06-15)                 │
+│                                                                 │
+│  → <span class="success">C1 SURVIVES</span> (older - tie-breaker)                            │
+│  → C2 MERGES INTO C1                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+<span class="keyword">MERGE PROCESS:</span>
+┌─────────────────────────────────────────────────────────────────┐
+│  1. SURVIVING CONTACT receives:                                 │
+│     • All handles from merged contact (combine, no duplicates)  │
+│     • All entities from merged contact (append)                 │
+│     • All workspace_relationships from merged contact           │
+│     • basic_info: Keep surviving contact's (primary)            │
+│                                                                 │
+│  2. MERGED CONTACT is updated:                                  │
+│     • status: "MERGED"                                          │
+│     • merged_into: surviving_contact_id                         │
+│     • merged_at: timestamp                                      │
+│     • (Soft delete - keep for audit)                            │
+│                                                                 │
+│  3. ALL WORKSPACE CONTACTS referencing merged contact:          │
+│     • Update contact_id → surviving_contact_id                  │
+└─────────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Merge Audit Trail -->
+            <div class="sectionDivider"><span>Merge Audit Trail</span></div>
+            <div class="codeBlock"><span class="keyword">MERGED CONTACT RECORD:</span> (soft deleted, kept for audit)
+{
+  contact_id: "C2",
+  <span class="warn">status: "MERGED"</span>,
+  merged_into: "C1",
+  merged_at: "2024-06-20T10:30:00Z",
+  merged_reason: "duplicate_handle_verified",
+  merged_handle: "+91-9876543210",
+
+  // Original data preserved for audit
+  original_handles: [...],
+  original_entities: [...],
+  original_workspace_relationships: [...]
+}
+
+<span class="keyword">SURVIVING CONTACT:</span> (has merge_history)
+{
+  contact_id: "C1",
+  ...
+  <span class="success">merge_history: [</span>
+    {
+      merged_contact_id: "C2",
+      merged_at: "2024-06-20T10:30:00Z",
+      reason: "duplicate_handle_verified",
+      handle: "+91-9876543210"
+    }
+  <span class="success">]</span>
+}</div>
+
+            <!-- Data Separation Edge Cases -->
+            <div class="sectionDivider"><span>Data Separation Edge Cases</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Edge Case</th><th>Handling</th></tr>
+              <tr>
+                <td class="step-num">1</td>
+                <td><b>Contact Library vs Workspace Contact conflict</b><br><span class="muted">CL has new address, WS has old</span></td>
+                <td>Both valid! WS Contact is workspace snapshot. Auto-fill shows CL data on next visit.</td>
+              </tr>
+              <tr>
+                <td class="step-num">2</td>
+                <td><b>Admin updates, then customer updates elsewhere</b></td>
+                <td>Customer update → Contact Library (source of truth). Admin update stays in WS Contact only.</td>
+              </tr>
+              <tr>
+                <td class="step-num">3</td>
+                <td><b>Merge with conflicting entities</b><br><span class="muted">C1 has Business A, C2 has Business B</span></td>
+                <td><span class="success">Combine entities</span> (append) → [Business A, Business B]. No overwrite.</td>
+              </tr>
+              <tr>
+                <td class="step-num">4</td>
+                <td><b>admin_data visibility to customer</b></td>
+                <td><span class="highlight">Partially visible</span>: Some fields shown (nickname), others hidden (internal notes).</td>
+              </tr>
+              <tr>
+                <td class="step-num">5</td>
+                <td><b>Customer in WS A updates, visits WS B</b></td>
+                <td>WS B has old data until customer saves/confirms. Auto-fill shows latest from Contact Library.</td>
+              </tr>
+            </table>
+
+            <!-- Workspace Contact Structure -->
+            <div class="sectionDivider"><span>Workspace Contact Structure (Updated)</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Field</th><th>Description</th></tr>
+              <tr><td class="step-num">1</td><td><code>contact_id</code></td><td><b>REQUIRED</b> - Reference to Contact Library</td></tr>
+              <tr><td class="step-num">2</td><td><code>tag</code></td><td>customer / employee / creator - quick identification</td></tr>
+              <tr><td class="step-num">3</td><td><code>admin_data{}</code></td><td>Admin-entered data: name, notes, etc. <span class="highlight">Partially visible to customer</span></td></tr>
+              <tr><td class="step-num">4</td><td><code>entities[]</code></td><td>Workspace-specific entities (can differ from Contact Library)</td></tr>
+              <tr><td class="step-num">5</td><td><code>status</code></td><td>ACTIVE / INACTIVE / PENDING_INVITATION</td></tr>
+            </table>
+
+            <!-- Key Rules Summary -->
+            <div class="hint">
+              <b>Key Rules:</b> Contact Library = ecosystem-level source of truth • Phone & Email globally unique • <code>contact_id</code> enables cross-workspace analytics • Only <span class="warn">customer can update</span> Contact Library data (except verified handles) • Admin can only: insert skeleton, add verified handles • <span class="warn">AUTO-MERGE</span> only when verifying handle that exists <b>verified</b> elsewhere (unverified = no merge) • Merge: more workspaces wins, then older • admin_data partially visible to customer • Phone verification in invite = <span class="highlight">optional</span>
+            </div>
+          </div>
+
+          <!-- Customer Journey (Flow 1) -->
+          <div class="tabpanel" id="panel-customer" role="tabpanel" aria-labelledby="tab-customer">
+            <!-- Data Model - Compact Grid -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>Contact Library (Global)</h4>
+                <p>Source of truth. <code>handles[]</code> with verified flag, <code>entities[]</code>, <code>workspace_relationships[]</code></p>
+              </div>
+              <div class="miniCard">
+                <h4>Entity</h4>
+                <p>Business or Individual. Address, bank details, other info. Linked via <code>person_id</code></p>
+              </div>
+              <div class="miniCard">
+                <h4>Workspace Contact</h4>
+                <p>Per workspace. <b>Copy</b> of contact data + <code>contact_id</code> (ref to Contact Library). <code>tag</code>: customer/employee/creator</p>
+              </div>
+            </div>
+
+            <!-- Flow Table -->
+            <div class="sectionDivider"><span>Customer Registration Flow</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th class="component">Action</th><th>Details</th></tr>
+              <tr><td class="step-num">1</td><td class="component">Visit</td><td>Customer visits e-commerce site (shop.clientbusiness.com)</td></tr>
+              <tr><td class="step-num">2</td><td class="component">Input</td><td>Enter mobile number for registration/login</td></tr>
+              <tr><td class="step-num">3</td><td class="component">OTP</td><td>Send & validate OTP via SMS</td></tr>
+              <tr><td colspan="3" class="section-header">Check Contact Library by Phone</td></tr>
+              <tr><td class="step-num">4a</td><td class="component">EXISTS</td><td>Pre-fill form with existing data (name, email, etc.)</td></tr>
+              <tr><td class="step-num">4b</td><td class="component">NOT EXISTS</td><td>Show empty form, customer fills manually</td></tr>
+              <tr><td class="step-num">5</td><td class="component">Submit</td><td><b>Customer data = Source of Truth</b> (only customer can update)</td></tr>
+              <tr><td colspan="3" class="section-header">Update Contact Library</td></tr>
+              <tr><td class="step-num">6a</td><td class="component">EXISTS</td><td>UPDATE contact (customer wins), set <code>handles[phone].verified=true</code>, add workspace_relationship</td></tr>
+              <tr><td class="step-num">6b</td><td class="component">NOT EXISTS</td><td>INSERT new contact with phone handle (<code>verified:true</code>), add workspace_relationship</td></tr>
+              <tr><td class="step-num">7</td><td class="component">Workspace</td><td>Create Workspace Contact: <b>copy</b> of contact data + <code>contact_id</code> (ref to Library), <code>tag: customer</code></td></tr>
+              <tr><td class="step-num">8</td><td class="component">Done</td><td>Registration complete, customer can shop</td></tr>
+            </table>
+
+            <!-- Text-based Flowchart -->
+            <div class="sectionDivider"><span>Visual Flow</span></div>
+            <div class="codeBlock">                         ┌─────────────────────────┐
+                         │  Customer visits site   │
+                         └───────────┬─────────────┘
+                                     ▼
+                         ┌─────────────────────────┐
+                         │   Enter mobile number   │
+                         └───────────┬─────────────┘
+                                     ▼
+                         ┌─────────────────────────┐
+                         │    Send & verify OTP    │
+                         └───────────┬─────────────┘
+                                     ▼
+                         ┌─────────────────────────┐
+                         │  Check Contact Library  │
+                         └───────────┬─────────────┘
+                                     ▼
+                    ┌────────────────┴────────────────┐
+                    ▼                                 ▼
+        ┌───────────────────┐             ┌───────────────────┐
+        │ <span class="success">EXISTS: Pre-fill</span>  │             │ <span class="warn">NEW: Empty form</span>   │
+        │   form with data  │             │  customer fills   │
+        └─────────┬─────────┘             └─────────┬─────────┘
+                  └────────────────┬────────────────┘
+                                   ▼
+                         ┌─────────────────────────┐
+                         │   <span class="highlight">Submit form</span>           │
+                         │ (customer = src truth)  │
+                         └───────────┬─────────────┘
+                                     ▼
+                    ┌────────────────┴────────────────┐
+                    ▼                                 ▼
+        ┌───────────────────┐             ┌───────────────────┐
+        │ <span class="success">EXISTS: UPDATE</span>    │             │ <span class="warn">NEW: INSERT</span>       │
+        │ contact, set      │             │ contact with      │
+        │ verified=true     │             │ verified=true     │
+        └─────────┬─────────┘             └─────────┬─────────┘
+                  └────────────────┬────────────────┘
+                                   ▼
+                         ┌─────────────────────────┐
+                         │ <span class="keyword">Create Workspace Contact</span>│
+                         │ <span class="highlight">COPY</span> of data + contact_id│
+                         │ (ref to Library)        │
+                         └───────────┬─────────────┘
+                                     ▼
+                         ┌─────────────────────────┐
+                         │   <span class="success">Registration Done</span>     │
+                         └─────────────────────────┘</div>
+
+            <!-- Email Conflict During Registration -->
+            <div class="sectionDivider"><span>Email Conflict: During Registration</span></div>
+            <div class="codeBlock"><span class="keyword">SCENARIO: User verifies phone → enters email → email belongs to DIFFERENT contact</span>
+
+<span class="highlight">Step 1:</span> User verifies phone (+91-9876543210)
+         │
+         ├── Phone NOT in Contact Library → Create new Contact A
+         └── Phone EXISTS → Use existing Contact A
+         │
+         ▼
+<span class="highlight">Step 2:</span> User enters email (john@example.com) in form
+         │
+         ▼
+<span class="highlight">Step 3:</span> System checks: Does this email exist in Contact Library?
+         │
+         ├── <span class="success">NO</span> → Proceed normally (add email to Contact A)
+         │
+         └── <span class="warn">YES, under DIFFERENT Contact B</span> →
+                 │
+                 ▼
+         ┌─────────────────────────────────────────────────────────────┐
+         │  Check Contact B's workspace_relationships:                 │
+         │                                                             │
+         │  • role: OWNER or MEMBER → <span class="warn">Show "Email already exists"</span>    │
+         │    (Protected: workspace team members)                      │
+         │                                                             │
+         │  • role: CUSTOMER only → <span class="success">Allow, trigger AUTO-MERGE</span>       │
+         │    (Same person verified both phone + email)                │
+         └─────────────────────────────────────────────────────────────┘
+
+<span class="keyword">WHY PROTECT OWNER/MEMBER?</span>
+┌─────────────────────────────────────────────────────────────┐
+│  Workspace owners/members are business users.               │
+│  Their email is their identity for workspace access.        │
+│                                                             │
+│  If someone else claims their email during customer         │
+│  registration, it could be:                                 │
+│  • Typo by customer                                         │
+│  • Attempted account takeover                               │
+│                                                             │
+│  → Show error, don't auto-merge                             │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="keyword">WHY ALLOW CUSTOMER MERGE?</span>
+┌─────────────────────────────────────────────────────────────┐
+│  If Contact B is only a CUSTOMER:                           │
+│  • User verified phone (proves ownership of phone)          │
+│  • Email matches existing customer                          │
+│  • Likely same person with different entry points           │
+│                                                             │
+│  → Safe to auto-merge (user owns both handles)              │
+└─────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Permissions + Rules Side by Side -->
+            <div class="compactGrid">
+              <div class="miniCard">
+                <h4>Permissions</h4>
+                <p><b>Customer:</b> UPDATE own data in Contact Library<br>
+                <b>Workspace Admin:</b> READ only (cannot correct typos)<br>
+                <b>Ecosystem Admin:</b> MERGE duplicates, investigate conflicts</p>
+              </div>
+              <div class="miniCard">
+                <h4>Handle Conflict</h4>
+                <p><b>Scenario:</b> Two contacts verify same phone<br>
+                <b>Action:</b> Allow both to proceed<br>
+                <b>Resolution:</b> Ecosystem Admin investigates later</p>
+              </div>
+            </div>
+
+            <!-- Customer Data Management - Hidden Tag -->
+            <div class="sectionDivider"><span>Customer Data Management: Hidden Tag</span></div>
+            <div class="codeBlock"><span class="keyword">When customer DELETES verified data:</span>
+
+<span class="warn">DON'T actually delete from Contact Library</span>
+Instead: Add <span class="highlight">hidden: true</span> to that handle
+
+┌─────────────────────────────────────────────────────────────┐
+│  <span class="highlight">Contact Library - Handle Structure:</span>                        │
+│                                                             │
+│  handles: [                                                 │
+│    { type: email,                                           │
+│      value: "old@example.com",                              │
+│      verified: true,                                        │
+│      <span class="warn">hidden: true</span>  ← Customer deleted this                  │
+│    },                                                       │
+│    { type: email,                                           │
+│      value: "new@example.com",                              │
+│      verified: false,                                       │
+│      <span class="success">hidden: false</span>  ← Customer added this (needs verify)    │
+│    },                                                       │
+│    { type: phone,                                           │
+│      value: "+91-9876543210",                               │
+│      verified: true,                                        │
+│      <span class="success">hidden: false</span>  ← Active handle                         │
+│    }                                                        │
+│  ]                                                          │
+└─────────────────────────────────────────────────────────────┘</div>
+
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Customer Action</th><th>System Behavior</th><th>Analytics Impact</th></tr>
+              <tr><td class="step-num">1</td><td><b>Deletes email</b></td><td>Set <code>hidden: true</code> on that handle</td><td>Data preserved for analytics</td></tr>
+              <tr><td class="step-num">2</td><td><b>Next visit - form pre-fill</b></td><td>Only show handles where <code>hidden: false</code></td><td>Customer sees clean form</td></tr>
+              <tr><td class="step-num">3</td><td><b>Re-enters SAME email</b></td><td>Set <code>hidden: false</code> (restore)</td><td>No re-verification needed</td></tr>
+              <tr><td class="step-num">4</td><td><b>Enters NEW email</b></td><td>Add new handle, old stays hidden</td><td>Can track: "changed from A to B"</td></tr>
+            </table>
+
+            <div class="compactGrid cols2">
+              <div class="miniCard">
+                <h4>Why Hidden Tag?</h4>
+                <p><b>Analytics:</b> Data never lost - track customer journey<br>
+                <b>UX:</b> Customer sees what they expect (deleted = gone)<br>
+                <b>Recovery:</b> Re-enter same data = instant restore (already verified)</p>
+              </div>
+              <div class="miniCard">
+                <h4>Multiple Handles</h4>
+                <p>Contact Library can have <b>multiple emails/phones</b><br>
+                Old ones: <code>hidden: true</code> (preserved)<br>
+                Current one: <code>hidden: false</code> (active)</p>
+              </div>
+            </div>
+
+            <div class="hint">
+              <b>Key Rules:</b> Customer = source of truth • <code>verified</code> is handle property (NOT tag) • <code>hidden: true</code> = soft delete (data preserved) • Pre-fill only shows <code>hidden: false</code> handles • Re-enter same data = restore (no re-verify) • Multiple handles allowed per type
+            </div>
+          </div>
+
+          <!-- Invite -->
+          <div class="tabpanel" id="panel-invite" role="tabpanel" aria-labelledby="tab-invite">
+            <!-- Key Points - Compact Grid -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>Contact Library Lookup</h4>
+                <p>Check by <b>EMAIL first</b>, then <b>PHONE</b>. If not found → create new with admin data</p>
+              </div>
+              <div class="miniCard">
+                <h4>Workspace Contact</h4>
+                <p>Always stores <b>admin-entered data</b> + <code>contact_id</code> reference. Status: <code>PENDING_INVITATION</code></p>
+              </div>
+              <div class="miniCard">
+                <h4>Data Relationship</h4>
+                <p>If contact EXISTS → <code>contact_id</code> reference only (no data copy)<br>If NOT EXISTS → admin data pushed to both</p>
+              </div>
+            </div>
+
+            <!-- Admin Invite Flow Table -->
+            <div class="sectionDivider"><span>Admin Invite Flow</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th class="component">Step</th><th>Details</th></tr>
+              <tr><td class="step-num">1</td><td class="component">Admin</td><td>Admin clicks "Invite User" in workspace dashboard</td></tr>
+              <tr><td class="step-num">2</td><td class="component">Form</td><td>Enters: email, phone, name, role (employee/admin)</td></tr>
+              <tr><td colspan="3" class="section-header">Contact Library Lookup (Email → Phone)</td></tr>
+              <tr><td class="step-num">3a</td><td class="component">EMAIL exists</td><td>Use existing <code>contact_id</code> <span class="muted">(reference only, no data copy)</span></td></tr>
+              <tr><td class="step-num">3b</td><td class="component">PHONE exists</td><td>Use existing <code>contact_id</code> <span class="muted">(reference only, no data copy)</span></td></tr>
+              <tr><td class="step-num">3c</td><td class="component">NEITHER exists</td><td><span class="warn">CREATE contact</span> skeleton (handles UNVERIFIED, empty workspace_relationships)</td></tr>
+              <tr><td colspan="3" class="section-header">Workspace Contact</td></tr>
+              <tr><td class="step-num">4</td><td class="component">Create</td><td>Admin-entered data + <code>contact_id</code> ref + status: <code>PENDING_INVITATION</code></td></tr>
+              <tr><td class="step-num">5</td><td class="component">Send</td><td>Email with invite link: <code>elauth.elsapiens.com/invite?token=xxx</code></td></tr>
+            </table>
+
+            <!-- Visual Flowchart -->
+            <div class="sectionDivider"><span>Visual Flow: Admin Invites User</span></div>
+            <div class="codeBlock"><span class="keyword">Admin in workspace dashboard</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   Admin clicks "Invite User"        │
+│   Enters: email, phone, name, role  │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Step 1:</span> Check EMAIL in Contact Library │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="success">EMAIL EXISTS</span> → Get contact_id (reference only)
+        │                              │
+        │                              ▼
+        │                    ┌─────────────────────────────────────┐
+        │                    │  <span class="keyword">Create Workspace Contact:</span>          │
+        │                    │  • contact_id (reference)           │
+        │                    │  • <span class="highlight">Admin-entered data</span> (name, etc.)  │
+        │                    │  • status: <span class="warn">PENDING_INVITATION</span>       │
+        │                    └─────────────────────────────────────┘
+        │
+        └── <span class="warn">EMAIL NOT EXISTS</span> →
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="highlight">Step 2:</span> Check PHONE in Contact Library │
+        └─────────────────────────────────────┘
+                │
+                ├── <span class="success">PHONE EXISTS</span> → Get contact_id (reference only)
+                │                              │
+                │                              ▼
+                │                    (Same: Create Workspace Contact
+                │                     with admin data + contact_id ref)
+                │
+                └── <span class="warn">PHONE NOT EXISTS</span> →
+                        │
+                        ▼
+               
+                ┌─────────────────────────────────────┐
+                │  <span class="keyword">Create Workspace Contact:</span>          │
+                │  • contact_id (no contact_id now)   │
+                │  • <span class="highlight">Admin-entered data</span> (same data)   │
+                │  • status: <span class="warn">PENDING_INVITATION</span>       │
+                └─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│  <span class="highlight">Send invitation email</span>              │
+│  Link: elauth.../invite?token=xxx   │
+└─────────────────────────────────────┘</div>
+
+            <!-- Scenario: User Registers Instead -->
+            <div class="sectionDivider"><span>Scenario: User Registers Instead of Using Invite Link</span></div>
+            <div class="codeBlock"><span class="keyword">User ignores invite email, goes to register directly</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   User enters SAME phone number     │
+│   (phone exists but UNVERIFIED)     │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   Send OTP, user verifies PHONE     │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="success">USE EXISTING contact</span>              │
+│   Update: phone.verified = true     │
+│   <span class="warn">Email stays UNVERIFIED</span>            │
+│   Create NEW workspace (registration)│
+│   Add tag: workspace_creator        │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">User now has:</span>                     │
+│   • Own workspace (creator)         │
+│   • Pending invite to other workspace│
+│   • Email still UNVERIFIED          │
+└─────────────────────────────────────┘
+
+<span class="keyword">IMPORTANT:</span> Same contact used for both!
+            Registration creates new workspace
+            Invite still pending on same contact</div>
+
+            <!-- Scenario: User Accepts Invite -->
+            <div class="sectionDivider"><span>Scenario: User Clicks Invite Link (with Phone Verification)</span></div>
+            <div class="codeBlock"><span class="keyword">User clicks invite link in email</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   elauth.elsapiens.com/invite       │
+│   ?token=xxx                        │
+│                                     │
+│   <span class="success">CLICK = EMAIL VERIFIED</span>            │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Step 1:</span> Check EMAIL in Contact Lib │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="success">EMAIL EXISTS</span> → Use this contact_id
+        │                 (skip phone check)
+        │                         │
+        │                         ▼
+        │               ┌─────────────────────────────────────┐
+        │               │   <span class="success">Complete Invite:</span>                  │
+        │               │   • email.verified = true           │
+        │               │   • Add tag: workspace_employee     │
+        │               │   • Workspace Contact: ACTIVE       │
+        │               │   • Redirect to workspace           │
+        │               └─────────────────────────────────────┘
+        │
+        └── <span class="warn">EMAIL NOT EXISTS</span> →
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="highlight">Step 2:</span> Check PHONE in Contact Lib│
+        └─────────────────────────────────────┘
+                │
+                ├── <span class="warn">PHONE NOT EXISTS</span> → Create new contact
+                │                     (email verified, phone unverified)
+                │                             │
+                │                             ▼
+                │                   (Complete Invite as above)
+                │
+                └── <span class="highlight">PHONE EXISTS</span> (Contact A found!) →
+                        │
+                        ▼
+                ┌─────────────────────────────────────┐
+                │   <span class="warn">UNCERTAIN: Same person?</span>           │
+                │   Phone matches Contact A           │
+                │   But email is NEW                  │
+                │                                     │
+                │   <span class="keyword">→ VERIFY PHONE via OTP</span>            │
+                └─────────────────────────────────────┘
+                        │
+                        ├── <span class="success">OTP VERIFIED</span> → Same person!
+                        │       │
+                        │       ▼
+                        │   ┌─────────────────────────────────────┐
+                        │   │   <span class="success">Add new email to Contact A</span>       │
+                        │   │   • email.verified = true (click)  │
+                        │   │   • Add tag: workspace_employee    │
+                        │   │   • Use Contact A's contact_id     │
+                        │   │                                    │
+                        │   │   <span class="warn">If email matches different</span>       │
+                        │   │   <span class="warn">Contact B → AUTO-MERGE!</span>          │
+                        │   │   (See Merge Contact tab)          │
+                        │   └─────────────────────────────────────┘
+                        │
+                        └── <span class="warn">OTP FAILED</span> → Different person
+                                │
+                                ▼
+                        ┌─────────────────────────────────────┐
+                        │   <span class="warn">Create NEW contact</span>                │
+                        │   • email: verified (click)         │
+                        │   • phone: UNVERIFIED               │
+                        │   • Different from Contact A        │
+                        └─────────────────────────────────────┘</div>
+
+            <!-- Edge Cases Table -->
+            <div class="sectionDivider"><span>Edge Cases & Handling</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Handling</th></tr>
+              <tr><td class="step-num">1</td><td><b>Contact exists (verified)</b></td><td>Use existing contact, create workspace contact with PENDING_INVITATION</td></tr>
+              <tr><td class="step-num">2</td><td><b>Contact exists (unverified)</b></td><td>Use existing contact, send invite</td></tr>
+              <tr><td class="step-num">3</td><td><b>Contact doesn't exist</b></td><td><span class="warn">Create skeleton contact</span> (handles unverified, empty workspace_relationships), send invite</td></tr>
+              <tr><td class="step-num">4</td><td><b>User registers instead</b></td><td>Use same contact, create their own workspace. <span class="highlight">Invite still pending</span></td></tr>
+              <tr><td class="step-num">5</td><td><b>User accepts invite later</b></td><td><span class="highlight">Contact Library:</span> email verified + add workspace_relationship | <span class="highlight">Workspace Contact:</span> ACTIVE + tag: employee</td></tr>
+              <tr><td class="step-num">6</td><td><b>Invite token expired</b></td><td><span class="warn">Show error</span>, admin must resend invite</td></tr>
+              <tr><td class="step-num">7</td><td><b>User already in workspace</b></td><td>Show "Already a member" message</td></tr>
+              <tr><td class="step-num">8</td><td><b>Same email invited twice</b></td><td>Use existing invite, resend notification</td></tr>
+            </table>
+
+            <!-- Workspace Contact Statuses -->
+            <div class="compactGrid">
+              <div class="miniCard">
+                <h4>Workspace Contact Status</h4>
+                <p><code>PENDING_INVITATION</code> - Invited but not accepted<br>
+                <code>ACTIVE</code> - Accepted and working<br>
+                <code>INACTIVE</code> - Deactivated by admin</p>
+              </div>
+              <div class="miniCard">
+                <h4>Handle Uniqueness</h4>
+                <p><b>Phone & Email</b> are UNIQUE in system<br>
+                Unverified handle + verified elsewhere → <span class="highlight">Link to same contact</span><br>
+                <span class="muted">(Contact merge = separate Flow 8)</span></p>
+              </div>
+            </div>
+
+            <!-- Critical Edge Case: Invite Expires Mid-Flow -->
+            <div class="sectionDivider"><span>Critical Edge Case: Invite Expires Mid-Flow</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Handling</th></tr>
+              <tr>
+                <td class="step-num">1</td>
+                <td><b>Token expires while filling form</b></td>
+                <td>
+                  <span class="warn">Check token validity before EACH step</span><br>
+                  • Click link → Check valid ✓<br>
+                  • Before phone OTP → Check valid ✓<br>
+                  • Before final submit → Check valid ✓<br>
+                  • If expired: <span class="warn">"Invite link expired. Request new invite from admin"</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="step-num">2</td>
+                <td><b>Phone OTP verified, then token expires</b></td>
+                <td>
+                  <span class="success">PRESERVE phone verification!</span><br>
+                  • Contact Library: phone.verified = true (keep)<br>
+                  • Invite itself expired → Cannot complete join<br>
+                  • <span class="highlight">On new invite:</span> Phone already verified, skip OTP step
+                </td>
+              </tr>
+              <tr>
+                <td class="step-num">3</td>
+                <td><b>Password set, then token expires</b></td>
+                <td>
+                  <span class="success">PRESERVE password!</span><br>
+                  • Password saved in ElAuth → Keep it<br>
+                  • Invite expired → User sees error<br>
+                  • <span class="highlight">On new invite:</span> User already has password, skip that step
+                </td>
+              </tr>
+              <tr>
+                <td class="step-num">4</td>
+                <td><b>User clicks expired link (first click)</b></td>
+                <td>
+                  <span class="warn">"This invite has expired"</span><br>
+                  • Show workspace name (for context)<br>
+                  • Button: "Request New Invite" → Notify admin<br>
+                  • Or: "Contact admin at [admin email]"
+                </td>
+              </tr>
+              <tr>
+                <td class="step-num">5</td>
+                <td><b>Admin resends invite to same email</b></td>
+                <td>
+                  <span class="highlight">Smart resume:</span><br>
+                  • Check what was already completed<br>
+                  • Skip verified phone (if done)<br>
+                  • Skip password (if set)<br>
+                  • Resume from incomplete step
+                </td>
+              </tr>
+            </table>
+
+            <div class="codeBlock"><span class="keyword">INVITE EXPIRY HANDLING:</span>
+
+┌─────────────────────────────────────────────────────────────┐
+│ TOKEN CONTAINS:                                             │
+│ • invite_id                                                 │
+│ • workspace_id                                              │
+│ • email (invited)                                           │
+│ • expires_at (e.g., 7 days from creation)                   │
+│ • created_by (admin user_id)                                │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="keyword">VALIDATION CHECKPOINTS:</span>
+
+User clicks link →
+        │
+        ▼
+┌───────────────────────────────────────┐
+│ CHECK 1: <span class="highlight">Is token expired?</span>            │
+│ IF expired → Show expiry error        │
+└───────────────────────────────────────┘
+        │ valid
+        ▼
+┌───────────────────────────────────────┐
+│ CHECK 2: <span class="highlight">Is invite still valid?</span>       │
+│ (admin may have revoked)              │
+│ IF revoked → "Invite cancelled"       │
+└───────────────────────────────────────┘
+        │ valid
+        ▼
+┌───────────────────────────────────────┐
+│ CHECK 3: <span class="highlight">Is user already member?</span>       │
+│ IF member → "You're already a member" │
+│ → Redirect to signin                  │
+└───────────────────────────────────────┘
+        │ not member
+        ▼
+    Continue with invite flow...
+
+<span class="keyword">EXPIRY DURING FLOW:</span>
+
+┌───────────────────────────────────────────────────────────────┐
+│ <span class="success">WHAT WE PRESERVE (even if token expires):</span>                   │
+│ ✓ Phone verification (Contact Library updated)                │
+│ ✓ Email verification (clicked link = verified)                │
+│ ✓ Password (stored in ElAuth)                                 │
+│ ✓ Any data already entered                                    │
+├───────────────────────────────────────────────────────────────┤
+│ <span class="warn">WHAT REQUIRES FRESH TOKEN:</span>                                  │
+│ ✗ Adding user to workspace                                    │
+│ ✗ Creating workspace contact record                           │
+│ ✗ Assigning role                                              │
+└───────────────────────────────────────────────────────────────┘
+
+<span class="keyword">RESULT:</span> New invite = <span class="success">Fast completion</span> (most steps already done)</div>
+
+            <div class="hint">
+              <b>Key Rules:</b> Lookup order: EMAIL first → PHONE second • If EXISTS: <code>contact_id</code> reference only (no data copy) • If NOT EXISTS: admin data pushed to both Contact Library & Workspace Contact • Workspace Contact always has admin-entered data • Click invite link = Email VERIFIED (no OTP) • On accept: <b>Both</b> get <code>workspace_employee</code> tag • <span class="success">Preserve verifications</span> even if token expires
+            </div>
+          </div>
+
+          <!-- Recovery -->
+          <div class="tabpanel" id="panel-recovery" role="tabpanel" aria-labelledby="tab-recovery">
+            <!-- Key Points -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>OTP Recovery</h4>
+                <p>Works for <b>Phone & Email</b>. User enters handle → receives OTP → verifies → resets password</p>
+              </div>
+              <div class="miniCard">
+                <h4>Magic Link</h4>
+                <p><b>Email only</b>. User clicks link in email → auto-verified → resets password</p>
+              </div>
+              <div class="miniCard">
+                <h4>Security</h4>
+                <p>Don't reveal if handle exists (privacy). Tokens expire. Rate limit OTP requests</p>
+              </div>
+            </div>
+
+            <!-- OTP Recovery Flow -->
+            <div class="sectionDivider"><span>Flow 1: OTP Recovery (Phone or Email)</span></div>
+            <div class="codeBlock"><span class="keyword">User clicks "Forgot Password"</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   User enters phone OR email        │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Check handle exists</span>               │
+│   (Don't reveal in UI for privacy)  │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="warn">NOT EXISTS</span> → Show generic "If account exists, OTP sent"
+        │
+        └── <span class="success">EXISTS</span> →
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="highlight">Create OTP record</span>                 │
+        │   Store in: auth_handle_verifications│
+        │   • OTP code                        │
+        │   • Expiry time                     │
+        │   • Handle reference                │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="keyword">Send OTP</span>                          │
+        │   Via SMS (phone) or Email          │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   User enters OTP                   │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="highlight">Verify OTP</span>                        │
+        │   • Check code matches              │
+        │   • Check not expired               │
+        │   • If handle was UNVERIFIED →      │
+        │     mark as VERIFIED                │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="success">Issue reset token</span>                 │
+        │   Short-lived token for password    │
+        │   change authorization              │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="keyword">Reset Password</span>                    │
+        │   • Bcrypt hash new password        │
+        │   • Update auth_users               │
+        │   • Invalidate OTP + reset token    │
+        └─────────────────────────────────────┘</div>
+
+            <!-- Magic Link Recovery Flow -->
+            <div class="sectionDivider"><span>Flow 2: Magic Link Recovery (Email Only)</span></div>
+            <div class="codeBlock"><span class="keyword">User clicks "Forgot Password" → selects Email Recovery</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   User enters email address         │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Check email exists</span>                │
+│   (verified OR unverified)          │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="warn">NOT EXISTS</span> → Show generic "If account exists, link sent"
+        │
+        └── <span class="success">EXISTS</span> →
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="highlight">Generate magic link token</span>         │
+        │   HMAC-SHA256 signed token          │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="keyword">Store in auth_magic_links</span>         │
+        │   • Token                           │
+        │   • Expiry time                     │
+        │   • Email reference                 │
+        │   • used: false                     │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="highlight">Send recovery email</span>               │
+        │   Link: elauth.../reset?token=xxx   │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   User clicks link in email         │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="highlight">Verify magic link</span>                 │
+        │   • Validate token signature        │
+        │   • Check not expired               │
+        │   • Check not already used          │
+        │   • Mark token as used              │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="success">If email was UNVERIFIED</span>           │
+        │   → Mark as VERIFIED (click = verify)│
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │   <span class="keyword">Reset Password</span>                    │
+        │   • Show password reset form        │
+        │   • Bcrypt hash new password        │
+        │   • Update auth_users               │
+        └─────────────────────────────────────┘</div>
+
+            <!-- Comparison Table -->
+            <div class="sectionDivider"><span>OTP vs Magic Link Comparison</span></div>
+            <table class="flowTable">
+              <tr><th>Aspect</th><th>OTP Recovery</th><th>Magic Link</th></tr>
+              <tr><td><b>Works for</b></td><td>Phone & Email</td><td>Email only</td></tr>
+              <tr><td><b>User action</b></td><td>Enter OTP code</td><td>Click link</td></tr>
+              <tr><td><b>Delivery</b></td><td>SMS or Email</td><td>Email only</td></tr>
+              <tr><td><b>Token storage</b></td><td><code>auth_handle_verifications</code></td><td><code>auth_magic_links</code></td></tr>
+              <tr><td><b>Security</b></td><td>6-digit code, short expiry</td><td>HMAC-SHA256 signed, single use</td></tr>
+              <tr><td><b>Side effect</b></td><td>Verifies handle if unverified</td><td>Verifies email if unverified</td></tr>
+            </table>
+
+            <div class="hint">
+              <b>Key Rules:</b> Don't reveal if handle exists (privacy) • OTP works for phone & email • Magic link is email-only • Both methods can verify unverified handles • Tokens must expire • Rate limit requests to prevent abuse
+            </div>
+          </div>
+
+          <!-- Client Registration (Flow 2) -->
+          <div class="tabpanel" id="panel-reg-new" role="tabpanel" aria-labelledby="tab-reg-new">
+            <!-- Key Rules - Compact Grid -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>Phone Check</h4>
+                <p>Verify phone <b>FIRST</b> before collecting other details. Block if CREATOR/EMPLOYEE.</p>
+              </div>
+              <div class="miniCard">
+                <h4>Email Check</h4>
+                <p><b>Block if email exists</b> (verified OR unverified). Avoids merge complexity.</p>
+              </div>
+              <div class="miniCard">
+                <h4>All Async</h4>
+                <p>UUIDs generated upfront. User gets <b>instant redirect</b> - no waiting for DB writes.</p>
+              </div>
+            </div>
+
+            <!-- Visual Flowchart -->
+            <div class="sectionDivider"><span>Registration Flow</span></div>
+            <div class="codeBlock">Client visits <span class="highlight">elattendance.elsapiens.com</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   Always show landing page          │
+│   NO TOKEN → "Register" button      │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   Redirect to ElAuth signup         │
+│   <span class="highlight">elauth.elsapiens.com/signup</span>       │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">Enter PHONE</span> → Check Contact Lib   │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="warn">CREATOR/EMPLOYEE</span> ────────────→ BLOCK: "Please signin instead"
+        │
+        ├── <span class="highlight">CUSTOMER only</span> ───────────────→ Follow "End User: New Workspace" flow
+        │
+        └── <span class="success">NO CONTACT / UNVERIFIED</span> ───→ Continue ↓
+                │
+                ▼
+┌─────────────────────────────────────┐
+│   Send OTP → User verifies phone    │
+│   Contact Library: phone.verified   │
+└─────────────────────────────────────┘
+                │
+                ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">Enter EMAIL</span> → Check Contact Lib   │
+└─────────────────────────────────────┘
+                │
+                ├── <span class="warn">EMAIL EXISTS</span> (any status) ──→ BLOCK: "Email already in use"
+                │
+                └── <span class="success">EMAIL NOT EXISTS</span> ──────────→ Continue ↓
+                        │
+                        ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">Collect Details</span> (config-driven)   │
+│   Name, Org name, Password (opt)    │
+└─────────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│   <span class="keyword">ON SUBMIT - ALL ASYNC</span>                                     │
+├─────────────────────────────────────────────────────────────┤
+│   1. Generate UUIDs upfront                                 │
+│   2. Fire-and-forget:                                       │
+│      → Workspace, Person identifier, Organisation           │
+│      → Contact Library (phone verified, email UNVERIFIED)   │
+│      → Workspace Contact (COPY + contact_id + [creator])    │
+│   3. Generate JWT immediately                               │
+│   4. Redirect to dashboard <span class="success">INSTANTLY</span>                        │
+└─────────────────────────────────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Dashboard checks workspace status</span> │
+└─────────────────────────────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│ <span class="success">COMPLETE</span>    │ │ <span class="warn">INCOMPLETE</span>  │ │ <span class="warn">FAILED</span>      │
+│ Show full   │ │ "Setting up │ │ Remove tag  │
+│ dashboard   │ │ workspace"  │ │ Show error  │
+└─────────────┘ │ + FCM wait  │ └─────────────┘
+                └─────────────┘</div>
+
+            <!-- Edge Cases -->
+            <div class="sectionDivider"><span>Edge Cases</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Decision</th></tr>
+              <tr><td class="step-num">1</td><td>Phone exists, <b>UNVERIFIED</b></td><td><span class="success">Send new OTP</span> (treat as fresh attempt)</td></tr>
+              <tr><td class="step-num">2</td><td>Phone exists, <b>CREATOR/EMPLOYEE</b></td><td><span class="warn">BLOCK</span>: "Please signin instead"</td></tr>
+              <tr><td class="step-num">3</td><td>Phone exists, <b>CUSTOMER only</b></td><td><span class="highlight">Follow "End User: New Workspace" flow</span></td></tr>
+              <tr><td class="step-num">4</td><td>Email exists (verified <b>OR</b> unverified)</td><td><span class="warn">BLOCK</span>: "Email already in use"</td></tr>
+              <tr><td class="step-num">5</td><td>Async operation fails</td><td>Retry queue → DLQ → remove tag, show error</td></tr>
+            </table>
+
+            <!-- Critical Edge Case 1: Phone verified, email matches different contact -->
+            <div class="sectionDivider"><span><span class="warn">CRITICAL:</span> Phone Verified, Email Matches Different Contact</span></div>
+            <div class="codeBlock"><span class="keyword">SCENARIO:</span> User verifies phone → enters email → email belongs to DIFFERENT contact
+
+<span class="highlight">EXISTING DATA:</span>
+Contact A: phone: +91-111 (VERIFIED), email: old@email.com
+Contact B: phone: +91-222, email: <span class="warn">john@example.com</span> (VERIFIED)
+
+<span class="highlight">USER ACTION:</span>
+User verifies phone +91-111 → enters email <span class="warn">john@example.com</span>
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
+│   <span class="warn">CONFLICT DETECTED!</span>                                        │
+│   Phone belongs to Contact A                                │
+│   Email belongs to Contact B                                │
+└─────────────────────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
+│   <span class="keyword">HANDLING:</span>                                                  │
+│                                                             │
+│   1. <span class="warn">BLOCK registration</span> with this email                     │
+│   2. Show message: "This email is linked to another account"│
+│   3. Options for user:                                      │
+│      a) Use different email                                 │
+│      b) "This is my email" → Verify via OTP sent to email   │
+│         → If verified: <span class="success">AUTO-MERGE Contact A + B</span>            │
+│         → User now has combined contact                     │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="success">WHY AUTO-MERGE IS SAFE:</span>
+User has PROVEN ownership of BOTH:
+  • Phone (verified via OTP)
+  • Email (verified via OTP)
+→ Must be same person → Safe to merge</div>
+
+            <!-- Critical Edge Case 2: Browser closed mid-registration -->
+            <div class="sectionDivider"><span><span class="warn">CRITICAL:</span> Browser Closed Mid-Registration</span></div>
+            <div class="codeBlock"><span class="keyword">SCENARIO:</span> User verifies phone → browser closes → returns later
+
+<span class="highlight">STATE AT BROWSER CLOSE:</span>
+┌─────────────────────────────────────────────────────────────┐
+│   Contact Library:                                          │
+│   • contact_id: "abc123" (created on phone input)           │
+│   • phone: +91-xxx (<span class="success">VERIFIED</span>)                              │
+│   • email: (not entered yet)                                │
+│   • workspace_relationships: [] (empty)                     │
+│   • NO workspace created yet                                │
+└─────────────────────────────────────────────────────────────┘
+        │
+        ▼ User returns (same device or different)
+        │
+┌─────────────────────────────────────────────────────────────┐
+│   <span class="keyword">USER ENTERS PHONE AGAIN</span>                                   │
+│   System checks Contact Library:                            │
+│   • Phone exists: YES                                       │
+│   • Phone verified: YES                                     │
+│   • Has workspace_relationships: NO                         │
+└─────────────────────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
+│   <span class="highlight">RESUME FLOW:</span>                                              │
+│                                                             │
+│   1. Send NEW OTP to verify still same person               │
+│   2. On OTP success → Skip to "Collect Details" step        │
+│   3. Pre-fill any data already in Contact Library           │
+│   4. Continue registration normally                         │
+│                                                             │
+│   <span class="success">Contact uses SAME contact_id</span> (no duplicate created)       │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="warn">EDGE CASE WITHIN EDGE CASE:</span>
+What if user returns after 30 days?
+→ Still resume (contact_id preserved)
+→ OTP verification ensures it's still them</div>
+
+            <!-- Data Created -->
+            <div class="sectionDivider"><span>Data Created</span></div>
+            <div class="compactGrid">
+              <div class="miniCard">
+                <h4>Contact Library (Global)</h4>
+                <p><code>handles:</code> phone (verified), email (UNVERIFIED)<br>
+                <code>workspace_relationships:</code> [{ws_id, role: OWNER}]<br>
+                Source of truth for analytics</p>
+              </div>
+              <div class="miniCard">
+                <h4>Workspace Contact</h4>
+                <p>COPY of data + <code>contact_id</code> reference<br>
+                <code>own_workspace:</code> workspace_id<br>
+                <code>tag:</code> creator</p>
+              </div>
+            </div>
+
+            <div class="hint">
+              <b>Key Rules:</b> Phone verify FIRST • Email BLOCKS if exists (any status) • All async with pre-generated UUIDs • User never waits for DB writes • Failed registration removes tag, preserves contact data
+            </div>
+          </div>
+
+
+          <!-- Client Signin (Flow 3) -->
+          <div class="tabpanel" id="panel-signin" role="tabpanel" aria-labelledby="tab-signin">
+            <!-- Key Rules - Compact Grid -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>Workspace Switching</h4>
+                <p>Must <b>LOGOUT</b> to switch workspace. Cannot switch while signed in.</p>
+              </div>
+              <div class="miniCard">
+                <h4>Organisation Switching</h4>
+                <p>Can switch organisation <b>within workspace</b> without logout.</p>
+              </div>
+              <div class="miniCard">
+                <h4>App List</h4>
+                <p><b>Role-based</b> - each workspace shows apps based on user's role in that workspace.</p>
+              </div>
+            </div>
+
+            <!-- Flow Table -->
+            <div class="sectionDivider"><span>Signin Flow Steps</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th class="component">Step</th><th>Details</th></tr>
+              <tr><td class="step-num">1</td><td class="component">Entry</td><td>User visits product URL (e.g., <code>elattendance.elsapiens.com</code>)</td></tr>
+              <tr><td class="step-num">2</td><td class="component">Cookie Check</td><td>Check cookie storage for valid JWT token</td></tr>
+              <tr><td class="step-num">3a</td><td class="component">HAS TOKEN</td><td><span class="success">Access dashboard directly</span></td></tr>
+              <tr><td class="step-num">3b</td><td class="component">NO TOKEN</td><td>Redirect to <code>elauth.elsapiens.com/signin?return_url=...</code></td></tr>
+              <tr><td colspan="3" class="section-header">ElAuth Signin</td></tr>
+              <tr><td class="step-num">4</td><td class="component">Config</td><td>Load config by domain, show signin form (phone/email based on config)</td></tr>
+              <tr><td class="step-num">5</td><td class="component">Credentials</td><td>User enters identifier + password/OTP</td></tr>
+              <tr><td class="step-num">6</td><td class="component">Verify</td><td>Check <code>person_identifier</code> table in ElAuth, match credentials</td></tr>
+              <tr><td colspan="3" class="section-header">Workspace Check (Accounts Service)</td></tr>
+              <tr><td class="step-num">7</td><td class="component">Query</td><td>Using <code>person_id</code>, check <code>workspace_relationships[]</code> with role: <code>OWNER</code> OR <code>MEMBER/ADMIN</code></td></tr>
+              <tr><td class="step-num">8</td><td class="component">Response</td><td>Return list of workspaces user belongs to</td></tr>
+            </table>
+
+            <!-- Visual Flowchart -->
+            <div class="sectionDivider"><span>Visual Flow</span></div>
+            <div class="codeBlock">User visits <span class="highlight">elattendance.elsapiens.com</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   Check cookie storage for token    │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="success">HAS VALID TOKEN</span> → Access dashboard directly
+        │
+        └── <span class="warn">NO TOKEN / EXPIRED</span> →
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │  Redirect to ElAuth:                │
+        │  <span class="keyword">elauth.elsapiens.com/signin</span>        │
+        │  ?return_url=elattendance...        │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │  User enters credentials            │
+        │  (phone/email + password/OTP)       │
+        └─────────────────────────────────────┘
+                │
+                ▼
+        ┌─────────────────────────────────────┐
+        │  <span class="keyword">ElAuth:</span> Check person_identifier    │
+        │  Match credentials, get person_id   │
+        └─────────────────────────────────────┘
+                │
+                ├── <span class="warn">NOT EXISTS</span> → "No account found, please register"
+                │
+                └── <span class="success">EXISTS + MATCH</span> →
+                        │
+                        ▼
+                ┌─────────────────────────────────────┐
+                │  <span class="keyword">Accounts Service:</span>                  │
+                │  Get workspaces by person_id        │
+                │  Tags: workspace_creator OR         │
+                │        workspace_employee           │
+                └─────────────────────────────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│ <span class="warn">ZERO</span>          │ │ <span class="success">SINGLE</span>        │ │ <span class="highlight">MULTIPLE</span>      │
+│ WORKSPACES    │ │ WORKSPACE     │ │ WORKSPACES    │
+└───────┬───────┘ └───────┬───────┘ └───────┬───────┘
+        │                 │                 │
+        ▼                 │                 ▼
+┌───────────────┐         │         ┌───────────────┐
+│ Redirect to   │         │         │ Show          │
+│ Registration  │         │         │ WORKSPACE     │
+│ (Flow 2)      │         │         │ SELECTOR      │
+└───────────────┘         │         └───────┬───────┘
+                          │                 │
+                          │                 ├── If NEVER created a workspace →
+                          │                 │   Show "+ Create Workspace" (SSO, ONE-TIME)
+                          │                 │
+                          │                 ▼
+                          │         ┌───────────────┐
+                          │         │ User selects  │
+                          │         │ workspace     │
+                          │         └───────┬───────┘
+                          │                 │
+        ┌─────────────────┴─────────────────┤
+        │                                   │
+        ▼                                   ▼
+┌───────────────────────┐   ┌───────────────────────┐
+│ <span class="success">WITH return_url</span>       │   │ <span class="highlight">DIRECT ElAuth</span>         │
+│ (e.g., elattendance)  │   │ (no return_url)       │
+├───────────────────────┤   ├───────────────────────┤
+│ Auto-redirect to      │   │ Show APP LIST         │
+│ app dashboard         │   │ (role-based)          │
+│                       │   │ User picks app        │
+└───────────────────────┘   └───────────────────────┘</div>
+
+            <!-- Workspace Selector UI -->
+            <div class="sectionDivider"><span>Workspace Selector UI (Multiple Workspaces)</span></div>
+            <div class="codeBlock"><span class="keyword">EXAMPLE 1: User has already created a workspace</span>
+┌─────────────────────────────────────────────────────────────┐
+│ <span class="keyword">Select Workspace</span>                                            │
+├─────────────────────────────────────────────────────────────┤
+│ ○ ABC Corp <span class="success">(CREATOR)</span>         ← tag: workspace_creator (max 1) │
+│ ○ XYZ Inc <span class="highlight">(EMPLOYEE)</span>         ← tag: workspace_employee      │
+│ ○ Partner Co <span class="highlight">(EMPLOYEE)</span>      ← tag: workspace_employee      │
+├─────────────────────────────────────────────────────────────┤
+│ <span class="muted">User already has a workspace - cannot create another</span>        │
+├─────────────────────────────────────────────────────────────┤
+│                                        [<span class="success">Continue</span>]           │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="keyword">EXAMPLE 2: User is ONLY an employee (never created a workspace)</span>
+┌─────────────────────────────────────────────────────────────┐
+│ <span class="keyword">Select Workspace</span>                                            │
+├─────────────────────────────────────────────────────────────┤
+│ ○ XYZ Inc <span class="highlight">(EMPLOYEE)</span>         ← tag: workspace_employee      │
+│ ○ Partner Co <span class="highlight">(EMPLOYEE)</span>      ← tag: workspace_employee      │
+├─────────────────────────────────────────────────────────────┤
+│ <span class="warn">+ Create New Workspace</span>       ← Shown because no creator tag │
+├─────────────────────────────────────────────────────────────┤
+│                                        [<span class="success">Continue</span>]           │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="keyword">When "Create New Workspace" clicked (SSO - already authenticated):</span>
+   1. Create workspace directly (user already verified)
+   2. Generate JWT with new workspace_id
+   3. Redirect to app dashboard
+   4. <span class="highlight">Collect organisation data INSIDE the app</span>
+      (Address, GST, Bank details, Logo, etc.)
+
+<span class="keyword">NOTE:</span> No redirect to Registration - user is already signed in (SSO)
+
+<span class="keyword">RULE:</span> One user = Maximum ONE workspace as creator
+      Can be employee in UNLIMITED workspaces
+
+<span class="keyword">SSO CREATE WORKSPACE FLOW:</span>
+┌─────────────────────────────────────────────────────────────┐
+│ User clicks "+ Create Workspace"                            │
+└───────────────────────────┬─────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│ <span class="success">User already authenticated</span> (has person_id, verified handle) │
+└───────────────────────────┬─────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Create workspace (async)                                    │
+│ Add tag: <span class="highlight">workspace_creator</span>                                  │
+└───────────────────────────┬─────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Generate new JWT with workspace_id                          │
+└───────────────────────────┬─────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Redirect to app dashboard                                   │
+└───────────────────────────┬─────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│ <span class="highlight">INSIDE APP:</span> Collect organisation data                       │
+│ (Address, GST, Bank details, Logo, etc.)                    │
+└─────────────────────────────────────────────────────────────┘</div>
+
+            <!-- App List UI (Direct ElAuth) -->
+            <div class="sectionDivider"><span>App List UI (Direct ElAuth Visit - No return_url)</span></div>
+            <div class="codeBlock">┌─────────────────────────────────────────────────────────────┐
+│ <span class="keyword">Select Application</span>                                          │
+│ <span class="muted">Apps available based on your role in this workspace</span>         │
+├─────────────────────────────────────────────────────────────┤
+│ ○ <span class="success">Attendance</span>      ○ <span class="success">CRM</span>             ○ <span class="muted">E-commerce (N/A)</span>      │
+│ ○ <span class="success">Accounting</span>      ○ <span class="muted">Inventory (N/A)</span>  ○ <span class="success">ElTracker</span>            │
+├─────────────────────────────────────────────────────────────┤
+│                                        [<span class="success">Open App</span>]           │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="keyword">Note:</span> Apps shown based on user's role in selected workspace
+      <span class="muted">(N/A)</span> = User doesn't have access to this app in current workspace</div>
+
+            <!-- Edge Cases Table -->
+            <div class="sectionDivider"><span>Edge Cases & Handling</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Handling</th></tr>
+              <tr><td class="step-num">1</td><td><b>Zero workspaces</b></td><td><span class="warn">Redirect to Registration (Flow 2)</span> - must create workspace</td></tr>
+              <tr><td class="step-num">2</td><td><b>Single workspace + return_url</b></td><td><span class="success">Auto-redirect</span> to app dashboard</td></tr>
+              <tr><td class="step-num">3</td><td><b>Single workspace + no return_url</b></td><td>Show <span class="highlight">app list</span> (role-based)</td></tr>
+              <tr><td class="step-num">4</td><td><b>Multiple workspaces</b></td><td>Show <span class="highlight">workspace selector</span></td></tr>
+              <tr><td class="step-num">5</td><td><b>Only employee (never created)</b></td><td>Show <span class="warn">"+ Create Workspace"</span> → SSO: create workspace, redirect to app, collect org data inside</td></tr>
+              <tr><td class="step-num">6</td><td><b>Credentials don't match</b></td><td><span class="warn">"Invalid credentials"</span> error</td></tr>
+              <tr><td class="step-num">7</td><td><b>Account not found</b></td><td><span class="warn">"No account found, please register"</span></td></tr>
+              <tr><td class="step-num">8</td><td><b>Token expired</b></td><td>Redirect to signin, <span class="success">preserve return_url</span></td></tr>
+              <tr><td class="step-num">9</td><td><b>Workspace deactivated</b></td><td>Don't show in selector list</td></tr>
+              <tr><td colspan="3" class="section-header">Critical Edge Case: Concurrent Signin / Password Changed</tr>
+              <tr><td class="step-num">10</td><td><b>Password changed while session active</b></td><td>
+                <span class="warn">Invalidate ALL existing tokens</span><br>
+                • When password changes → update <code>password_changed_at</code> timestamp<br>
+                • JWT validation: check <code>token_issued_at</code> &gt; <code>password_changed_at</code><br>
+                • If token older than password change → <span class="warn">REJECT</span>, force re-login
+              </td></tr>
+              <tr><td class="step-num">11</td><td><b>Same user, multiple devices signin</b></td><td>
+                <span class="success">ALLOW by default</span><br>
+                • Each device gets its own JWT token<br>
+                • All tokens share same <code>user_id</code>, different <code>session_id</code><br>
+                • Optional: Workspace setting to limit concurrent sessions
+              </td></tr>
+              <tr><td class="step-num">12</td><td><b>Admin force-logout user</b></td><td>
+                • Add user_id to <code>invalidated_sessions</code> Redis set<br>
+                • Token validation middleware checks this set<br>
+                • User sees "Session ended by administrator"
+              </td></tr>
+            </table>
+
+            <!-- Token Structure -->
+            <div class="compactGrid">
+              <div class="miniCard">
+                <h4>JWT Token Contents</h4>
+                <p><code>user_id</code> - from ElAuth<br>
+                <code>workspace_id</code> - selected workspace<br>
+                <code>roles</code> - user's roles in workspace<br>
+                <code>exp</code> - expiration timestamp</p>
+              </div>
+              <div class="miniCard">
+                <h4>Cookie Storage</h4>
+                <p><b>Domain:</b> <code>.elsapiens.com</code><br>
+                <b>Scope:</b> All subdomains can access<br>
+                <b>Security:</b> HttpOnly, Secure, SameSite</p>
+              </div>
+            </div>
+
+            <div class="hint">
+              <b>Key Rules:</b> Must LOGOUT to switch workspace • Can switch organisation within workspace • App list is role-based per workspace • Zero workspaces → Registration • <b>ONE workspace per user as creator</b> (can be employee in unlimited) • "Create Workspace" shown only if user has NEVER created one
+            </div>
+          </div>
+
+          <!-- Merge Contact (Flow 8) -->
+          <!--  -->
+
+          <!-- Customer to Client Upgrade -->
+          <div class="tabpanel" id="panel-upgrade" role="tabpanel" aria-labelledby="tab-upgrade">
+            <!-- Key Points -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>What is Upgrade?</h4>
+                <p><b>Customer</b> (end user) becomes a <b>Client</b> (workspace creator) in the ecosystem</p>
+              </div>
+              <div class="miniCard">
+                <h4>Use Case</h4>
+                <p>E-commerce customer wants to start their own business using ElSapiens products</p>
+              </div>
+              <div class="miniCard">
+                <h4>Key Principle</h4>
+                <p>Same Contact Library entry, new <b>workspace_creator</b> tag added (keeps customer tag)</p>
+              </div>
+            </div>
+
+            <!-- Visual Flowchart -->
+            <div class="sectionDivider"><span>Upgrade Flow</span></div>
+            <div class="codeBlock"><span class="keyword">Customer</span> (has Contact Library entry)
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   Customer visits any ElSapiens     │
+│   product and clicks "Register"     │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Enter Phone</span> → Check Contact Lib   │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="success">PHONE EXISTS</span> (Customer)           │
+│   Has tag: workspace_customer       │
+│   NOT workspace_creator/employee    │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">ALLOW REGISTRATION</span>                │
+│   (Customer can become Creator)     │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Verify OTP</span> → Collect Details      │
+│   (Name, Email, Org Name, etc.)     │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">CREATE NEW WORKSPACE</span>              │
+│   (Same contact, new workspace)     │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="success">UPDATE Contact Library</span>            │
+│   • ADD workspace_relationship:     │
+│     {ws_id: B, role: OWNER}         │
+│   • Same contact_id                 │
+└─────────────────────────────────────┘
+        │
+        ▼
+<span class="success">Customer is now also a Client!</span></div>
+
+            <!-- Data Changes -->
+            <div class="sectionDivider"><span>Data Changes</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Entity</th><th>Before</th><th>After</th></tr>
+              <tr>
+                <td class="step-num">1</td>
+                <td><b>Contact Library</b></td>
+                <td>workspace_relationships: [{ws_id: A, role: CUSTOMER}]</td>
+                <td>workspace_relationships: [{ws_id: A, role: CUSTOMER}, <span class="success">{ws_id: B, role: OWNER}</span>]</td>
+              </tr>
+              <tr>
+                <td class="step-num">2</td>
+                <td><b>Workspace</b></td>
+                <td>Customer of Workspace A</td>
+                <td>Customer of A + <span class="success">Creator of NEW Workspace B</span></td>
+              </tr>
+              <tr>
+                <td class="step-num">3</td>
+                <td><b>Workspace Contact</b></td>
+                <td>1 record (customer in A)</td>
+                <td>2 records (customer in A, <span class="success">creator in B</span>)</td>
+              </tr>
+              <tr>
+                <td class="step-num">4</td>
+                <td><b>ElAuth</b></td>
+                <td>Person identifier (phone)</td>
+                <td>Same identifier + password (if not set)</td>
+              </tr>
+            </table>
+
+            <!-- Scenarios -->
+            <div class="sectionDivider"><span>Scenarios</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Handling</th></tr>
+              <tr>
+                <td class="step-num">1</td>
+                <td><b>Customer has verified phone</b></td>
+                <td>Send OTP to verify they still own the phone</td>
+              </tr>
+              <tr>
+                <td class="step-num">2</td>
+                <td><b>Customer has different email now</b></td>
+                <td>Check new email uniqueness, add as new handle if valid</td>
+              </tr>
+              <tr>
+                <td class="step-num">3</td>
+                <td><b>Customer already has password</b></td>
+                <td>Skip password collection, use existing ElAuth credentials</td>
+              </tr>
+              <tr>
+                <td class="step-num">4</td>
+                <td><b>Customer is employee in another workspace</b></td>
+                <td><span class="warn">Block</span> - has workspace_employee tag, signin instead</td>
+              </tr>
+              <tr>
+                <td class="step-num">5</td>
+                <td><b>Customer wants to use different phone</b></td>
+                <td>Verify new phone, add as new handle, keep old phone</td>
+              </tr>
+            </table>
+
+            <!-- Key Rules -->
+            <div class="hint">
+              <b>Key Rules:</b> Same Contact Library entry used • Tags accumulate (customer + creator) • One person can be customer in some workspaces AND creator of others • Employee tag blocks upgrade (signin instead)
+            </div>
+          </div>
+
+          <!-- Logout -->
+          <div class="tabpanel" id="panel-logout" role="tabpanel" aria-labelledby="tab-logout">
+            <!-- Key Points -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>What Happens</h4>
+                <p>JWT token is <b>cleared from cookie storage</b>. User must re-authenticate to access protected resources</p>
+              </div>
+              <div class="miniCard">
+                <h4>Cookie Domain</h4>
+                <p>Token stored on <b>.elsapiens.com</b> (shared across subdomains). Logout clears for all products</p>
+              </div>
+              <div class="miniCard">
+                <h4>Server-Side Cache</h4>
+                <p><b>Must clear server cache</b> on logout (user data, permissions, session info cached in Redis/memory)</p>
+              </div>
+            </div>
+
+            <!-- Visual Flowchart -->
+            <div class="sectionDivider"><span>Logout Flow</span></div>
+            <div class="codeBlock"><span class="keyword">User clicks "Logout"</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">Frontend</span>: Clear JWT cookie        │
+│   Domain: .elsapiens.com            │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">Call ElAuth logout API</span>            │
+│   POST /v1/auth/logout              │
+│   • Log analytics event             │
+│   • <span class="warn">Clear server-side cache</span>        │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="warn">SERVER: Clear cached data</span>         │
+│   • User permissions (Redis)        │
+│   • Session data                    │
+│   • Workspace context               │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="success">Redirect to landing page</span>          │
+│   or elauth.elsapiens.com/signin    │
+└─────────────────────────────────────┘
+        │
+        ▼
+<span class="success">User logged out from ALL products!</span></div>
+
+            <!-- Multi-Workspace Logout -->
+            <div class="sectionDivider"><span>Multi-Workspace Scenario</span></div>
+            <div class="codeBlock"><span class="keyword">User signed into multiple workspaces</span>
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   JWT contains: workspace_id        │
+│   User is in: Workspace A, B, C     │
+└─────────────────────────────────────┘
+        │
+        ├── <span class="highlight">SINGLE LOGOUT</span> (current implementation)
+                │
+                ▼
+            Clear cookie → User logged out of ALL workspaces
+            (Cookie is for domain, not per workspace)
+        
+         </div>
+
+            <!-- What Happens on Logout -->
+            <div class="sectionDivider"><span>What Happens</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Component</th><th>Action</th></tr>
+              <tr>
+                <td class="step-num">1</td>
+                <td><b>Cookie Storage</b></td>
+                <td>JWT token deleted from <code>.elsapiens.com</code> domain</td>
+              </tr>
+              <tr>
+                <td class="step-num">2</td>
+                <td><b>ElAuth API</b></td>
+                <td>POST /v1/auth/logout - Log event for analytics (timestamp, user_id)</td>
+              </tr>
+              <tr>
+                <td class="step-num">3</td>
+                <td><b><span class="warn">Server Cache</span></b></td>
+                <td><span class="warn">Clear Redis/memory cache:</span> user permissions, session data, workspace context</td>
+              </tr>
+              <tr>
+                <td class="step-num">4</td>
+                <td><b>Firebase Token</b></td>
+                <td>If push notifications enabled, revoke Firebase token</td>
+              </tr>
+              <tr>
+                <td class="step-num">5</td>
+                <td><b>Local Storage</b></td>
+                <td>Clear any cached user preferences/data on frontend</td>
+              </tr>
+              <tr>
+                <td class="step-num">6</td>
+                <td><b>Redirect</b></td>
+                <td>Send user to landing page or signin page</td>
+              </tr>
+            </table>
+
+            <!-- Token Invalidation Note -->
+            <div class="sectionDivider"><span>Token Behavior</span></div>
+            <table class="flowTable">
+              <tr><th>Aspect</th><th>Current (Stateless JWT)</th><th>Future (Token Blacklist)</th></tr>
+              <tr>
+                <td><b>Logout mechanism</b></td>
+                <td>Delete cookie only</td>
+                <td>Delete cookie + add to blacklist</td>
+              </tr>
+              <tr>
+                <td><b>Token validity after logout</b></td>
+                <td>Still valid until expiry (but user doesn't have it)</td>
+                <td>Immediately invalid (checked against blacklist)</td>
+              </tr>
+              <tr>
+                <td><b>Security tradeoff</b></td>
+                <td>Simpler, faster validation</td>
+                <td>More secure, requires DB check</td>
+              </tr>
+            </table>
+
+            <!-- Critical Edge Case: Redis Down -->
+            <div class="sectionDivider"><span>Critical Edge Case: Redis/Cache Failure During Logout</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Scenario</th><th>Handling</th></tr>
+              <tr>
+                <td class="step-num">1</td>
+                <td><b>Redis unreachable during logout</b></td>
+                <td>
+                  <span class="success">Still complete logout successfully</span><br>
+                  • Cookie deletion is PRIMARY (always works)<br>
+                  • Cache clearing is SECONDARY (best effort)<br>
+                  • Log the cache failure for monitoring
+                </td>
+              </tr>
+              <tr>
+                <td class="step-num">2</td>
+                <td><b>Cache stale after failed clear</b></td>
+                <td>
+                  <span class="highlight">TTL handles cleanup</span><br>
+                  • Cache has TTL (e.g., 15 minutes max)<br>
+                  • Stale cache auto-expires<br>
+                  • Next login will populate fresh cache
+                </td>
+              </tr>
+              <tr>
+                <td class="step-num">3</td>
+                <td><b>User re-logs in before cache expires</b></td>
+                <td>
+                  <span class="warn">Force cache refresh on login</span><br>
+                  • Login always fetches fresh permissions<br>
+                  • Overwrites any stale cached data<br>
+                  • User gets correct state
+                </td>
+              </tr>
+              <tr>
+                <td class="step-num">4</td>
+                <td><b>Partial cache failure</b></td>
+                <td>
+                  • Track which keys failed to delete<br>
+                  • Queue for retry via background job<br>
+                  • Alert if failure rate exceeds threshold
+                </td>
+              </tr>
+            </table>
+
+            <div class="codeBlock"><span class="keyword">LOGOUT RESILIENCE STRATEGY:</span>
+
+┌─────────────────────────────────────────────────────────────┐
+│ PRIORITY 1: <span class="success">ALWAYS SUCCEED</span>                                │
+│ • Delete cookie (client-side) ✓                             │
+│ • Return success to user ✓                                  │
+└─────────────────────────────────────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────┐
+│ PRIORITY 2: <span class="highlight">BEST EFFORT</span>                                   │
+│ • Clear Redis cache                                         │
+│   └─ If fails → Log error, continue                         │
+│ • Log analytics                                             │
+│   └─ If fails → Log error, continue                         │
+│ • Revoke Firebase token                                     │
+│   └─ If fails → Log error, continue                         │
+└─────────────────────────────────────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────┐
+│ FALLBACK: <span class="warn">SAFETY NETS</span>                                     │
+│ • Cache TTL ensures auto-expiry                             │
+│ • Login overwrites stale cache                              │
+│ • Background job retries failed deletions                   │
+└─────────────────────────────────────────────────────────────┘</div>
+
+            <div class="hint">
+              <b>Key Points:</b> Cookie cleared on logout • <span class="warn">Server cache MUST be cleared</span> (Redis: permissions, session, workspace context) • Affects all products (shared domain) • Analytics event logged • Firebase token revoked if applicable • <span class="success">Logout never fails</span> - cache failure is logged but doesn't block user
+            </div>
+          </div>
+
+          <!-- Roles & Permissions -->
+          <div class="tabpanel" id="panel-roles" role="tabpanel" aria-labelledby="tab-roles">
+            <!-- Key Points -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>Role Levels</h4>
+                <p><b>Workspace-level</b> roles define what a user can do within a specific workspace</p>
+              </div>
+              <div class="miniCard">
+                <h4>Role Types</h4>
+                <p><b>OWNER</b> (creator), <b>ADMIN</b>, <b>MEMBER</b> (employee), <b>CUSTOMER</b></p>
+              </div>
+              <div class="miniCard">
+                <h4>Permission Model</h4>
+                <p>Role-based (RBAC). Each role has predefined permissions. Custom permissions per product</p>
+              </div>
+            </div>
+
+            <!-- Role Hierarchy -->
+            <div class="sectionDivider"><span>Role Hierarchy</span></div>
+            <div class="codeBlock"><span class="keyword">WORKSPACE ROLES</span>
+
+┌─────────────────────────────────────┐
+│   <span class="success">OWNER</span>                             │
+│   • Created the workspace           │
+│   • Full control (billing, delete)  │
+│   • Cannot be removed               │
+│   • Only 1 per workspace            │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="highlight">ADMIN</span>                             │
+│   • Manage team members             │
+│   • Invite/remove users             │
+│   • Access all features             │
+│   • Cannot delete workspace         │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="keyword">MEMBER</span> (Employee)                 │
+│   • Access assigned features        │
+│   • Cannot manage team              │
+│   • Cannot invite users             │
+│   • Product-specific permissions    │
+└─────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────┐
+│   <span class="muted">CUSTOMER</span>                          │
+│   • End user of workspace           │
+│   • Limited access (self-service)   │
+│   • Can update own profile          │
+│   • Cannot access admin features    │
+└─────────────────────────────────────┘</div>
+
+            <!-- Permission Matrix -->
+            <div class="sectionDivider"><span>Permission Matrix</span></div>
+            <table class="flowTable">
+              <tr><th>Permission</th><th>Owner</th><th>Admin</th><th>Member</th><th>Customer</th></tr>
+              <tr>
+                <td><b>View workspace</b></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="warn">Limited</span></td>
+              </tr>
+              <tr>
+                <td><b>Invite users</b></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="warn">✗</span></td>
+                <td><span class="warn">✗</span></td>
+              </tr>
+              <tr>
+                <td><b>Remove users</b></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="warn">✗</span></td>
+                <td><span class="warn">✗</span></td>
+              </tr>
+              <tr>
+                <td><b>Manage billing</b></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="warn">✗</span></td>
+                <td><span class="warn">✗</span></td>
+                <td><span class="warn">✗</span></td>
+              </tr>
+              <tr>
+                <td><b>Delete workspace</b></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="warn">✗</span></td>
+                <td><span class="warn">✗</span></td>
+                <td><span class="warn">✗</span></td>
+              </tr>
+              <tr>
+                <td><b>Access products</b></td>
+                <td><span class="success">All</span></td>
+                <td><span class="success">All</span></td>
+                <td><span class="highlight">Assigned</span></td>
+                <td><span class="muted">Self-service</span></td>
+              </tr>
+              <tr>
+                <td><b>Update own profile</b></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="success">✓</span></td>
+                <td><span class="success">✓</span></td>
+              </tr>
+            </table>
+
+            <!-- Product-Specific Permissions -->
+            <div class="sectionDivider"><span>Product-Specific Permissions</span></div>
+            <div class="codeBlock"><span class="keyword">Each product can define granular permissions:</span>
+
+<span class="highlight">ElAttendance</span>
+├── attendance.view     - View attendance records
+├── attendance.mark     - Mark attendance
+├── attendance.approve  - Approve leave requests
+└── attendance.admin    - Manage attendance settings
+
+<span class="highlight">ElCRM</span>
+├── crm.leads.view      - View leads
+├── crm.leads.create    - Create leads
+├── crm.leads.edit      - Edit leads
+├── crm.leads.delete    - Delete leads
+└── crm.admin           - Full CRM access
+
+<span class="highlight">ElInventory</span>
+├── inventory.view      - View stock
+├── inventory.update    - Update stock
+├── inventory.transfer  - Transfer between locations
+└── inventory.admin     - Full inventory access</div>
+
+            <!-- Role Assignment -->
+            <div class="sectionDivider"><span>Role Assignment Flow</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Step</th><th>Details</th></tr>
+              <tr>
+                <td class="step-num">1</td>
+                <td><b>Invite User</b></td>
+                <td>Admin selects role when inviting (ADMIN or MEMBER)</td>
+              </tr>
+              <tr>
+                <td class="step-num">2</td>
+                <td><b>Accept Invite</b></td>
+                <td>User joins with assigned role</td>
+              </tr>
+              <tr>
+                <td class="step-num">3</td>
+                <td><b>Change Role</b></td>
+                <td>Owner/Admin can change user's role</td>
+              </tr>
+              <tr>
+                <td class="step-num">4</td>
+                <td><b>Assign Permissions</b></td>
+                <td>For MEMBER role, assign product-specific permissions</td>
+              </tr>
+            </table>
+
+            <!-- Data Model -->
+            <div class="sectionDivider"><span>Data Model</span></div>
+            <div class="codeBlock"><span class="keyword">WORKSPACE_USER</span> (links user to workspace)
+├── workspace_user_id
+├── workspace_id
+├── user_id
+├── <span class="highlight">role</span>: OWNER | ADMIN | MEMBER
+└── created_at
+
+<span class="keyword">USER_PERMISSION</span> (granular permissions)
+├── permission_id
+├── workspace_user_id
+├── <span class="highlight">permission</span>: "crm.leads.create"
+├── granted_by
+└── granted_at
+
+<span class="keyword">WORKSPACE_CONTACT</span> (for customers)
+├── workspace_contact_id
+├── workspace_id
+├── contact_id
+├── <span class="highlight">type</span>: CUSTOMER | EMPLOYEE | OWNER
+└── status: ACTIVE | INVITED | INACTIVE</div>
+
+            <div class="hint">
+              <b>Key Points:</b> OWNER = one per workspace, full control • ADMIN = team management, no billing • MEMBER = assigned permissions only • CUSTOMER = self-service, limited access • Product-specific permissions for granular control
+            </div>
+          </div>
+
+          <!-- JWT Token -->
+          <div class="tabpanel" id="panel-tokens" role="tabpanel" aria-labelledby="tab-tokens">
+            <!-- What are JWT Tokens -->
+            <div class="compactGrid cols3">
+              <div class="miniCard">
+                <h4>What are JWT Tokens?</h4>
+                <p><b>JSON Web Tokens</b> used for authentication and session management</p>
+              </div>
+              <div class="miniCard">
+                <h4>Two Token System</h4>
+                <p><b>Access Token</b> for API requests + <b>Refresh Token</b> for renewal</p>
+              </div>
+              <div class="miniCard">
+                <h4>Why Two Tokens?</h4>
+                <p><b>Security</b> - Short-lived access + long-lived refresh = balance of UX and security</p>
+              </div>
+            </div>
+
+            <!-- Token Overview -->
+            <div class="sectionDivider"><span>Token Overview</span></div>
+            <div class="codeBlock"><span class="keyword">When user logs in:</span>
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
+│  <span class="highlight">System creates TWO tokens:</span>                                 │
+│                                                             │
+│  1. <span class="success">ACCESS TOKEN</span> (24 hours)                                 │
+│     • The JWT you use for API requests                      │
+│     • Contains: user_id, workspace_id, exp                  │
+│     • Stored in HTTP-only cookie                            │
+│     • Sent with EVERY API request                           │
+│     • Expires in 24 hours                                   │
+│                                                             │
+│  2. <span class="warn">REFRESH TOKEN</span> (30 days)                                 │
+│     • Used ONLY to get new Access Token                     │
+│     • Never sent with normal API requests                   │
+│     • When Access Token expires, use this to get new one    │
+│     • Expires in 30 days                                    │
+└─────────────────────────────────────────────────────────────┘</div>
+
+            <!-- Token Structure -->
+            <div class="sectionDivider"><span>Token Structure</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Token</th><th>Lifetime</th><th>Purpose</th><th>Storage</th></tr>
+              <tr><td class="step-num">1</td><td><code>access_token</code></td><td><span class="success">24 hours</span></td><td>Authenticate API requests</td><td>HTTP-only cookie</td></tr>
+              <tr><td class="step-num">2</td><td><code>refresh_token</code></td><td><span class="warn">30 days</span></td><td>Get new access token without re-login</td><td>HTTP-only cookie (separate)</td></tr>
+            </table>
+
+            <!-- Access Token Payload -->
+            <div class="sectionDivider"><span>Access Token Payload (JWT)</span></div>
+            <div class="codeBlock"><span class="keyword">ACCESS_TOKEN</span> (decoded JWT payload)
+{
+  "<span class="highlight">user_id</span>": "usr_abc123",
+  "<span class="highlight">workspace_id</span>": "ws_xyz789",
+  "<span class="highlight">role</span>": "OWNER",
+  "<span class="warn">iat</span>": 1705000000,        <span class="muted">// Issued at timestamp</span>
+  "<span class="warn">exp</span>": 1705086400,        <span class="muted">// Expires in 24 hours</span>
+  "type": "access"
+}</div>
+
+            <!-- Token Lifecycle -->
+            <div class="sectionDivider"><span>Token Lifecycle Example</span></div>
+            <div class="codeBlock"><span class="keyword">EXAMPLE TIMELINE:</span>
+
+<span class="success">Day 1:</span>  Login → Get Access Token (24h) + Refresh Token (30d)
+        │
+        ├── API Request #1 → Send Access Token → <span class="success">✓ Valid</span>
+        ├── API Request #2 → Send Access Token → <span class="success">✓ Valid</span>
+        └── ... (all requests use Access Token)
+
+<span class="warn">Day 2:</span>  Access Token expired!
+        │
+        ├── API Request → Send Access Token → <span class="bad">✗ Expired (401)</span>
+        │
+        ▼
+        <span class="highlight">Auto-refresh flow:</span>
+        ├── Send Refresh Token to /api/auth/refresh
+        ├── Get NEW Access Token (24h)
+        └── Retry original request → <span class="success">✓ Success</span>
+
+<span class="warn">Day 3-29:</span>  Same pattern repeats...
+        │
+        ├── Access Token expires every 24h
+        └── Refresh Token renews it automatically
+
+<span class="bad">Day 30:</span>  Refresh Token expired!
+        │
+        ├── Cannot get new Access Token
+        └── Must LOGIN again</div>
+
+            <!-- Token Flow Diagram -->
+            <div class="sectionDivider"><span>Token Refresh Flow</span></div>
+            <div class="codeBlock"><span class="keyword">REFRESH FLOW:</span>
+
+┌──────────┐         ┌──────────┐         ┌──────────┐
+│  Client  │         │   API    │         │   Auth   │
+└────┬─────┘         └────┬─────┘         └────┬─────┘
+     │                    │                    │
+     │ API Request        │                    │
+     │ (expired token)    │                    │
+     ├───────────────────►│                    │
+     │                    │                    │
+     │    <span class="bad">401 Unauthorized</span>│                    │
+     │◄───────────────────┤                    │
+     │                    │                    │
+     │ POST /auth/refresh │                    │
+     │ (refresh_token)    │                    │
+     ├────────────────────┼───────────────────►│
+     │                    │                    │
+     │                    │   <span class="success">New Access Token</span> │
+     │◄───────────────────┼────────────────────┤
+     │                    │                    │
+     │ Retry API Request  │                    │
+     │ (new access token) │                    │
+     ├───────────────────►│                    │
+     │                    │                    │
+     │       <span class="success">200 OK</span>       │                    │
+     │◄───────────────────┤                    │
+     │                    │                    │</div>
+
+            <!-- Security Best Practices -->
+            <div class="sectionDivider"><span>Security Considerations</span></div>
+            <table class="flowTable">
+              <tr><th class="step-num">#</th><th>Practice</th><th>Reason</th></tr>
+              <tr><td class="step-num">1</td><td>Store tokens in <code>HTTP-only</code> cookies</td><td>Prevents XSS attacks from stealing tokens</td></tr>
+              <tr><td class="step-num">2</td><td>Short Access Token lifetime (24h)</td><td>Limits damage if token is compromised</td></tr>
+              <tr><td class="step-num">3</td><td>Refresh Token rotation</td><td>Issue new refresh token on each refresh, invalidate old one</td></tr>
+              <tr><td class="step-num">4</td><td>Secure cookie flags</td><td><code>Secure</code>, <code>SameSite=Strict</code> for CSRF protection</td></tr>
+              <tr><td class="step-num">5</td><td>Token blacklisting on logout</td><td>Invalidate refresh token when user logs out</td></tr>
+            </table>
+
+            <!-- Simple Summary -->
+            <div class="sectionDivider"><span>Simple Summary</span></div>
+            <div class="codeBlock"><span class="keyword">IN SIMPLE TERMS:</span>
+
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  <span class="success">ACCESS TOKEN</span> = Your daily pass                             │
+│     • Use it for everything                                 │
+│     • Expires quickly (24h) for security                    │
+│     • The JWT in your cookie                                │
+│                                                             │
+│  <span class="warn">REFRESH TOKEN</span> = Your backup key                            │
+│     • Only used when access token expires                   │
+│     • Gets you a new access token without login             │
+│     • Lasts longer (30 days)                                │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+<span class="highlight">WHY THIS MATTERS:</span>
+
+Without Refresh Token:
+  → Access Token expires → User must login again every 24h
+  → <span class="bad">Bad UX!</span>
+
+With Refresh Token:
+  → Access Token expires → Auto-refresh in background
+  → User stays logged in for 30 days
+  → <span class="success">Seamless experience!</span></div>
+
+            <div class="hint">
+              <b>Key Points:</b> Access Token = main JWT for API requests (24h) • Refresh Token = backup to renew access token (30d) • Both stored in HTTP-only cookies • Automatic refresh happens transparently • User only re-logs in when refresh token expires
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>
+        Open locally with: <code>xdg-open docs/planning/flows.html</code>
+      </div>
+      <div style="margin-top:6px;">If you want, I can auto-generate this page from the markdown sources.</div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+      const panels = Array.from(document.querySelectorAll('.tabpanel'));
+
+      function activate(panelId) {
+        for (const tab of tabs) {
+          const selected = tab.dataset.panel === panelId;
+          tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+          tab.tabIndex = selected ? 0 : -1;
+        }
+        for (const panel of panels) {
+          panel.classList.toggle('active', panel.id === panelId);
+        }
+      }
+
+      function initSubtabs(container) {
+        const subtabs = Array.from(container.querySelectorAll(':scope > .subtabs .subtab'));
+        const subpanels = Array.from(container.querySelectorAll(':scope > .subpanel'));
+        if (!subtabs.length || !subpanels.length) return;
+
+        function activateSub(subpanelId) {
+          for (const tab of subtabs) {
+            const selected = tab.dataset.subpanel === subpanelId;
+            tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+            tab.tabIndex = selected ? 0 : -1;
+          }
+          for (const panel of subpanels) {
+            panel.classList.toggle('active', panel.id === subpanelId);
+          }
+        }
+
+        for (const tab of subtabs) {
+          tab.addEventListener('click', () => activateSub(tab.dataset.subpanel));
+          tab.addEventListener('keydown', (e) => {
+            const idx = subtabs.indexOf(tab);
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+              e.preventDefault();
+              const dir = e.key === 'ArrowRight' ? 1 : -1;
+              const next = (idx + dir + subtabs.length) % subtabs.length;
+              subtabs[next].focus();
+              activateSub(subtabs[next].dataset.subpanel);
+            }
+          });
+        }
+
+        // If none is active, default to the first.
+        const active = subpanels.find((p) => p.classList.contains('active'));
+        if (!active) activateSub(subtabs[0].dataset.subpanel);
+
+        return { activateSub, subtabs, subpanels };
+      }
+
+      for (const tab of tabs) {
+        tab.addEventListener('click', () => activate(tab.dataset.panel));
+        tab.addEventListener('keydown', (e) => {
+          const idx = tabs.indexOf(tab);
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const dir = e.key === 'ArrowRight' ? 1 : -1;
+            const next = (idx + dir + tabs.length) % tabs.length;
+            tabs[next].focus();
+            activate(tabs[next].dataset.panel);
+          }
+        });
+      }
+
+      // Initialize each independent subtab group.
+      const subtabGroups = Array.from(document.querySelectorAll('.tabpanel')).map(initSubtabs).filter(Boolean);
+
+      // Deep link support: #panel-id
+      const hash = (location.hash || '').replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        if (hash.startsWith('subpanel-')) {
+          const target = document.getElementById(hash);
+          const group = subtabGroups.find((g) => g.subpanels.includes(target));
+          if (group) group.activateSub(hash);
+        } else {
+          activate(hash);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
