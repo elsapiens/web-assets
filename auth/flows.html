@@ -48,7 +48,7 @@
     a { color: inherit; }
 
     .wrap {
-      max-width: 1160px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 28px 20px 46px;
     }
@@ -123,7 +123,6 @@
       border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
       box-shadow: var(--shadow);
-      overflow: hidden;
     }
 
     .cardHeader {
@@ -134,6 +133,20 @@
       padding: 16px 16px 12px;
       border-bottom: 1px solid rgba(255,255,255,0.10);
       background: rgba(0,0,0,0.14);
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    /* Sticky Flows Header */
+    .flowsCard {
+      position: relative;
+    }
+
+    .flowsCard > .cardHeader {
+      position: sticky;
+      top: 0;
+      z-index: 101;
+      background: rgba(11,16,32,0.98);
+      backdrop-filter: blur(10px);
     }
 
     .cardHeader h2 {
@@ -152,6 +165,8 @@
 
     .cardBody {
       padding: 14px 16px 16px;
+      flex: 1;
+      min-width: 0;
     }
 
     .twoCol {
@@ -247,14 +262,44 @@
       white-space: nowrap;
     }
 
-    /* Tabs */
+    /* Tabs Layout Container */
+    .tabsContainer {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 768px) {
+      .tabsContainer {
+        flex-direction: row;
+      }
+    }
+
+    /* Tabs Sidebar */
     .tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      padding: 10px 12px;
+      padding: 12px;
       border-bottom: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.10);
+      background: rgba(0,0,0,0.14);
+    }
+
+    @media (min-width: 768px) {
+      .tabs {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        width: 320px;
+        min-width: 320px;
+        border-bottom: none;
+        border-right: 1px solid rgba(255,255,255,0.10);
+        border-radius: 0 0 0 var(--radius);
+        position: sticky;
+        top: 65px;
+        height: fit-content;
+        max-height: calc(100vh - 65px);
+        overflow-y: auto;
+        align-self: flex-start;
+      }
     }
 
     .tab {
@@ -268,6 +313,14 @@
       font-size: 12.5px;
       line-height: 1;
       transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    @media (min-width: 768px) {
+      .tab {
+        text-align: left;
+        border-radius: 8px;
+        white-space: nowrap;
+      }
     }
 
     .tab:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.20); }
@@ -675,7 +728,7 @@
       </section>
 
       <!-- Tabs -->
-      <section class="card">
+      <section class="card flowsCard">
         <div class="cardHeader">
           <div>
             <h2>Flows</h2>
@@ -686,6 +739,7 @@
           <div class="pill"><b>Sources</b> <code>docs/planning/*.md</code></div>
         </div>
 
+        <div class="tabsContainer">
         <div class="tabs" role="tablist" aria-label="Flow tabs">
           <button class="tab" role="tab" id="tab-concepts" aria-controls="panel-concepts" aria-selected="true" data-panel="panel-concepts">Concepts</button>
           <button class="tab" role="tab" id="tab-contact-library" aria-controls="panel-contact-library" aria-selected="false" data-panel="panel-contact-library">Contact Library</button>
@@ -3450,6 +3504,7 @@ With Refresh Token:
             </div>
           </div>
         </div>
+        </div>
       </section>
     </main>
 
@@ -3474,6 +3529,11 @@ With Refresh Token:
         }
         for (const panel of panels) {
           panel.classList.toggle('active', panel.id === panelId);
+        }
+        // Scroll to the tabs container when switching tabs
+        const tabsContainer = document.querySelector('.tabsContainer');
+        if (tabsContainer) {
+          tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }
 
