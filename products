@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Documentation - Complete Guide</title>
+    <style>
+        :root {
+            --primary: #8197c0;
+            --primary-dark: #5a6f94;
+            --primary-light: #a8b9d4;
+            --primary-lighter: #e8edf4;
+            --bg: #f5f7fa;
+            --white: #ffffff;
+            --text: #2c3e50;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --success-light: #dcfce7;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --sidebar-width: 220px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        /* Main Layout */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .sidebar-header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 11px;
+            opacity: 0.85;
+        }
+
+        /* Navigation */
+        .nav {
+            padding: 12px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-light);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--primary-lighter);
+            color: var(--primary-dark);
+        }
+
+        .nav-item.active {
+            background: var(--primary-lighter);
+            color: var(--primary-dark);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-num {
+            width: 24px;
+            height: 24px;
+            background: var(--bg);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .nav-item.active .nav-num {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px 32px;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+
+        /* Panel */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* Section */
+        .section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .section-num {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .section-title { font-size: 18px; font-weight: 600; color: var(--primary-dark); }
+        .section > p { color: var(--text-light); font-size: 13px; margin-bottom: 12px; }
+
+        /* Info Box */
+        .info-box {
+            background: var(--primary-lighter);
+            border-left: 4px solid var(--primary);
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+
+        .info-box.success { background: var(--success-light); border-left-color: var(--success); }
+        .info-box.warning { background: var(--warning-light); border-left-color: var(--warning); }
+        .info-box.error { background: var(--error-light); border-left-color: var(--error); }
+        .info-box strong { display: block; margin-bottom: 4px; }
+
+        /* Cards Grid */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .card {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 8px; }
+        .card p { font-size: 12px; color: var(--text-light); margin: 0; }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin: 16px 0;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            font-size: 11px;
+        }
+
+        th:first-child { border-radius: 8px 0 0 0; }
+        th:last-child { border-radius: 0 8px 0 0; }
+        tr:hover { background: var(--bg); }
+
+        /* Flow */
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            background: var(--primary);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .flow-box small { display: block; font-size: 10px; opacity: 0.8; margin-top: 2px; }
+        .flow-box.success { background: var(--success); }
+        .flow-box.warning { background: var(--warning); }
+        .flow-arrow { color: var(--primary); font-size: 18px; }
+
+        /* Policy Box */
+        .policy-box {
+            background: white;
+            border: 2px solid var(--primary-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .policy-box h4 {
+            font-size: 15px;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-lighter);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 180px;
+            }
+            .content {
+                margin-left: 180px;
+                padding: 16px;
+            }
+            .cards { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+            .content {
+                margin-left: 0;
+                max-width: 100%;
+            }
+            .layout {
+                flex-direction: column;
+            }
+            .flow { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>Item Documentation</h1>
+                <p>Developer Reference Guide</p>
+            </div>
+            <nav class="nav">
+                <button class="nav-item active" onclick="showTab('item-master', this)">
+                    <span class="nav-num">1</span> Item Master
+                </button>
+                <button class="nav-item" onclick="showTab('item-nature', this)">
+                    <span class="nav-num">2</span> Item Nature
+                </button>
+                <button class="nav-item" onclick="showTab('commodity', this)">
+                    <span class="nav-num">3</span> Commodity
+                </button>
+                <button class="nav-item" onclick="showTab('financial', this)">
+                    <span class="nav-num">4</span> Financial
+                </button>
+                <button class="nav-item" onclick="showTab('stores', this)">
+                    <span class="nav-num">5</span> Stores
+                </button>
+                <button class="nav-item" onclick="showTab('media', this)">
+                    <span class="nav-num">6</span> Media
+                </button>
+                <button class="nav-item" onclick="showTab('documents', this)">
+                    <span class="nav-num">7</span> Documents
+                </button>
+            </nav>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+
+        <!-- ============================================== -->
+        <!-- TAB 1: ITEM MASTER -->
+        <!-- ============================================== -->
+        <div class="panel active" id="item-master">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">1</div>
+                    <div class="section-title">Item Master Overview</div>
+                </div>
+                <p>The Item Master contains three types of item definitions. Each serves a different purpose.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#128085;</div>
+                        <h4>Items</h4>
+                        <p>Standalone products and services</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#128084;&#128085;</div>
+                        <h4>Item Groups</h4>
+                        <p>Variants (size, color, etc.)</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#127873;</div>
+                        <h4>Composite Items</h4>
+                        <p>Bundles sold as one unit</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Key Difference</strong>
+                    <strong style="display: inline; font-weight: normal;">Item Groups</strong> = same item, different attributes (T-shirt S/M/L).
+                    <strong style="display: inline; font-weight: normal;">Composite Items</strong> = different items bundled (T-shirt + Shorts + Bag).
+                </div>
+            </div>
+
+            <!-- Items Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">1.1</div>
+                    <div class="section-title">Items (Standalone)</div>
+                </div>
+                <p>Items are the basic unit. Each represents a single product or service.</p>
+
+                <div class="cards">
+                    <div class="card" style="background: var(--success-light); border-color: var(--success);">
+                        <h4 style="color: var(--success);">Goods (Products)</h4>
+                        <p>Physical items with inventory tracking. Has stock, can be stored, valued using FIFO/Weighted Avg.</p>
+                        <div style="margin-top: 8px; font-size: 11px; color: var(--text-light);"><em>E.g., Laptop, T-Shirt, Coffee</em></div>
+                    </div>
+                    <div class="card" style="background: var(--primary-lighter); border-color: var(--primary);">
+                        <h4 style="color: var(--primary-dark);">Services</h4>
+                        <p>Non-physical items, no inventory. Delivered, not stored. Time or task based.</p>
+                        <div style="margin-top: 8px; font-size: 11px; color: var(--text-light);"><em>E.g., Installation, Consulting, Repair</em></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Item Groups Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">1.2</div>
+                    <div class="section-title">Item Groups (Variants)</div>
+                </div>
+                <p>Create multiple variants of the same item with attributes like size, color, material.</p>
+
+                <div class="cards">
+                    <div class="card" style="background: var(--error-light); border-color: var(--error);">
+                        <h4 style="color: var(--error);">Without Item Groups</h4>
+                        <ul style="font-size: 11px; color: var(--text); padding-left: 16px; margin-top: 8px;">
+                            <li>T-Shirt Small Blue</li>
+                            <li>T-Shirt Small Red</li>
+                            <li>T-Shirt Medium Blue</li>
+                            <li style="color: var(--text-light);">... 12+ items to manage</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="background: var(--success-light); border-color: var(--success);">
+                        <h4 style="color: var(--success);">With Item Groups</h4>
+                        <div style="font-size: 12px; margin-top: 8px;">
+                            <strong>Group:</strong> T-Shirt<br>
+                            <span style="background: var(--primary-lighter); padding: 2px 6px; border-radius: 4px; font-size: 10px;">Size: S, M, L, XL</span>
+                            <span style="background: var(--warning-light); padding: 2px 6px; border-radius: 4px; font-size: 10px;">Color: Blue, Red</span>
+                        </div>
+                        <p style="color: var(--success); margin-top: 8px;">System generates all variants automatically</p>
+                    </div>
+                </div>
+
+                <div class="info-box success">
+                    <strong>Variant Pricing</strong>
+                    All variants inherit the base price. Override individual variants when needed (e.g., XL +$3, Premium color +$10).
+                </div>
+            </div>
+
+            <!-- Composite Items Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">1.3</div>
+                    <div class="section-title">Composite Items</div>
+                </div>
+                <p>Group different items together and sell as a single unit. Two types based on inventory tracking.</p>
+
+                <div class="cards">
+                    <div class="card" style="background: var(--primary-lighter); border-color: var(--primary);">
+                        <h4 style="color: var(--primary-dark);">Assembly Item</h4>
+                        <p>Items combined into a single unit. Inventory tracked at assembled level.</p>
+                        <div style="margin-top: 8px; font-size: 11px;">
+                            <strong>Example:</strong> Desktop Computer<br>
+                            CPU + RAM + HDD &#8594; Build &#8594; Track "Computer" stock
+                        </div>
+                    </div>
+                    <div class="card" style="background: var(--warning-light); border-color: var(--warning);">
+                        <h4 style="color: #b45309;">Kit Item</h4>
+                        <p>Items sold together but remain separate. Inventory at component level.</p>
+                        <div style="margin-top: 8px; font-size: 11px;">
+                            <strong>Example:</strong> Gift Basket<br>
+                            Wine + Cheese + Crackers &#8594; Each reduces on sale
+                        </div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr><th>Scenario</th><th>Type</th><th>Why</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Manufacturing PCs from parts</td><td><strong style="color: var(--primary);">Assembly</strong></td><td>Components combined, can't separate</td></tr>
+                        <tr><td>Gift basket with wine + cheese</td><td><strong style="color: #b45309;">Kit</strong></td><td>Items can be sold separately too</td></tr>
+                        <tr><td>Furniture set (table + chairs)</td><td><strong style="color: #b45309;">Kit</strong></td><td>Each piece has own identity</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box warning">
+                    <strong>Associated Services</strong>
+                    Composite Items can include services (e.g., Washing Machine + Free Installation). Track cost even for free services to calculate true margins.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 2: ITEM NATURE -->
+        <!-- ============================================== -->
+        <div class="panel" id="item-nature">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">2</div>
+                    <div class="section-title">Item Nature Parameters</div>
+                </div>
+                <p>Parameters that apply based on item nature - Goods, Services, or Utilities.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4 style="color: var(--success);">&#128230; Goods</h4>
+                        <p><strong>40 Fields</strong> | HSN Code | Inventory: Yes</p>
+                        <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Physical products - tangible</div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #8b5cf6;">
+                        <h4 style="color: #8b5cf6;">&#128295; Services</h4>
+                        <p><strong>29 Fields</strong> | SAC Code | Inventory: No</p>
+                        <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Effort/time based - intangible</div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4 style="color: var(--warning);">&#9889; Utilities</h4>
+                        <p><strong>28 Fields</strong> | SAC Code | Inventory: No</p>
+                        <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Consumables & recurring</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">2.1</div>
+                    <div class="section-title">Tangible vs Intangible</div>
+                </div>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Tangible (Goods)</h4>
+                        <ul style="font-size: 12px; color: var(--text-light); padding-left: 16px; margin-top: 8px;">
+                            <li>Physical products</li>
+                            <li>Weight, dimensions, packaging</li>
+                            <li>Inventory tracking</li>
+                            <li>Barcode/QR support</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #8b5cf6;">
+                        <h4>Intangible (Services/Utilities)</h4>
+                        <ul style="font-size: 12px; color: var(--text-light); padding-left: 16px; margin-top: 8px;">
+                            <li>No physical attributes</li>
+                            <li>No/limited inventory</li>
+                            <li>Time or consumption based</li>
+                            <li>Delivered, not stored</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">2.2</div>
+                    <div class="section-title">Common Parameters (All Types)</div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr><th>Category</th><th>Fields</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Tenant Hierarchy</strong></td><td>id, reseller_id, workspace_id, organisation_ids, is_shared</td><td>Multi-tenant structure</td></tr>
+                        <tr><td><strong>Product & SKU</strong></td><td>product_code*, sku</td><td>Identification</td></tr>
+                        <tr><td><strong>Basic Info</strong></td><td>name*, short_name, description, internal_notes</td><td>Display information</td></tr>
+                        <tr><td><strong>Classification</strong></td><td>item_type*, item_nature*, tax_code, category_id, commodity_id</td><td>Categorization</td></tr>
+                        <tr><td><strong>UOM</strong></td><td>primary_uom*, base_uom, conversion_factor</td><td>Units of measure</td></tr>
+                        <tr><td><strong>Status</strong></td><td>status*, is_active*, activation_date, discontinuation_date</td><td>Lifecycle</td></tr>
+                        <tr><td><strong>Audit</strong></td><td>created_at*, updated_at*, created_by, updated_by</td><td>Tracking</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">2.3</div>
+                    <div class="section-title">Goods-Only Parameters</div>
+                </div>
+                <p>Physical attributes that only apply to tangible goods.</p>
+
+                <table>
+                    <thead>
+                        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>net_weight</td><td>Decimal</td><td>Product weight without packaging</td></tr>
+                        <tr><td>gross_weight</td><td>Decimal</td><td>Weight with packaging</td></tr>
+                        <tr><td>tare_weight</td><td>Decimal</td><td>Packaging weight only</td></tr>
+                        <tr><td>weight_unit</td><td>Enum</td><td>g, kg, lb, oz</td></tr>
+                        <tr><td>length, width, height</td><td>Decimal</td><td>Dimensions</td></tr>
+                        <tr><td>dimension_unit</td><td>Enum</td><td>cm, m, in, ft</td></tr>
+                        <tr><td>manufacturer_id</td><td>UUID</td><td>Manufacturer reference</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <strong>Hidden for Services/Utilities</strong>
+                    These 11 fields are hidden when item_nature is 'service' or 'utility' since they don't apply to intangible items.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 3: COMMODITY -->
+        <!-- ============================================== -->
+        <div class="panel" id="commodity">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">3</div>
+                    <div class="section-title">Commodity Parameters</div>
+                </div>
+                <p>Industry-specific parameters for categorizing and taxing items.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--primary);">
+                        <h4>Category</h4>
+                        <p>Broad grouping for organization</p>
+                        <div style="font-size: 11px; color: var(--text-light);">e.g., Electronics, Food</div>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--warning);">
+                        <h4>Sub-Category</h4>
+                        <p>Further classification within category</p>
+                        <div style="font-size: 11px; color: var(--text-light);">e.g., Computers, Spices</div>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--success);">
+                        <h4>Commodity</h4>
+                        <p>Product type with custom parameters</p>
+                        <div style="font-size: 11px; color: var(--text-light);">e.g., Laptops, Green Cardamom</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Independent Classifications</strong>
+                    Category, Sub-Category, and Commodity are <strong>independent</strong> - no enforced hierarchy between them. Each can be assigned separately to an item based on your organization's needs.
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">3.2</div>
+                    <div class="section-title">Tax Codes (HSN/SAC)</div>
+                </div>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>HSN Code (Goods)</h4>
+                        <p>Harmonized System of Nomenclature. 4-8 digit code for goods classification.</p>
+                        <div style="margin-top: 8px; font-size: 11px; font-family: monospace; background: var(--bg); padding: 4px 8px; border-radius: 4px;">
+                            8471 - Computers | 6109 - T-shirts
+                        </div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #8b5cf6;">
+                        <h4>SAC Code (Services)</h4>
+                        <p>Service Accounting Code. 6 digit code for services classification.</p>
+                        <div style="margin-top: 8px; font-size: 11px; font-family: monospace; background: var(--bg); padding: 4px 8px; border-radius: 4px;">
+                            998314 - IT Services | 995411 - Repair
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">3.3</div>
+                    <div class="section-title">Tax Management (Separate Module)</div>
+                </div>
+                <p>Tax Management is a <strong>separate module</strong> that maintains HSN/SAC to Tax Class mappings.</p>
+
+                <div class="flow">
+                    <div class="flow-box">Enter HSN/SAC<small>e.g., 8471</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box success">Auto-Select Tax Class<small>GST 18%</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box warning">Override if needed<small>Optional</small></div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr><th>HSN/SAC</th><th>Description</th><th>Default Tax Class</th><th>Override?</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>8471</td><td>Computers</td><td>GST 18%</td><td>Yes</td></tr>
+                        <tr><td>6109</td><td>T-shirts</td><td>GST 5%</td><td>Yes</td></tr>
+                        <tr><td>998314</td><td>IT Services</td><td>GST 18%</td><td>Yes</td></tr>
+                        <tr><td>0902</td><td>Tea</td><td>GST 5%</td><td>Yes</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <strong>How It Works</strong>
+                    When you enter an HSN/SAC code on an item, the system looks up the mapping and auto-selects the corresponding tax class. You can override this selection if needed for special cases (e.g., exemptions, specific schemes).
+                </div>
+
+                <div class="info-box warning">
+                    <strong>Tax Classes Available</strong>
+                    GST 0% (Exports, Essentials) | GST 5% (Basic goods) | GST 12% (Standard) | GST 18% (Most items) | GST 28% (Luxury)
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">3.4</div>
+                    <div class="section-title">Commodity Parameters Builder</div>
+                </div>
+                <p>Different products need different information. A Green Cardamom needs "Moisture Content" while a Laptop needs "RAM Size". Define custom fields per commodity that appear automatically when users select that commodity.</p>
+
+                <div class="flow">
+                    <div class="flow-box">Ecosystem Library<small>Master schema</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box warning">Workspace Fork<small>Customize</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box success">Item Entry<small>User fills data</small></div>
+                </div>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>Field (1D) - Single Value</h4>
+                        <p>Capture one piece of information per parameter.</p>
+                        <table style="margin-top: 12px; font-size: 11px;">
+                            <tr><td><strong>Text</strong></td><td>Lot Number, Lab Name</td></tr>
+                            <tr><td><strong>Number</strong></td><td>Harvest Year, Shelf Life</td></tr>
+                            <tr><td><strong>Decimal</strong></td><td>Moisture %, Oil Content</td></tr>
+                            <tr><td><strong>Dropdown</strong></td><td>Country, Processing Type</td></tr>
+                            <tr><td><strong>Multi-select</strong></td><td>Certifications</td></tr>
+                            <tr><td><strong>Boolean</strong></td><td>Is Organic?, Export Grade</td></tr>
+                            <tr><td><strong>Date</strong></td><td>Lab Test Date, Auction Date</td></tr>
+                        </table>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Matrix (2D) - Grid Data</h4>
+                        <p>User-defined grid for distributions and multi-dimensional data.</p>
+                        <div style="margin-top: 12px; font-size: 11px;">
+                            <strong>How it works:</strong>
+                            <ol style="margin: 8px 0 0 16px; padding: 0;">
+                                <li>User specifies rows × columns</li>
+                                <li>User names each row and column</li>
+                                <li>User fills values in cells</li>
+                            </ol>
+                            <div style="margin-top: 8px; color: var(--text-light);">
+                                <strong>Validation:</strong> matrix_total = 100%, row totals, column totals, cell min/max
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="policy-box">
+                    <h4>Example: Green Cardamom Grade Distribution (Matrix)</h4>
+                    <table style="font-size: 11px; margin-top: 12px;">
+                        <thead>
+                            <tr><th>Size Grade</th><th>Clean Green</th><th>Light Green</th><th>Yellowish</th><th>Splits</th><th style="background: var(--primary-dark);">Row %</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>8.5mm (AGEB)</td><td>12%</td><td>8%</td><td>5%</td><td>5%</td><td><strong>30%</strong></td></tr>
+                            <tr><td>8mm+ (AGB)</td><td>10%</td><td>7%</td><td>4%</td><td>4%</td><td><strong>25%</strong></td></tr>
+                            <tr><td>7-8mm (AGS)</td><td>9%</td><td>6%</td><td>5%</td><td>5%</td><td><strong>25%</strong></td></tr>
+                            <tr><td>6-7mm (AGS1)</td><td>6%</td><td>5%</td><td>5%</td><td>4%</td><td><strong>20%</strong></td></tr>
+                            <tr style="background: var(--success-light);"><td><strong>Total</strong></td><td>37%</td><td>26%</td><td>19%</td><td>18%</td><td><strong>100%</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box success">
+                    <strong>Fork & Extend Model</strong>
+                    Ecosystem defines master schema. Workspaces can: show/hide fields, make optional fields required, add dropdown options, create workspace-specific parameters. Cannot delete ecosystem fields, only hide them.
+                </div>
+
+                <div class="info-box">
+                    <strong>On Item Page</strong>
+                    When user selects a commodity (e.g., "Green Cardamom"), the defined parameters appear automatically in organized sections. Users just fill in the data - complexity is hidden in the schema.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 4: FINANCIAL -->
+        <!-- ============================================== -->
+        <div class="panel" id="financial">
+            <!-- 4.0 Core Concept -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4</div>
+                    <div class="section-title">Financial Parameters</div>
+                </div>
+                <p>Items are commercial definitions. The <strong>transaction context</strong> determines how they're treated financially. This is event-driven accounting.</p>
+
+                <div class="policy-box">
+                    <h4>The Core Principle</h4>
+                    <p>The same item can be <strong>Inventory</strong>, <strong>Expense</strong>, or <strong>Fixed Asset</strong> - depending on how it's used. The item doesn't decide accounting; transactions do.</p>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px;">
+                        <div style="background: var(--success-light); padding: 12px; border-radius: 8px; text-align: center; border: 2px solid var(--success);">
+                            <strong style="color: var(--success);">Inventory</strong>
+                            <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">Purchased for resale</p>
+                        </div>
+                        <div style="background: var(--error-light); padding: 12px; border-radius: 8px; text-align: center; border: 2px solid var(--error);">
+                            <strong style="color: var(--error);">Expense</strong>
+                            <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">Consumed in operations</p>
+                        </div>
+                        <div style="background: var(--primary-lighter); padding: 12px; border-radius: 8px; text-align: center; border: 2px solid var(--primary);">
+                            <strong style="color: var(--primary-dark);">Fixed Asset</strong>
+                            <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">Long-term internal use</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Event-Driven Architecture: How It Works</h4>
+                <p>Items hold parameters. Events read those parameters and create journal entries. The journal is the source of truth.</p>
+
+                <div style="background: var(--bg); border-radius: 10px; padding: 20px; margin: 16px 0;">
+                    <div style="font-family: 'Monaco', 'Consolas', monospace; font-size: 11px; line-height: 1.8;">
+                        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: center; text-align: center;">
+                            <div style="background: var(--white); border: 2px solid var(--border); border-radius: 8px; padding: 12px;">
+                                <strong style="color: var(--primary-dark);">ITEM</strong>
+                                <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Holds parameters</div>
+                                <div style="font-size: 9px; color: var(--text-light);">valuation method, HSN, etc.</div>
+                            </div>
+                            <span style="color: var(--text-light);">→</span>
+                            <div style="background: var(--warning-light); border: 2px solid var(--warning); border-radius: 8px; padding: 12px;">
+                                <strong style="color: #b45309;">EVENT</strong>
+                                <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Triggers processing</div>
+                                <div style="font-size: 9px; color: var(--text-light);">purchase, sale, transfer</div>
+                            </div>
+                            <span style="color: var(--text-light);">→</span>
+                            <div style="background: var(--success-light); border: 2px solid var(--success); border-radius: 8px; padding: 12px;">
+                                <strong style="color: var(--success);">JOURNAL ENTRY</strong>
+                                <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Source of truth</div>
+                                <div style="font-size: 9px; color: var(--text-light);">Dr/Cr accounts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card" style="border-top: 3px solid var(--primary);">
+                        <h4>Purchase Event</h4>
+                        <ol style="font-size: 11px; margin: 8px 0 0 16px; padding: 0; line-height: 1.8;">
+                            <li>PO received → triggers purchase event</li>
+                            <li>System reads item's valuation method</li>
+                            <li>System reads item's HSN → determines tax</li>
+                            <li>Cost layers updated (FIFO) or average recalculated</li>
+                            <li>Journal entry created:<br>
+                                <code style="font-size: 10px;">Dr Inventory | Cr Accounts Payable</code>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--success);">
+                        <h4>Sale Event</h4>
+                        <ol style="font-size: 11px; margin: 8px 0 0 16px; padding: 0; line-height: 1.8;">
+                            <li>Invoice created → triggers sale event</li>
+                            <li>System reads item's valuation method</li>
+                            <li>COGS calculated (FIFO: oldest layer, or avg cost)</li>
+                            <li>Store's price list applied → selling price</li>
+                            <li>Journal entries created:<br>
+                                <code style="font-size: 10px;">Dr COGS | Cr Inventory</code><br>
+                                <code style="font-size: 10px;">Dr Receivable | Cr Revenue</code>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Key Insight</strong>
+                    Items don't "do" accounting. Items are data. Events read item data, apply policies, and create journal entries. The sections below define the parameters that events consume.
+                </div>
+            </div>
+
+            <!-- 4.1 Permission Flags -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4.1</div>
+                    <div class="section-title">Permission Flags</div>
+                </div>
+                <p>Each item has permission flags that control where it appears in the system.</p>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4><code>can_sell = TRUE</code></h4>
+                        <p>Item appears in Sales screens, can be added to sales orders</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4><code>can_purchase = TRUE</code></h4>
+                        <p>Item appears in Purchase screens, can be added to purchase orders</p>
+                    </div>
+                </div>
+
+                <div class="info-box warning">
+                    <strong>Example:</strong> "Company Laptop" might have <code>can_purchase = TRUE</code> (IT can buy it) but <code>can_sell = FALSE</code> (you don't sell laptops to customers).
+                </div>
+            </div>
+
+            <!-- 4.2 Price Lists -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4.2</div>
+                    <div class="section-title">Price Lists</div>
+                </div>
+                <p>A Price List is a reusable pricing configuration that determines how prices are calculated. Instead of setting individual prices on each item, create price lists applied to groups of items.</p>
+
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Pricing Formula</h4>
+                <div class="flow">
+                    <div class="flow-box">Purchase Cost<small>Base cost</small></div>
+                    <span class="flow-arrow">+</span>
+                    <div class="flow-box warning">Expenses<small>Shipping, handling</small></div>
+                    <span class="flow-arrow">+</span>
+                    <div class="flow-box success">Margin<small>Profit</small></div>
+                    <span class="flow-arrow">=</span>
+                    <div class="flow-box" style="background: var(--text);">Final Price</div>
+                </div>
+
+                <div class="policy-box">
+                    <h4>Calculation Example</h4>
+                    <table style="margin-top: 12px;">
+                        <tbody>
+                            <tr><td><strong>Purchase Cost</strong></td><td style="text-align: right; font-family: monospace;">$100.00</td></tr>
+                            <tr><td>+ Shipping</td><td style="text-align: right; font-family: monospace;">$10.00</td></tr>
+                            <tr><td>+ Handling</td><td style="text-align: right; font-family: monospace;">$5.00</td></tr>
+                            <tr><td>+ Storage</td><td style="text-align: right; font-family: monospace;">$5.00</td></tr>
+                            <tr style="background: var(--warning-light);"><td><strong>= Landed Cost</strong></td><td style="text-align: right; font-family: monospace;"><strong>$120.00</strong></td></tr>
+                            <tr><td>+ Margin (25%)</td><td style="text-align: right; font-family: monospace; color: var(--success);">$30.00</td></tr>
+                            <tr style="background: var(--success-light);"><td><strong style="color: var(--success);">= Final Selling Price</strong></td><td style="text-align: right; font-family: monospace;"><strong style="color: var(--success);">$150.00</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box warning">
+                    <strong>Expense Linking (Until BOM)</strong>
+                    <p style="margin: 4px 0 0;">Until Bill of Materials (BOM) functionality is available, expenses (shipping, handling, storage) are set at the <strong>item level</strong> in inventory. Users can override these values per transaction if needed.</p>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Margin Types</h4>
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--success);">
+                        <div style="font-size: 24px;">%</div>
+                        <h4>Percentage</h4>
+                        <p style="font-size: 11px;">Add % on landed cost</p>
+                        <div style="font-family: monospace; font-size: 10px; background: var(--bg); padding: 6px; border-radius: 4px; margin-top: 8px;">$120 + 25% = $150</div>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--primary);">
+                        <div style="font-size: 24px;">$</div>
+                        <h4>Fixed Amount</h4>
+                        <p style="font-size: 11px;">Add fixed $ amount</p>
+                        <div style="font-family: monospace; font-size: 10px; background: var(--bg); padding: 6px; border-radius: 4px; margin-top: 8px;">$120 + $30 = $150</div>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--warning);">
+                        <div style="font-size: 24px;">&#128200;</div>
+                        <h4>Tiered</h4>
+                        <p style="font-size: 11px;">Margin varies by qty</p>
+                        <div style="font-family: monospace; font-size: 10px; background: var(--bg); padding: 6px; border-radius: 4px; margin-top: 8px;">1-10: 30% | 11-50: 20%</div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Multiple Price Lists Per Item</h4>
+                <p>The same item can have different prices depending on which price list is applied:</p>
+                <table>
+                    <thead>
+                        <tr><th>Price List</th><th>Type</th><th>Calculation</th><th>Final Price</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Retail Standard</td><td style="color: var(--success);">Markup 40%</td><td>$700 + 40%</td><td><strong>$980</strong></td></tr>
+                        <tr><td>Wholesale Bulk</td><td style="color: var(--success);">Markup 15%</td><td>$700 + 15%</td><td><strong>$805</strong></td></tr>
+                        <tr><td>Employee Discount</td><td style="color: var(--error);">Markdown 10%</td><td>$700 - 10%</td><td><strong>$630</strong></td></tr>
+                        <tr><td>Clearance Sale</td><td style="color: var(--error);">Markdown 30%</td><td>$700 - 30%</td><td><strong>$490</strong></td></tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Round Off Options</h4>
+                <table>
+                    <thead><tr><th>Round To</th><th>Input</th><th>Result</th><th>Use Case</th></tr></thead>
+                    <tbody>
+                        <tr><td>Never mind</td><td>1000.678</td><td>1000.678</td><td>Keep exact value</td></tr>
+                        <tr><td>Nearest whole</td><td>1000.678</td><td>1001</td><td>Simple pricing</td></tr>
+                        <tr><td>0.99</td><td>1000.678</td><td>1000.99</td><td>Psychological ($X.99)</td></tr>
+                        <tr><td>0.50</td><td>1000.678</td><td>1000.50</td><td>Half-dollar</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 4.3 Discounts & Offers -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4.3</div>
+                    <div class="section-title">Discounts & Offers</div>
+                </div>
+                <p>Discounts are <strong>store-specific promotions</strong> applied ON TOP of price lists. They are separate from price lists.</p>
+
+                <div class="flow">
+                    <div class="flow-box">Base Price<small>Item cost</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box warning">Price List<small>Markup/Markdown</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box success">Discounts<small>Store-specific</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box" style="background: var(--text);">Customer Pays</div>
+                </div>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Price List</h4>
+                        <ul style="font-size: 12px; margin: 8px 0 0 16px; padding: 0;">
+                            <li>Sets the base selling price</li>
+                            <li>Applied at business level</li>
+                            <li>Permanent pricing strategy</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Discounts & Offers</h4>
+                        <ul style="font-size: 12px; margin: 8px 0 0 16px; padding: 0;">
+                            <li>Reduces from list price</li>
+                            <li>Applied at store level</li>
+                            <li>Time-limited promotions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Offer Sets: Many Sets, One Active</h4>
+                <p>You can create <strong>multiple offer sets</strong> (Summer Sale, Diwali Sale, Clearance, New Year), but only <strong>ONE can be active per store</strong> at any time.</p>
+
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap;">
+                    <div style="background: var(--bg); border: 2px dashed var(--border); border-radius: 8px; padding: 10px 14px; text-align: center; opacity: 0.6;">
+                        <div style="font-size: 10px; color: var(--text-light);">Offer Set</div>
+                        <strong style="color: var(--text-light); font-size: 11px;">Summer Sale</strong>
+                        <div style="font-size: 9px; color: var(--text-light); margin-top: 2px;">INACTIVE</div>
+                    </div>
+                    <div style="background: var(--success-light); border: 2px solid var(--success); border-radius: 8px; padding: 10px 14px; text-align: center;">
+                        <div style="font-size: 10px; color: var(--success);">Offer Set</div>
+                        <strong style="color: var(--success); font-size: 11px;">Diwali Sale</strong>
+                        <div style="font-size: 9px; color: var(--success); margin-top: 2px;">ACTIVE</div>
+                    </div>
+                    <div style="background: var(--bg); border: 2px dashed var(--border); border-radius: 8px; padding: 10px 14px; text-align: center; opacity: 0.6;">
+                        <div style="font-size: 10px; color: var(--text-light);">Offer Set</div>
+                        <strong style="color: var(--text-light); font-size: 11px;">Clearance</strong>
+                        <div style="font-size: 9px; color: var(--text-light); margin-top: 2px;">INACTIVE</div>
+                    </div>
+                    <div style="background: var(--bg); border: 2px dashed var(--border); border-radius: 8px; padding: 10px 14px; text-align: center; opacity: 0.6;">
+                        <div style="font-size: 10px; color: var(--text-light);">Offer Set</div>
+                        <strong style="color: var(--text-light); font-size: 11px;">New Year</strong>
+                        <div style="font-size: 9px; color: var(--text-light); margin-top: 2px;">INACTIVE</div>
+                    </div>
+                </div>
+
+                <div class="info-box warning">
+                    <strong>Why Only One Active?</strong> Activating a new offer set automatically deactivates the current one. This prevents conflicting discounts and keeps pricing predictable.
+                </div>
+
+                <div class="policy-box">
+                    <h4>Spend-Based Tiers (Within Offer Set)</h4>
+                    <table style="margin-top: 12px;">
+                        <thead><tr><th>Spending Tier</th><th>Discount</th><th>Customer Pays</th></tr></thead>
+                        <tbody>
+                            <tr><td>$0 - $499</td><td>5% off</td><td>$475 on $500 purchase</td></tr>
+                            <tr style="background: var(--warning-light);"><td>$500 - $999</td><td style="color: var(--warning);">10% off</td><td>$900 on $1,000 purchase</td></tr>
+                            <tr style="background: var(--success-light);"><td>$1,000+</td><td style="color: var(--success);"><strong>15% off</strong></td><td>$850 on $1,000 purchase</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4.4 Inventory Valuation -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4.4</div>
+                    <div class="section-title">Inventory Valuation</div>
+                </div>
+                <p>Determines <strong>how you calculate the cost</strong> of items in stock. Each item has ONE valuation method.</p>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>FIFO (First In, First Out)</h4>
+                        <p>Oldest inventory sold first. COGS reflects older prices.</p>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; margin-top: 10px; font-family: monospace; font-size: 10px;">
+                            Jan: 10 @ $100<br>Feb: 10 @ $120<br>Sell 5: <strong>5 × $100 = $500</strong>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;"><em>Best for: Perishables, dated inventory</em></div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Weighted Average</h4>
+                        <p>All units valued at average cost. Each purchase updates average.</p>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; margin-top: 10px; font-family: monospace; font-size: 10px;">
+                            Jan: 10 @ $100<br>Feb: 10 @ $120<br>Avg: $110<br>Sell 5: <strong>5 × $110 = $550</strong>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;"><em>Best for: Commodities, homogeneous items</em></div>
+                    </div>
+                </div>
+
+                <div class="info-box warning">
+                    <strong>One Method Per Item</strong>
+                    Cannot use FIFO for one store and Weighted Average for another. Must be consistent across all locations for accurate accounting.
+                </div>
+            </div>
+
+            <!-- 4.5 Fixed Assets & Depreciation -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4.5</div>
+                    <div class="section-title">Fixed Assets & Depreciation</div>
+                </div>
+                <p>When items are purchased/produced for long-term internal use (not resale), they become <strong>Fixed Assets</strong> that lose value over time through depreciation.</p>
+
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Asset Categories</h4>
+                <p>Define default depreciation rules for groups of similar assets:</p>
+                <table>
+                    <thead><tr><th>Category</th><th>Useful Life</th><th>Salvage</th><th>Method</th><th>Frequency</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Office Furniture</strong></td><td>7 years</td><td>10%</td><td>Straight Line</td><td>Monthly</td></tr>
+                        <tr><td><strong>Computer Equipment</strong></td><td>3 years</td><td>$0</td><td>Straight Line</td><td>Monthly</td></tr>
+                        <tr><td><strong>Vehicles</strong></td><td>5 years</td><td>15%</td><td>Declining Balance</td><td>Monthly</td></tr>
+                        <tr><td><strong>Machinery</strong></td><td>10 years</td><td>5%</td><td>Straight Line</td><td>Monthly</td></tr>
+                        <tr><td><strong>Buildings</strong></td><td>30 years</td><td>20%</td><td>Straight Line</td><td>Annually</td></tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Depreciation Methods</h4>
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>Straight Line</h4>
+                        <p><strong>Same amount every year.</strong> Simple and predictable.</p>
+                        <div style="font-family: monospace; font-size: 11px; background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 10px;">
+                            (Cost - Salvage) / Useful Life
+                        </div>
+                        <div style="font-size: 11px; margin-top: 10px;">
+                            <strong>Example:</strong> $10,000, $1,000 salvage, 5 years<br>
+                            ($10,000 - $1,000) / 5 = <strong style="color: var(--primary);">$1,800/year</strong>
+                        </div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Declining Balance</h4>
+                        <p><strong>Higher depreciation early, less later.</strong> Based on remaining book value.</p>
+                        <div style="font-family: monospace; font-size: 11px; background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 10px;">
+                            Book Value × Rate (Rate = 2 / Life)
+                        </div>
+                        <div style="font-size: 11px; margin-top: 10px;">
+                            <strong>Example:</strong> $10,000, 5 years, 40% rate<br>
+                            Y1: $4,000 | Y2: $2,400 | Y3: $1,440...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box success">
+                    <strong>Why Categories Matter:</strong>
+                    Without categories, users manually enter parameters for every asset. Categories enforce consistency while allowing overrides when needed.
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Step-by-Step: Inventory → Fixed Asset</h4>
+                <div style="background: var(--bg); padding: 20px; border-radius: 12px;">
+                    <div style="display: flex; gap: 16px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+                        <div style="background: var(--primary); color: white; min-width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">1</div>
+                        <div>
+                            <strong style="color: var(--primary-dark);">Item in Inventory</strong>
+                            <p style="font-size: 12px; color: var(--text-light); margin: 4px 0 0;">Executive Desk Set valued at $2,000 (production cost)</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+                        <div style="background: var(--warning); color: white; min-width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">2</div>
+                        <div>
+                            <strong style="color: var(--primary-dark);">Capitalization Transaction</strong>
+                            <p style="font-size: 12px; color: var(--text-light); margin: 4px 0 0;">Select Asset Category: "Office Furniture" → System auto-fills: 7 years, 10% salvage, Straight Line</p>
+                            <div style="font-family: monospace; font-size: 10px; background: white; padding: 6px; border-radius: 4px; margin-top: 6px;">
+                                Dr. Fixed Assets: $2,000 | Cr. Inventory: $2,000
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+                        <div style="background: var(--success); color: white; min-width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">3</div>
+                        <div>
+                            <strong style="color: var(--primary-dark);">Asset Record Created</strong>
+                            <p style="font-size: 12px; color: var(--text-light); margin: 4px 0 0;">Value: $2,000 | Salvage: $200 (10%) | Depreciable: $1,800 | Annual: $257.14</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px;">
+                        <div style="background: var(--text-light); color: white; min-width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">4</div>
+                        <div>
+                            <strong style="color: var(--primary-dark);">Monthly Depreciation (Automatic)</strong>
+                            <div style="font-family: monospace; font-size: 10px; background: white; padding: 6px; border-radius: 4px; margin-top: 6px;">
+                                Dr. Depreciation Expense: $21.43 | Cr. Accumulated Depreciation: $21.43
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.6 Store-Level Pricing -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4.6</div>
+                    <div class="section-title">Store-Level Pricing Hierarchy</div>
+                </div>
+                <p>Business sets default price list, but each store can have its own selling price list.</p>
+
+                <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin: 16px 0;">
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                        <div style="background: var(--primary); color: white; min-width: 80px; padding: 8px 12px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 500;">BUSINESS</div>
+                        <div style="flex: 1; background: white; padding: 12px 16px; border-radius: 8px; border: 2px solid var(--primary);">
+                            <strong style="color: var(--primary-dark);">Base Price List (Default)</strong>
+                            <p style="font-size: 11px; color: var(--text-light); margin: 4px 0 0;">Default pricing for entire organization</p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; color: var(--primary); font-size: 16px; margin: 8px 0;">↓</div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                        <div style="background: var(--warning); color: white; min-width: 80px; padding: 8px 12px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 500;">STORE</div>
+                        <div style="flex: 1; background: white; padding: 12px 16px; border-radius: 8px; border: 2px solid var(--warning);">
+                            <strong style="color: #b45309;">Store Selling Price List</strong>
+                            <p style="font-size: 11px; color: var(--text-light); margin: 4px 0 0;">Override business default for this store</p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; color: var(--primary); font-size: 16px; margin: 8px 0;">↓</div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="background: var(--success); color: white; min-width: 80px; padding: 8px 12px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 500;">DISCOUNT</div>
+                        <div style="flex: 1; background: white; padding: 12px 16px; border-radius: 8px; border: 2px solid var(--success);">
+                            <strong style="color: var(--success);">Store Discounts & Offers</strong>
+                            <p style="font-size: 11px; color: var(--text-light); margin: 4px 0 0;">Time-limited promotions on top of store price</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="policy-box">
+                    <h4>Example: Same Item, Different Store Strategies</h4>
+                    <p style="font-size: 12px; color: var(--text-light);">Item Cost: $2,000 | Business Default: Wholesale (+15%) = $2,300</p>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px;">
+                        <div style="background: var(--bg); padding: 12px; border-radius: 8px; text-align: center;">
+                            <strong style="font-size: 12px;">Wholesale Store</strong>
+                            <div style="font-size: 11px; color: var(--text-light); margin: 4px 0;">Uses Default</div>
+                            <div style="font-size: 16px; font-weight: 600; color: var(--primary-dark);">$2,300</div>
+                        </div>
+                        <div style="background: var(--success-light); padding: 12px; border-radius: 8px; text-align: center; border: 2px solid var(--success);">
+                            <strong style="font-size: 12px;">Retail Showroom</strong>
+                            <div style="font-size: 11px; color: var(--success);">Retail List (+40%)</div>
+                            <div style="font-size: 16px; font-weight: 600; color: var(--success);">$2,800</div>
+                        </div>
+                        <div style="background: var(--warning-light); padding: 12px; border-radius: 8px; text-align: center; border: 2px solid var(--warning);">
+                            <strong style="font-size: 12px;">Premium Outlet</strong>
+                            <div style="font-size: 11px; color: #b45309;">Premium List (+60%)</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #b45309;">$3,200</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box warning">
+                    <strong>Note: Purchasing is Centralized</strong>
+                    Store-level pricing applies only to Sales. Purchasing is done at business/central level with a single purchase price list.
+                </div>
+            </div>
+
+            <!-- 4.7 Key Takeaways -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">4.7</div>
+                    <div class="section-title">Key Takeaways</div>
+                </div>
+                <div style="background: var(--primary-lighter); padding: 20px; border-radius: 12px; border: 2px solid var(--primary);">
+                    <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.8;">
+                        <li><strong>Items are simple definitions</strong> - they don't contain accounting rules or fixed prices</li>
+                        <li><strong>Context determines treatment</strong> - same item can be expense, inventory, or asset</li>
+                        <li><strong>Flags control availability</strong> - <code>can_sell</code> and <code>can_purchase</code> determine where items appear</li>
+                        <li><strong>Price Lists have 3 methods</strong> - Markup, Markdown, and Tiered (quantity-based)</li>
+                        <li><strong>Multiple price lists per item</strong> - retail, wholesale, employee, clearance, etc.</li>
+                        <li><strong>Discounts apply on top</strong> - store-level promotions after price list calculation</li>
+                        <li><strong>Asset Categories define defaults</strong> - depreciation rules can be overridden per asset</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 5: STORES -->
+        <!-- ============================================== -->
+        <div class="panel" id="stores">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5</div>
+                    <div class="section-title">Stores</div>
+                </div>
+                <p>Stores are your selling channels - where customers interact with and purchase your products. A store can be a physical retail location or an online storefront.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card" style="border-top: 4px solid var(--success);">
+                        <h4>Physical Store</h4>
+                        <p>Brick-and-mortar retail locations. Customers visit, browse, and purchase in person.</p>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0; color: var(--text-light);">
+                            <li>Operating hours</li>
+                            <li>Physical address</li>
+                            <li>POS integration</li>
+                            <li>In-store pickup</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-top: 4px solid var(--primary);">
+                        <h4>Online Store</h4>
+                        <p>E-commerce storefronts. Customers browse digitally and purchase online.</p>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0; color: var(--text-light);">
+                            <li>24/7 availability</li>
+                            <li>Domain/URL</li>
+                            <li>PLP/PDP configuration</li>
+                            <li>Delivery/shipping</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">How It Works: Item → Store → Customer</h4>
+                <p>Items exist in Item Master. Stores configure how those items are displayed and priced. The customer sees the result.</p>
+
+                <div style="background: var(--bg); border-radius: 10px; padding: 20px; margin: 16px 0;">
+                    <div style="font-family: 'Monaco', 'Consolas', monospace; font-size: 11px; line-height: 1.8;">
+                        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: center; text-align: center;">
+                            <div style="background: var(--white); border: 2px solid var(--border); border-radius: 8px; padding: 12px;">
+                                <strong style="color: var(--primary-dark);">ITEM MASTER</strong>
+                                <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Product data</div>
+                                <div style="font-size: 9px; color: var(--text-light);">name, images, specs, HSN</div>
+                            </div>
+                            <span style="color: var(--text-light);">→</span>
+                            <div style="background: var(--warning-light); border: 2px solid var(--warning); border-radius: 8px; padding: 12px;">
+                                <strong style="color: #b45309;">STORE CONFIG</strong>
+                                <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Display rules</div>
+                                <div style="font-size: 9px; color: var(--text-light);">price list, visibility, offers</div>
+                            </div>
+                            <span style="color: var(--text-light);">→</span>
+                            <div style="background: var(--success-light); border: 2px solid var(--success); border-radius: 8px; padding: 12px;">
+                                <strong style="color: var(--success);">CUSTOMER VIEW</strong>
+                                <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Final display</div>
+                                <div style="font-size: 9px; color: var(--text-light);">PLP card, PDP page</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card" style="border-top: 3px solid var(--primary);">
+                        <h4>Customer Visits Store (Online)</h4>
+                        <ol style="font-size: 11px; margin: 8px 0 0 16px; padding: 0; line-height: 1.8;">
+                            <li>Customer opens store URL</li>
+                            <li>System reads item's <code>show_in_store</code> flag</li>
+                            <li>System reads store's price list → calculates price</li>
+                            <li>System reads store's tax config → inclusive/exclusive</li>
+                            <li>System reads item's commodity params → specs</li>
+                            <li>PLP/PDP rendered with all data combined</li>
+                        </ol>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--success);">
+                        <h4>Customer Visits Store (Physical)</h4>
+                        <ol style="font-size: 11px; margin: 8px 0 0 16px; padding: 0; line-height: 1.8;">
+                            <li>Customer enters physical location</li>
+                            <li>Staff uses POS system</li>
+                            <li>System reads store's price list → calculates price</li>
+                            <li>System reads store's tax config → receipt format</li>
+                            <li>System checks inventory availability</li>
+                            <li>Sale processed, receipt generated</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Key Insight</strong>
+                    Items don't know which store they're in. Stores pull item data and apply their own configuration (pricing, display rules, offers). The same item can appear differently in different stores.
+                </div>
+
+                <div class="info-box warning" style="margin-top: 12px;">
+                    <strong>Store vs Inventory</strong>
+                    Stores are <strong>selling channels</strong>, not storage locations. Inventory management (stock levels, transfers, warehouses) is handled in a separate Inventory module. Stores define <em>where and how you sell</em>, Inventory defines <em>what stock you have</em>.
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.1</div>
+                    <div class="section-title">Store Properties</div>
+                </div>
+
+                <div class="cards">
+                    <div class="card"><strong>Store Name*</strong><p>Display name of the store</p></div>
+                    <div class="card"><strong>Store Code</strong><p>Unique identifier</p></div>
+                    <div class="card"><strong>Address</strong><p>Physical location</p></div>
+                    <div class="card"><strong>Contact</strong><p>Phone, email</p></div>
+                    <div class="card"><strong>Operating Hours</strong><p>Business hours</p></div>
+                    <div class="card"><strong>Price List</strong><p>Store-specific pricing</p></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.2</div>
+                    <div class="section-title">Store-Level Pricing</div>
+                </div>
+                <p>Each store can be assigned its own selling price list. The price list determines how prices are calculated for that store.</p>
+
+                <table>
+                    <thead>
+                        <tr><th>Store Type</th><th>Typical Price List</th><th>Example</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Flagship Retail</td><td>Full retail markup</td><td>Retail (+40%)</td></tr>
+                        <tr><td>Outlet Store</td><td>Discounted markup</td><td>Outlet (-20%)</td></tr>
+                        <tr><td>Wholesale Channel</td><td>Lower markup for bulk</td><td>Wholesale (+15%)</td></tr>
+                        <tr><td>Online Store</td><td>Competitive pricing</td><td>Online (+30%)</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <strong>See Financial Tab</strong>
+                    For complete details on price lists, pricing formulas, margins, discounts, and offer sets, refer to the <strong>Financial Parameters</strong> tab.
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.3</div>
+                    <div class="section-title">Tax Display Configuration</div>
+                </div>
+                <p>Whether prices are shown with or without tax is configured at the store level.</p>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Tax Inclusive</h4>
+                        <p>Displayed price includes tax. Common for B2C retail.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            $118 shown = $100 price + $18 GST
+                        </div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>Tax Exclusive</h4>
+                        <p>Displayed price excludes tax. Tax added at checkout. Common for B2B.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            $100 shown + $18 GST = $118 at checkout
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Store-Level Setting</strong>
+                    This is configured per store, not per item. All items in a store follow the same tax display rule.
+                </div>
+            </div>
+
+            <!-- 5.4 Store Item Configuration -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.4</div>
+                    <div class="section-title">Store Item Configuration</div>
+                </div>
+                <p>Configure how each item appears and behaves in the store. These are item-level settings within a store context.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="border-top: 3px solid var(--primary);">
+                        <h4>Display Settings</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Show/Hide in store</li>
+                            <li>Display price</li>
+                            <li>Tags (Bestseller, New)</li>
+                            <li>USP/Key highlights</li>
+                            <li>Banners attachment</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--success);">
+                        <h4>Offers & Promotions</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Active offers on item</li>
+                            <li>Free shipping threshold</li>
+                            <li>Bundle deals</li>
+                            <li>Countdown timers</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--warning);">
+                        <h4>Return & Shipping</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Is returnable?</li>
+                            <li>Return conditions</li>
+                            <li>Return window (days)</li>
+                            <li>Free shipping above $X</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Commodity Params Auto-Display</strong>
+                    When an item has a commodity assigned, the commodity-specific parameters automatically appear on the product page (e.g., Green Cardamom shows Moisture %, Grade Distribution).
+                </div>
+            </div>
+
+            <!-- 5.5 E-commerce Pages Overview -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.5</div>
+                    <div class="section-title">E-commerce Pages Overview</div>
+                </div>
+                <p>Online stores have two main page types that display items to customers. Understanding these is essential for configuring how products appear.</p>
+
+                <div style="background: var(--bg); border-radius: 10px; padding: 20px; margin: 16px 0;">
+                    <div style="font-family: 'Monaco', 'Consolas', monospace; font-size: 11px; line-height: 1.8; text-align: center;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                            <div style="background: var(--white); border: 2px solid var(--border); border-radius: 6px; padding: 8px 12px;">HOME</div>
+                            <span style="color: var(--text-light);">→</span>
+                            <div style="background: var(--white); border: 2px solid var(--border); border-radius: 6px; padding: 8px 12px;">CATEGORY</div>
+                            <span style="color: var(--text-light);">→</span>
+                            <div style="background: var(--warning-light); border: 2px solid var(--warning); border-radius: 6px; padding: 8px 12px;">
+                                <strong style="color: #b45309;">PLP</strong>
+                            </div>
+                            <span style="color: var(--text-light);">→ click →</span>
+                            <div style="background: var(--success-light); border: 2px solid var(--success); border-radius: 6px; padding: 8px 12px;">
+                                <strong style="color: var(--success);">PDP</strong>
+                            </div>
+                            <span style="color: var(--text-light);">→</span>
+                            <div style="background: var(--white); border: 2px solid var(--border); border-radius: 6px; padding: 8px 12px;">CART</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>PLP - Product Listing Page</h4>
+                        <p><strong>Shows MANY products.</strong> A grid of product cards.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            <strong>Examples:</strong>
+                            <ul style="margin: 4px 0 0 16px; padding: 0;">
+                                <li>Amazon search results</li>
+                                <li>Category page ("All Laptops")</li>
+                                <li>Sale/collection page</li>
+                            </ul>
+                        </div>
+                        <div style="font-size: 10px; background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 10px;">
+                            <strong>Goal:</strong> Get customer to CLICK on a product
+                        </div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>PDP - Product Detail Page</h4>
+                        <p><strong>Shows ONE product.</strong> Full details, images, specs.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            <strong>Examples:</strong>
+                            <ul style="margin: 4px 0 0 16px; padding: 0;">
+                                <li>Click any product on Amazon</li>
+                                <li>Direct product link shared</li>
+                                <li>QR code scan destination</li>
+                            </ul>
+                        </div>
+                        <div style="font-size: 10px; background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 10px;">
+                            <strong>Goal:</strong> Get customer to ADD TO CART
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Why This Matters</strong>
+                    PLP and PDP have different jobs. PLP must grab attention in 3 seconds with limited space. PDP must answer all questions and remove hesitation. The sections below detail what data appears on each.
+                </div>
+            </div>
+
+            <!-- 5.6 Product Listing Page (PLP) -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.6</div>
+                    <div class="section-title">Product Listing Page (PLP)</div>
+                </div>
+                <p>The PLP is your 24/7 salesperson. Each card must communicate maximum value within 3-4 seconds.</p>
+
+                <div class="policy-box">
+                    <h4>PLP Card Elements</h4>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px;">
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 20px;">&#128247;</div>
+                            <strong style="font-size: 11px;">Image</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Primary + hover</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 20px;">&#11088;</div>
+                            <strong style="font-size: 11px;">Ratings</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Auto-calculated</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 20px;">&#127991;</div>
+                            <strong style="font-size: 11px;">Tags</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Bestseller, New</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 20px;">&#128176;</div>
+                            <strong style="font-size: 11px;">Price Block</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">MRP, Discount</p>
+                        </div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead><tr><th>Element</th><th>Conversion Role</th><th>Admin Control</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Image</strong></td><td>First emotional hook</td><td>Primary + hover image</td></tr>
+                        <tr><td><strong>Product Name</strong></td><td>Instant understanding, SEO</td><td>Short + long name</td></tr>
+                        <tr><td><strong>Ratings</strong></td><td>Social proof, trust</td><td>Auto from reviews</td></tr>
+                        <tr><td><strong>Tags</strong></td><td>Attention magnet</td><td>Unlimited tags, priorities</td></tr>
+                        <tr><td><strong>Price Block</strong></td><td>Clear savings = attention</td><td>Auto discount calc</td></tr>
+                        <tr><td><strong>Lowest Price X Days</strong></td><td>Urgency, transparency</td><td>Auto-track 30/60/90 days</td></tr>
+                        <tr><td><strong>Offer Count</strong></td><td>Curiosity, click-through</td><td>"3 Offers" badge</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 5.7 Product Detail Page (PDP) -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.7</div>
+                    <div class="section-title">Product Detail Page (PDP)</div>
+                </div>
+                <p>The PDP is the sales landing page. Every element increases clarity, reduces hesitation, or pushes toward purchase.</p>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>Media & Identity</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Image/Video gallery</li>
+                            <li>Product name (detailed)</li>
+                            <li>Tags (Bestseller)</li>
+                            <li>Seller information</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Pricing & Offers</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Price block (MRP, savings)</li>
+                            <li>Lowest price X days</li>
+                            <li>Offers popup (Buy 3 Get 1)</li>
+                            <li>Countdown timer</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Variations</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Color swatches</li>
+                            <li>Size chart popup</li>
+                            <li>Stock indicator</li>
+                            <li>"Low stock" scarcity</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="policy-box">
+                    <h4>PDP Sections (Configurable)</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; font-size: 12px;">
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>Add to Cart & Buy Now</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Sticky CTA on mobile</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>Trust Highlights</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">COD, Free Ship, Easy Returns</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>Key Highlight Images</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">1-3 explanatory images</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>Specifications</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Key-value tech details</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>Description (Expandable)</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Rich text with images</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>Reviews Section</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Summary + image reviews</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>Delivery Checker</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Pincode-based ETA</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
+                            <strong>COD Checker</strong>
+                            <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Pincode-based availability</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box success">
+                    <strong>Conversion Elements:</strong> Gift wrap option, Wishlist, Similar products (ML-based), Frequently bought together, Bottom product ads/posters.
+                </div>
+            </div>
+
+            <!-- 5.8 Social Sharing -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.8</div>
+                    <div class="section-title">Social Sharing</div>
+                </div>
+                <p>Optimize how products appear when shared on WhatsApp and Instagram.</p>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>WhatsApp Share Card</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Product image</li>
+                            <li>Name (short)</li>
+                            <li>Price + Discount</li>
+                            <li>Rating + Tags</li>
+                            <li>Offers summary</li>
+                            <li>Short link</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>Instagram Layout</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Auto-generate templates</li>
+                            <li>Square (1080x1080)</li>
+                            <li>Story (1080x1920)</li>
+                            <li>Price/discount sticker</li>
+                            <li>Auto brand logo</li>
+                            <li>"-50%" overlay</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>IG-Style Features:</strong> Overlay stickers ("-50%", "Best Deal"), "Buy Now" button linking back, Image-first layout with bold price.
+                </div>
+            </div>
+
+            <!-- 5.9 Conversion Optimization -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">5.9</div>
+                    <div class="section-title">Conversion Optimization</div>
+                </div>
+                <p>High-converting e-commerce principles built into the system.</p>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                    <div style="background: var(--success-light); padding: 12px; border-radius: 8px; text-align: center;">
+                        <strong style="font-size: 12px; color: var(--success);">Reduce Cognitive Load</strong>
+                        <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Bite-sized info blocks</p>
+                    </div>
+                    <div style="background: var(--primary-lighter); padding: 12px; border-radius: 8px; text-align: center;">
+                        <strong style="font-size: 12px; color: var(--primary-dark);">Build Trust</strong>
+                        <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Ratings, reviews, seller info</p>
+                    </div>
+                    <div style="background: var(--warning-light); padding: 12px; border-radius: 8px; text-align: center;">
+                        <strong style="font-size: 12px; color: #b45309;">Create Urgency</strong>
+                        <p style="font-size: 10px; color: var(--text-light); margin: 4px 0 0;">Timers, low stock, price history</p>
+                    </div>
+                </div>
+
+                <div class="info-box warning" style="margin-top: 16px;">
+                    <strong>Conversion Features:</strong> Sticky footer CTA, Exit intent popup, "Frequently Bought Together", Personalized recommendations, "Only 3 left!" scarcity.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 6: MEDIA -->
+        <!-- ============================================== -->
+        <div class="panel" id="media">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">6</div>
+                    <div class="section-title">Media</div>
+                </div>
+                <p>Manage product images and videos for visual presentation.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#128247;</div>
+                        <h4>Images</h4>
+                        <p>Product photos, thumbnails, gallery</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#127909;</div>
+                        <h4>Videos</h4>
+                        <p>Product demos, tutorials, 360° views</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Note:</strong> Documents (specifications, manuals, certificates) are managed in the <strong>Documents tab</strong>. Media focuses on visual content only (images, videos).
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">6.1</div>
+                    <div class="section-title">Image Configuration</div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr><th>Property</th><th>Value</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Primary Image</td><td>1 per item</td><td>Main display image</td></tr>
+                        <tr><td>Gallery Images</td><td>Up to 10</td><td>Additional product views</td></tr>
+                        <tr><td>Thumbnail Size</td><td>150x150px</td><td>List views</td></tr>
+                        <tr><td>Full Size</td><td>1200x1200px</td><td>Detail views</td></tr>
+                        <tr><td>Formats</td><td>JPG, PNG, WebP</td><td>Supported formats</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 7: DOCUMENTS -->
+        <!-- ============================================== -->
+        <div class="panel" id="documents">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">7</div>
+                    <div class="section-title">Documents</div>
+                </div>
+                <p>Documents are files and certifications collected at the item level. These flow through the system and can be displayed to customers or used internally.</p>
+
+                <div class="flow">
+                    <div class="flow-box">Item Definition<small>Document attached</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box warning">Stored<small>Document storage</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box success">Displayed<small>PDP, downloads</small></div>
+                </div>
+            </div>
+
+            <!-- 8.1 Document Types -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">7.1</div>
+                    <div class="section-title">Document Types</div>
+                </div>
+                <p>Different document categories collected per item based on nature and compliance requirements.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Technical Documents</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Product specifications</li>
+                            <li>Technical data sheets</li>
+                            <li>Installation manuals</li>
+                            <li>User guides</li>
+                            <li>Wiring diagrams</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>Compliance Documents</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Quality certificates</li>
+                            <li>Safety certifications (CE, UL)</li>
+                            <li>Lab test reports</li>
+                            <li>MSDS (Material Safety)</li>
+                            <li>Regulatory approvals</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Commercial Documents</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Warranty cards</li>
+                            <li>Product brochures</li>
+                            <li>Price lists</li>
+                            <li>Terms & conditions</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--text-light);">
+                        <h4>Legal Documents</h4>
+                        <ul style="font-size: 11px; margin: 8px 0 0 14px; padding: 0;">
+                            <li>Import licenses</li>
+                            <li>Export permits</li>
+                            <li>Patent/trademark docs</li>
+                            <li>Country-specific compliance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8.2 Document Flow -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">7.2</div>
+                    <div class="section-title">Document Flow</div>
+                </div>
+                <p>How documents move from creation to consumption.</p>
+
+                <div class="policy-box">
+                    <h4>Data Flow: Item → Customer</h4>
+                    <table style="margin-top: 12px; font-size: 12px;">
+                        <thead>
+                            <tr><th>Stage</th><th>Action</th><th>Who</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>1. Upload</strong></td><td>Document attached to item master</td><td>Admin/Procurement</td></tr>
+                            <tr><td><strong>2. Categorize</strong></td><td>Tag document type, set visibility</td><td>Admin</td></tr>
+                            <tr><td><strong>3. Version</strong></td><td>New versions replace old, history kept</td><td>System</td></tr>
+                            <tr><td><strong>4. Display</strong></td><td>Show on PDP, include in downloads</td><td>Storefront</td></tr>
+                            <tr><td><strong>5. Deliver</strong></td><td>Email with order, print with invoice</td><td>System</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 8.3 Document Properties -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">7.3</div>
+                    <div class="section-title">Document Properties</div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr><th>Property</th><th>Description</th><th>Example</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Document Type</strong></td><td>Category of document</td><td>Certificate, Manual, Brochure</td></tr>
+                        <tr><td><strong>File Format</strong></td><td>Supported formats</td><td>PDF, DOC, XLS, JPG</td></tr>
+                        <tr><td><strong>Visibility</strong></td><td>Who can see it</td><td>Public, Customer-only, Internal</td></tr>
+                        <tr><td><strong>Expiry Date</strong></td><td>When document becomes invalid</td><td>Certificate expiry</td></tr>
+                        <tr><td><strong>Version</strong></td><td>Document version tracking</td><td>v1.0, v2.1</td></tr>
+                        <tr><td><strong>Language</strong></td><td>Document language</td><td>EN, AR, HI</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 8.4 Document Display -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">7.4</div>
+                    <div class="section-title">Document Display Options</div>
+                </div>
+                <p>Configure where and how documents appear to customers.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--success);">
+                        <h4>Product Page</h4>
+                        <p style="font-size: 11px;">Show in "Downloads" section of PDP</p>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--primary);">
+                        <h4>Order Email</h4>
+                        <p style="font-size: 11px;">Attach to order confirmation email</p>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--warning);">
+                        <h4>Invoice Attachment</h4>
+                        <p style="font-size: 11px;">Include with printed invoice</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Visibility Rules</strong>
+                    Documents marked as "Public" appear on PDP for all visitors. "Customer-only" documents are available post-purchase. "Internal" documents are never shown to customers.
+                </div>
+            </div>
+
+            <!-- 8.5 Expiry & Renewal -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">7.5</div>
+                    <div class="section-title">Expiry & Renewal Alerts</div>
+                </div>
+                <p>Track document validity and get notified before expiry.</p>
+
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Expiry Tracking</h4>
+                        <p>Set expiry dates on certificates and compliance documents. System alerts before expiry.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            Alert: 30 days, 7 days, 1 day before expiry
+                        </div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--error);">
+                        <h4>Expired Document Handling</h4>
+                        <p>Expired documents are automatically hidden from public view. Items may be flagged for review.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            Auto-hide, Admin notification, Item flag
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div> <!-- Close content -->
+    </div> <!-- Close layout -->
+
+    <script>
+        function showTab(tabId, btn) {
+            // Hide all panels
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            // Deactivate all nav items
+            document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+            // Show selected panel
+            document.getElementById(tabId).classList.add('active');
+            // Activate clicked nav item
+            btn.classList.add('active');
+            // Scroll content to top
+            document.querySelector('.content').scrollTop = 0;
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
