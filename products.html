@@ -428,9 +428,46 @@
                     </div>
                 </div>
 
-                <div class="info-box success">
-                    <strong>Variant Pricing</strong>
-                    All variants inherit the base price. Override individual variants when needed (e.g., XL +$3, Premium color +$10).
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Key Difference: Multiple Items Section</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">Item Groups have a unique <strong>"Multiple Items"</strong> section not found in regular Items:</p>
+
+                <div class="card" style="border: 2px solid var(--primary); background: var(--primary-lighter);">
+                    <h4 style="color: var(--primary); margin-bottom: 12px;">&#9745; Create Attributes and Options</h4>
+                    <table style="font-size: 12px;">
+                        <tbody>
+                            <tr>
+                                <td style="width: 120px;"><strong>Attribute*</strong></td>
+                                <td>Select attribute type (e.g., Color, Size, Material)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Options*</strong></td>
+                                <td>Enter values for that attribute (e.g., Red, Blue, Green)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>+ Add more</strong></td>
+                                <td>Add additional attributes to create more variant combinations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Auto-Generated Variant Grid</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">System generates a row for each variant combination with individual pricing:</p>
+                <table style="font-size: 11px;">
+                    <thead>
+                        <tr><th>Item Name</th><th>SKU</th><th>Cost Price</th><th>Selling Price</th><th>UPC</th><th>EAN</th><th>Reorder Point</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>T-Shirt - S - Red</td><td>TSH-S-RED</td><td>&#8377;200</td><td>&#8377;499</td><td>-</td><td>-</td><td>10</td></tr>
+                        <tr><td>T-Shirt - S - Blue</td><td>TSH-S-BLU</td><td>&#8377;200</td><td>&#8377;499</td><td>-</td><td>-</td><td>10</td></tr>
+                        <tr><td>T-Shirt - M - Red</td><td>TSH-M-RED</td><td>&#8377;200</td><td>&#8377;499</td><td>-</td><td>-</td><td>10</td></tr>
+                        <tr style="color: var(--text-light);"><td colspan="7">... more variants auto-generated</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box success" style="margin-top: 16px;">
+                    <strong>Copy to All</strong>
+                    Use "COPY TO ALL" to quickly apply the same Cost Price or Selling Price across all variants, then override individual variants as needed (e.g., XL +&#8377;50).
                 </div>
             </div>
 
@@ -475,6 +512,123 @@
                 <div class="info-box warning">
                     <strong>Associated Services</strong>
                     Composite Items can include services (e.g., Washing Machine + Free Installation). Track cost even for free services to calculate true margins.
+                </div>
+            </div>
+
+            <!-- Item Creation Flow Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">1.4</div>
+                    <div class="section-title">Item Creation Flow</div>
+                </div>
+                <p>Complete workflow from landing page to item creation, showing all steps and form sections.</p>
+
+                <h4 style="margin: 16px 0 12px; color: var(--primary-dark);">Step 1: Landing Page - Select Item Type</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">User starts by selecting what type of item to create.</p>
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center; border: 2px solid var(--primary);">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#128230;</div>
+                        <h4 style="color: var(--primary);">Item</h4>
+                        <p>Single standalone product or service</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#128193;</div>
+                        <h4>Item Group</h4>
+                        <p>Same item with attribute variations</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">&#127873;</div>
+                        <h4>Composite Item</h4>
+                        <p>Bundle of multiple items</p>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Step 2: Item Nature Selection</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">After selecting "Item", choose the nature which determines available fields.</p>
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4 style="color: var(--success);">&#128230; Goods</h4>
+                        <p>Physical products with inventory tracking, weight, dimensions, and packaging attributes.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            <strong>Tax:</strong> HSN Code | <strong>Inventory:</strong> Yes
+                        </div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #8b5cf6;">
+                        <h4 style="color: #8b5cf6;">&#128295; Service</h4>
+                        <p>Intangible offerings - time-based or effort-based work without physical attributes.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">
+                            <strong>Tax:</strong> SAC Code | <strong>Inventory:</strong> No
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Step 3: Item Form - 6 Sections</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">Complete the item details across these sections:</p>
+
+                <table>
+                    <thead>
+                        <tr><th>Section</th><th>Purpose</th><th>Key Fields</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--primary);">1. Basic Information</strong></td>
+                            <td>Core item identity and attributes</td>
+                            <td>Name, SKU, Description, Tax Code, Physical params (Goods only: weight, dimensions)</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--primary);">2. Classification</strong></td>
+                            <td>Hierarchical categorization</td>
+                            <td>Category &#8594; Sub-Category &#8594; Commodity (cascading selection)</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--primary);">3. Commodity Parameters</strong></td>
+                            <td>Dynamic fields from commodity schema</td>
+                            <td>Fields auto-loaded based on selected Commodity (e.g., Apparel: size, color, fabric)</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--primary);">4. Financial</strong></td>
+                            <td>Pricing and inventory settings</td>
+                            <td>Inventory accounts, Pricing Policy, Can Sell toggle, Can Purchase toggle</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--primary);">5. Media</strong></td>
+                            <td>Visual and document assets</td>
+                            <td>Images (primary + gallery), Videos, Documents (spec sheets, manuals)</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--primary);">6. Stores</strong></td>
+                            <td>Per-store configuration</td>
+                            <td>Availability, store-specific pricing, stock levels, display settings</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Complete Creation Flow</h4>
+                <div class="flow">
+                    <div class="flow-box">Landing Page<small>Select type</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box warning">Nature<small>Goods/Service</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box">Basic Info<small>Core details</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box">Classification<small>Categorize</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box">Commodity<small>Dynamic fields</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box">Financial<small>Pricing</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box">Media<small>Assets</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box success">Stores<small>Publish</small></div>
+                </div>
+
+                <div class="info-box" style="margin-top: 20px;">
+                    <strong>Goods vs Service Differences</strong>
+                    <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px;">
+                        <li><strong>Basic Info:</strong> Goods include physical params (weight, dimensions, packaging) - Services skip these</li>
+                        <li><strong>Financial:</strong> Goods have inventory accounts and tracking - Services do not</li>
+                        <li><strong>Classification:</strong> Goods use HSN codes, Services use SAC codes for tax compliance</li>
+                    </ul>
                 </div>
             </div>
         </div>
