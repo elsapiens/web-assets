@@ -400,18 +400,142 @@
                     </div>
                 </div>
 
-                <div class="policy-box" style="margin-top: 16px; border-color: var(--primary);">
-                    <h4 style="color: var(--primary-dark);">Item Code</h4>
-                    <p style="font-size: 12px; margin-top: 8px;">Users can define a custom <strong>Item Code</strong> for identification purposes. This is available for:</p>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px;">
-                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
-                            <strong>Single Items</strong>
-                            <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">Define a unique item code for each standalone product or service</p>
+                <!-- Item Code Section -->
+                <div class="policy-box" style="margin-top: 16px; border-color: var(--primary); padding: 20px;">
+                    <h4 style="color: var(--primary-dark); font-size: 16px; margin-bottom: 12px;">Item Code</h4>
+                    <p style="font-size: 12px; margin-bottom: 16px;">Define custom <strong>Item Codes</strong> to identify items. Each part of the code is user-definable:</p>
+
+                    <!-- Code Structure -->
+                    <div style="background: var(--bg); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <div style="text-align: center; margin-bottom: 16px;">
+                            <span style="font-family: monospace; font-size: 20px; letter-spacing: 1px;">
+                                <span style="background: var(--warning-light); padding: 6px 10px; border-radius: 4px;">SF</span>
+                                <span style="background: var(--primary-lighter); padding: 6px 10px; border-radius: 4px; margin-left: 4px;">0</span>
+                                <span style="background: var(--bg); padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border); margin-left: 4px;">12</span>
+                                <span style="background: var(--success-light); padding: 6px 10px; border-radius: 4px; margin-left: 4px;">AC</span>
+                                <span style="background: var(--error-light); padding: 6px 10px; border-radius: 4px; margin-left: 4px;">01</span>
+                            </span>
                         </div>
-                        <div style="background: var(--bg); padding: 10px; border-radius: 6px;">
-                            <strong>Item Groups (Variants)</strong>
-                            <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">Define an item code at the group level; variants inherit or can have individual codes</p>
-                        </div>
+                        <table style="font-size: 11px; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;">Part</th>
+                                    <th style="width: 15%;">Example</th>
+                                    <th>Description</th>
+                                    <th style="width: 18%;">Defined In</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: var(--warning-light);">
+                                    <td><strong>Category</strong></td>
+                                    <td><code>SF</code></td>
+                                    <td>Main category code (e.g., SF = Semi-Finished, R = Raw Material)</td>
+                                    <td style="font-size: 10px;">Category Master</td>
+                                </tr>
+                                <tr style="background: var(--primary-lighter);">
+                                    <td><strong>Subcategory</strong></td>
+                                    <td><code>0</code></td>
+                                    <td>Subcategory code within the main category</td>
+                                    <td style="font-size: 10px;">Subcategory Master</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Product</strong></td>
+                                    <td><code>12</code></td>
+                                    <td>Product code (e.g., 12 = Cardamom)</td>
+                                    <td style="font-size: 10px;">Item / Item Group</td>
+                                </tr>
+                                <tr style="background: var(--success-light);">
+                                    <td><strong>Grade</strong> <span style="font-size: 9px; color: var(--success);">(Variant)</span></td>
+                                    <td><code>AC</code></td>
+                                    <td>Variant attribute - size based (see Grade Codes below)</td>
+                                    <td style="font-size: 10px;">Attribute Options</td>
+                                </tr>
+                                <tr style="background: var(--error-light);">
+                                    <td><strong>Sort</strong> <span style="font-size: 9px; color: var(--error);">(Variant)</span></td>
+                                    <td><code>01</code></td>
+                                    <td>Variant attribute (e.g., 01 = Normal, 02 = Split)</td>
+                                    <td style="font-size: 10px;">Attribute Options</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Examples -->
+                    <h5 style="color: var(--primary-dark); margin: 16px 0 10px; font-size: 13px;">Examples</h5>
+                    <table style="font-size: 11px; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 22%;">Code</th>
+                                <th style="width: 40%;">Description</th>
+                                <th>Breakdown</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">SF012AC01</code></td>
+                                <td>Cardamom 8-8.4MM Normal</td>
+                                <td style="font-size: 10px;">SF + 0 + 12 + AC + 01</td>
+                            </tr>
+                            <tr>
+                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">SF012BA02</code></td>
+                                <td>Cardamom 7-8MM Split</td>
+                                <td style="font-size: 10px;">SF + 0 + 12 + BA + 02</td>
+                            </tr>
+                            <tr>
+                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">SF012CA01</code></td>
+                                <td>Cardamom 6-7MM Normal</td>
+                                <td style="font-size: 10px;">SF + 0 + 12 + CA + 01</td>
+                            </tr>
+                            <tr>
+                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">R011</code></td>
+                                <td>Raw Material - Oil Distillation</td>
+                                <td style="font-size: 10px;">R + 0 + 11 (Single Item)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Grade Codes Reference -->
+                    <h5 style="color: var(--primary-dark); margin: 20px 0 10px; font-size: 13px;">Grade Codes (Size-Based)</h5>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <table style="font-size: 10px;">
+                            <thead>
+                                <tr style="background: var(--success-light);">
+                                    <th>Size</th>
+                                    <th>Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>8.5MM B</td><td><code style="font-weight: bold;">AA</code></td></tr>
+                                <tr><td>8-8.5MM B</td><td><code style="font-weight: bold;">AB</code></td></tr>
+                                <tr><td>8-8.4MM</td><td><code style="font-weight: bold;">AC</code></td></tr>
+                            </tbody>
+                        </table>
+                        <table style="font-size: 10px;">
+                            <thead>
+                                <tr style="background: var(--success-light);">
+                                    <th>Size</th>
+                                    <th>Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>7-8MM</td><td><code style="font-weight: bold;">BA</code></td></tr>
+                                <tr><td>7.5-8MM</td><td><code style="font-weight: bold;">BB</code></td></tr>
+                                <tr><td>7-7.5MM</td><td><code style="font-weight: bold;">BC</code></td></tr>
+                            </tbody>
+                        </table>
+                        <table style="font-size: 10px;">
+                            <thead>
+                                <tr style="background: var(--success-light);">
+                                    <th>Size</th>
+                                    <th>Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>6-7MM</td><td><code style="font-weight: bold;">CA</code></td></tr>
+                                <tr><td>6.5-7MM</td><td><code style="font-weight: bold;">CB</code></td></tr>
+                                <tr><td>5-6MM</td><td><code style="font-weight: bold;">DA</code></td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
