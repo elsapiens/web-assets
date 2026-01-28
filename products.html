@@ -274,7 +274,28 @@
             border-bottom: 2px solid var(--primary-lighter);
         }
 
-        /* Responsive */
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 200;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Responsive - Tablet */
         @media (max-width: 900px) {
             .sidebar {
                 width: 180px;
@@ -284,30 +305,231 @@
                 padding: 16px;
             }
             .cards { grid-template-columns: 1fr; }
+
+            /* 3-column grids to 2 columns */
+            div[style*="grid-template-columns: repeat(3"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
         }
 
+        /* Responsive - Mobile */
         @media (max-width: 600px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
+            .mobile-menu-toggle {
+                display: block;
             }
+
+            .sidebar {
+                position: fixed;
+                width: 260px;
+                height: 100vh;
+                left: -280px;
+                top: 0;
+                transition: left 0.3s ease;
+                z-index: 150;
+                box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.4);
+                z-index: 140;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
             .content {
                 margin-left: 0;
                 max-width: 100%;
+                padding: 60px 12px 20px 12px;
             }
+
             .layout {
                 flex-direction: column;
             }
-            .flow { flex-direction: column; }
-            .flow-arrow { transform: rotate(90deg); }
+
+            /* Section styling */
+            .section {
+                padding: 16px;
+                margin-bottom: 16px;
+                border-radius: 10px;
+            }
+
+            .section-header {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .section-num {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            /* Policy boxes */
+            .policy-box {
+                padding: 14px;
+                margin: 12px 0;
+            }
+
+            .policy-box h4 {
+                font-size: 14px;
+            }
+
+            /* Info boxes */
+            .info-box {
+                padding: 12px 14px;
+                font-size: 12px;
+            }
+
+            /* Tables - horizontal scroll */
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                font-size: 11px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            th, td {
+                padding: 8px 10px;
+                min-width: 80px;
+            }
+
+            /* Grids to single column */
+            div[style*="grid-template-columns: repeat(3"],
+            div[style*="grid-template-columns: repeat(2"],
+            div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            /* Flow diagrams */
+            .flow {
+                flex-direction: column;
+                padding: 14px;
+                gap: 8px;
+            }
+
+            .flow-box {
+                width: 100%;
+                max-width: 200px;
+                padding: 10px 14px;
+                font-size: 11px;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+                font-size: 16px;
+            }
+
+            /* Item Code visual */
+            div[style*="font-family: monospace"][style*="font-size: 18px"] {
+                font-size: 14px !important;
+            }
+
+            div[style*="font-family: monospace"] span[style*="padding: 8px 12px"] {
+                padding: 6px 8px !important;
+                font-size: 12px !important;
+            }
+
+            /* Cards */
+            .card {
+                padding: 14px;
+            }
+
+            .card h4 {
+                font-size: 13px;
+            }
+
+            /* Nav items - larger touch targets */
+            .nav-item {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+
+            .nav-num {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            /* Sidebar header */
+            .sidebar-header {
+                padding: 16px 14px;
+            }
+
+            .sidebar-header h1 {
+                font-size: 15px;
+            }
+
+            /* Code blocks */
+            code {
+                font-size: 10px;
+                word-break: break-all;
+            }
+
+            /* Hide complex nested grids content overflow */
+            .policy-box > div[style*="display: grid"] {
+                gap: 10px !important;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 380px) {
+            .content {
+                padding: 55px 8px 16px 8px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            .policy-box {
+                padding: 12px;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            th, td {
+                padding: 6px 8px;
+                min-width: 70px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+        &#9776;
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" onclick="toggleMobileMenu()"></div>
+
     <div class="layout">
         <!-- Sidebar Navigation -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1>Item Documentation</h1>
                 <p>Developer Reference Guide</p>
@@ -328,14 +550,17 @@
                 <button class="nav-item" onclick="showTab('financial', this)">
                     <span class="nav-num">5</span> Financial
                 </button>
+                <button class="nav-item" onclick="showTab('accounting', this)">
+                    <span class="nav-num">6</span> Accounting
+                </button>
                 <button class="nav-item" onclick="showTab('stores', this)">
-                    <span class="nav-num">6</span> Stores
+                    <span class="nav-num">7</span> Stores
                 </button>
                 <button class="nav-item" onclick="showTab('media', this)">
-                    <span class="nav-num">7</span> Media
+                    <span class="nav-num">8</span> Media
                 </button>
                 <button class="nav-item" onclick="showTab('documents', this)">
-                    <span class="nav-num">8</span> Documents
+                    <span class="nav-num">9</span> Documents
                 </button>
             </nav>
         </div>
@@ -402,140 +627,98 @@
 
                 <!-- Item Code Section -->
                 <div class="policy-box" style="margin-top: 16px; border-color: var(--primary); padding: 20px;">
-                    <h4 style="color: var(--primary-dark); font-size: 16px; margin-bottom: 12px;">Item Code</h4>
-                    <p style="font-size: 12px; margin-bottom: 16px;">Define custom <strong>Item Codes</strong> to identify items. Each part of the code is user-definable:</p>
+                    <h4 style="color: var(--primary-dark); font-size: 16px; margin-bottom: 12px;">Item Code Structure</h4>
+                    <p style="font-size: 12px; margin-bottom: 16px;">Item Code = <strong>Commodity</strong> + <strong>Item</strong> + <strong>Variants</strong></p>
 
-                    <!-- Code Structure -->
+                    <!-- Code Structure Visual -->
                     <div style="background: var(--bg); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
                         <div style="text-align: center; margin-bottom: 16px;">
-                            <span style="font-family: monospace; font-size: 20px; letter-spacing: 1px;">
-                                <span style="background: var(--warning-light); padding: 6px 10px; border-radius: 4px;">SF</span>
-                                <span style="background: var(--primary-lighter); padding: 6px 10px; border-radius: 4px; margin-left: 4px;">0</span>
-                                <span style="background: var(--bg); padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border); margin-left: 4px;">12</span>
-                                <span style="background: var(--success-light); padding: 6px 10px; border-radius: 4px; margin-left: 4px;">AC</span>
-                                <span style="background: var(--error-light); padding: 6px 10px; border-radius: 4px; margin-left: 4px;">01</span>
+                            <span style="font-family: monospace; font-size: 18px; letter-spacing: 1px;">
+                                <span style="background: #dbeafe; padding: 8px 12px; border-radius: 6px; border: 2px solid #3b82f6;">CDM</span>
+                                <span style="color: var(--text-light); margin: 0 4px;">-</span>
+                                <span style="background: var(--warning-light); padding: 8px 12px; border-radius: 6px; border: 2px solid var(--warning);">001</span>
+                                <span style="color: var(--text-light); margin: 0 4px;">-</span>
+                                <span style="background: var(--success-light); padding: 8px 12px; border-radius: 6px; border: 2px solid var(--success);">AC01</span>
                             </span>
                         </div>
-                        <table style="font-size: 11px; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th style="width: 20%;">Part</th>
-                                    <th style="width: 15%;">Example</th>
-                                    <th>Description</th>
-                                    <th style="width: 18%;">Defined In</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="background: var(--warning-light);">
-                                    <td><strong>Category</strong></td>
-                                    <td><code>SF</code></td>
-                                    <td>Main category code (e.g., SF = Semi-Finished, R = Raw Material)</td>
-                                    <td style="font-size: 10px;">Category Master</td>
-                                </tr>
-                                <tr style="background: var(--primary-lighter);">
-                                    <td><strong>Subcategory</strong></td>
-                                    <td><code>0</code></td>
-                                    <td>Subcategory code within the main category</td>
-                                    <td style="font-size: 10px;">Subcategory Master</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Product</strong></td>
-                                    <td><code>12</code></td>
-                                    <td>Product code (e.g., 12 = Cardamom)</td>
-                                    <td style="font-size: 10px;">Item / Item Group</td>
-                                </tr>
-                                <tr style="background: var(--success-light);">
-                                    <td><strong>Grade</strong> <span style="font-size: 9px; color: var(--success);">(Variant)</span></td>
-                                    <td><code>AC</code></td>
-                                    <td>Variant attribute - size based (see Grade Codes below)</td>
-                                    <td style="font-size: 10px;">Attribute Options</td>
-                                </tr>
-                                <tr style="background: var(--error-light);">
-                                    <td><strong>Sort</strong> <span style="font-size: 9px; color: var(--error);">(Variant)</span></td>
-                                    <td><code>01</code></td>
-                                    <td>Variant attribute (e.g., 01 = Normal, 02 = Split)</td>
-                                    <td style="font-size: 10px;">Attribute Options</td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                        <!-- Three Part Breakdown -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px;">
+                            <div style="background: #eff6ff; padding: 12px; border-radius: 8px; border-top: 3px solid #3b82f6;">
+                                <strong style="color: #1e40af; font-size: 12px;">Commodity Code</strong>
+                                <div style="font-size: 11px; color: var(--text-light); margin-top: 6px;">
+                                    User-defined in Commodity Master
+                                </div>
+                                <div style="font-size: 10px; margin-top: 8px; padding: 6px; background: white; border-radius: 4px;">
+                                    <code>CDM</code> = Cardamom<br>
+                                    <code>PEP</code> = Pepper<br>
+                                    <code>OIL</code> = Essential Oils
+                                </div>
+                            </div>
+                            <div style="background: var(--warning-light); padding: 12px; border-radius: 8px; border-top: 3px solid var(--warning);">
+                                <strong style="color: #b45309; font-size: 12px;">Item Sequence</strong>
+                                <div style="font-size: 11px; color: var(--text-light); margin-top: 6px;">
+                                    Sequential number within commodity
+                                </div>
+                                <div style="font-size: 10px; margin-top: 8px; padding: 6px; background: white; border-radius: 4px;">
+                                    <code>001</code> = First item<br>
+                                    <code>002</code> = Second item<br>
+                                    <code>003</code> = Third item
+                                </div>
+                            </div>
+                            <div style="background: var(--success-light); padding: 12px; border-radius: 8px; border-top: 3px solid var(--success);">
+                                <strong style="color: var(--success); font-size: 12px;">Variant Codes</strong>
+                                <div style="font-size: 11px; color: var(--text-light); margin-top: 6px;">
+                                    From Attribute Options (Item Groups only)
+                                </div>
+                                <div style="font-size: 10px; margin-top: 8px; padding: 6px; background: white; border-radius: 4px;">
+                                    <code>AC</code> = Grade (8-8.4MM)<br>
+                                    <code>01</code> = Sort (Normal)<br>
+                                    <span style="color: var(--text-light);">Empty for Single Items</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Examples -->
-                    <h5 style="color: var(--primary-dark); margin: 16px 0 10px; font-size: 13px;">Examples</h5>
+                    <!-- Examples Table -->
                     <table style="font-size: 11px; width: 100%;">
                         <thead>
                             <tr>
-                                <th style="width: 22%;">Code</th>
-                                <th style="width: 40%;">Description</th>
+                                <th style="width: 20%;">Item Code</th>
+                                <th style="width: 30%;">Description</th>
                                 <th>Breakdown</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">SF012AC01</code></td>
+                            <tr style="background: var(--success-light);">
+                                <td><code style="font-weight: bold;">CDM-001-AC01</code></td>
                                 <td>Cardamom 8-8.4MM Normal</td>
-                                <td style="font-size: 10px;">SF + 0 + 12 + AC + 01</td>
+                                <td style="font-size: 10px;"><span style="color: #3b82f6;">CDM</span> + <span style="color: #b45309;">001</span> + <span style="color: var(--success);">AC + 01</span></td>
                             </tr>
                             <tr>
-                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">SF012BA02</code></td>
+                                <td><code style="font-weight: bold;">CDM-001-BA02</code></td>
                                 <td>Cardamom 7-8MM Split</td>
-                                <td style="font-size: 10px;">SF + 0 + 12 + BA + 02</td>
+                                <td style="font-size: 10px;"><span style="color: #3b82f6;">CDM</span> + <span style="color: #b45309;">001</span> + <span style="color: var(--success);">BA + 02</span></td>
+                            </tr>
+                            <tr style="background: var(--warning-light);">
+                                <td><code style="font-weight: bold;">PEP-001</code></td>
+                                <td>Black Pepper (Single Item)</td>
+                                <td style="font-size: 10px;"><span style="color: #3b82f6;">PEP</span> + <span style="color: #b45309;">001</span> <span style="color: var(--text-light);">(no variants)</span></td>
                             </tr>
                             <tr>
-                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">SF012CA01</code></td>
-                                <td>Cardamom 6-7MM Normal</td>
-                                <td style="font-size: 10px;">SF + 0 + 12 + CA + 01</td>
-                            </tr>
-                            <tr>
-                                <td><code style="font-weight: bold; background: var(--bg); padding: 2px 6px; border-radius: 4px;">R011</code></td>
-                                <td>Raw Material - Oil Distillation</td>
-                                <td style="font-size: 10px;">R + 0 + 11 (Single Item)</td>
+                                <td><code style="font-weight: bold;">OIL-003</code></td>
+                                <td>Cardamom Oil (Single Item)</td>
+                                <td style="font-size: 10px;"><span style="color: #3b82f6;">OIL</span> + <span style="color: #b45309;">003</span> <span style="color: var(--text-light);">(no variants)</span></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <!-- Grade Codes Reference -->
-                    <h5 style="color: var(--primary-dark); margin: 20px 0 10px; font-size: 13px;">Grade Codes (Size-Based)</h5>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                        <table style="font-size: 10px;">
-                            <thead>
-                                <tr style="background: var(--success-light);">
-                                    <th>Size</th>
-                                    <th>Code</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>8.5MM B</td><td><code style="font-weight: bold;">AA</code></td></tr>
-                                <tr><td>8-8.5MM B</td><td><code style="font-weight: bold;">AB</code></td></tr>
-                                <tr><td>8-8.4MM</td><td><code style="font-weight: bold;">AC</code></td></tr>
-                            </tbody>
-                        </table>
-                        <table style="font-size: 10px;">
-                            <thead>
-                                <tr style="background: var(--success-light);">
-                                    <th>Size</th>
-                                    <th>Code</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>7-8MM</td><td><code style="font-weight: bold;">BA</code></td></tr>
-                                <tr><td>7.5-8MM</td><td><code style="font-weight: bold;">BB</code></td></tr>
-                                <tr><td>7-7.5MM</td><td><code style="font-weight: bold;">BC</code></td></tr>
-                            </tbody>
-                        </table>
-                        <table style="font-size: 10px;">
-                            <thead>
-                                <tr style="background: var(--success-light);">
-                                    <th>Size</th>
-                                    <th>Code</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>6-7MM</td><td><code style="font-weight: bold;">CA</code></td></tr>
-                                <tr><td>6.5-7MM</td><td><code style="font-weight: bold;">CB</code></td></tr>
-                                <tr><td>5-6MM</td><td><code style="font-weight: bold;">DA</code></td></tr>
-                            </tbody>
-                        </table>
+                    <div class="info-box" style="margin-top: 12px;">
+                        <strong>Single Items vs Item Groups:</strong> Single items have no variant suffix (e.g., <code>PEP-001</code>). Item Groups with variants include attribute codes (e.g., <code>CDM-001-AC01</code>).
+                    </div>
+
+                    <div class="info-box warning" style="margin-top: 8px;">
+                        <strong>Workspace Override:</strong> This is the default structure. Users can override the Item Code format in their Workspace settings to match their business requirements.
                     </div>
                 </div>
 
@@ -2216,13 +2399,212 @@
         </div>
 
         <!-- ============================================== -->
-        <!-- TAB 6: STORES -->
+        <!-- TAB 6: ACCOUNTING -->
         <!-- ============================================== -->
-        <div class="panel" id="stores">
-            <!-- 6. Stores Intro -->
+        <div class="panel" id="accounting">
             <div class="section">
                 <div class="section-header">
                     <div class="section-num">6</div>
+                    <div class="section-title">Accounting</div>
+                </div>
+                <p>How Item module integrates with Accounting App for ledger configuration and transaction posting.</p>
+
+                <!-- Accounting App Integration -->
+                <div class="policy-box" style="margin-top: 16px; border-color: #3b82f6;">
+                    <h4 style="color: #3b82f6;">Accounting App Integration</h4>
+
+                    <div class="flow" style="margin-top: 12px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
+                        <div class="flow-box" style="background: #3b82f6; min-width: 120px;">
+                            Item Module
+                            <small>Transactions</small>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                            <span style="color: #3b82f6; font-size: 11px;">Sends &#8594;</span>
+                            <span style="color: #3b82f6; font-size: 11px;">&#8592; Receives</span>
+                        </div>
+                        <div class="flow-box" style="background: #1e40af; min-width: 120px;">
+                            Accounting App
+                            <small>Ledger Config</small>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                        <div style="background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #bfdbfe;">
+                            <strong style="color: #1e40af; font-size: 11px;">&#8594; SENDS</strong>
+                            <div style="font-size: 10px; color: var(--text-light); margin-top: 6px;">Sale/Purchase/Adjustment transactions with item, qty, amount, tax</div>
+                        </div>
+                        <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                            <strong style="color: #166534; font-size: 11px;">&#8592; RECEIVES</strong>
+                            <div style="font-size: 10px; color: var(--text-light); margin-top: 6px;">Ledger mappings, account codes, validation status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Journal Entries - Consolidated -->
+                <div class="policy-box" style="margin-top: 16px; border-color: var(--primary);">
+                    <h4>Transaction Journal Entries</h4>
+
+                    <table style="font-size: 11px; width: 100%; margin-top: 12px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 18%;">Event</th>
+                                <th style="width: 50%;">Journal Entry</th>
+                                <th>Accounts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: var(--success-light);">
+                                <td><strong>Sale (Cash)</strong></td>
+                                <td><code style="font-size: 10px;">Dr Cash, Cr Sales, Cr Output Tax</code><br><code style="font-size: 10px;">Dr COGS, Cr Inventory</code></td>
+                                <td>Cash, Sales, Tax, COGS, Inventory</td>
+                            </tr>
+                            <tr style="background: var(--primary-lighter);">
+                                <td><strong>Sale (Credit)</strong></td>
+                                <td><code style="font-size: 10px;">Dr AR, Cr Sales, Cr Output Tax</code><br><code style="font-size: 10px;">Dr COGS, Cr Inventory</code></td>
+                                <td>AR, Sales, Tax, COGS, Inventory</td>
+                            </tr>
+                            <tr style="background: var(--warning-light);">
+                                <td><strong>Purchase</strong></td>
+                                <td><code style="font-size: 10px;">Dr Inventory, Dr Input Tax, Cr AP</code></td>
+                                <td>Inventory, Tax, AP</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Stock Transfer</strong></td>
+                                <td><code style="font-size: 10px;">Dr Dest Warehouse, Cr Source Warehouse</code></td>
+                                <td>Inventory (location)</td>
+                            </tr>
+                            <tr style="background: var(--error-light);">
+                                <td><strong>Stock Adjustment</strong></td>
+                                <td><code style="font-size: 10px;">Dr/Cr Inventory, Cr/Dr Stock Adj</code></td>
+                                <td>Inventory, Stock Adj</td>
+                            </tr>
+                            <tr style="background: #f3e8ff;">
+                                <td><strong>Tax Settlement</strong></td>
+                                <td><code style="font-size: 10px;">Dr Output Tax, Cr Input Tax, Cr Cash</code></td>
+                                <td>Tax accounts, Cash</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Store-wise Accounting -->
+                <div class="policy-box" style="margin-top: 16px; border-color: var(--success);">
+                    <h4 style="color: var(--success);">Store-wise Sales Accounts</h4>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 4px;">Each store posts to its own Sales Account for channel-wise revenue tracking.</p>
+
+                    <table style="font-size: 11px; width: 100%; margin-top: 12px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Store</th>
+                                <th style="width: 30%;">Sales Account</th>
+                                <th style="width: 20%;">Sales</th>
+                                <th>% Share</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: var(--success-light);">
+                                <td><strong>Retail Store</strong></td>
+                                <td>Sales - Retail</td>
+                                <td>&#8377;50,000</td>
+                                <td>10%</td>
+                            </tr>
+                            <tr style="background: var(--primary-lighter);">
+                                <td><strong>Online Store</strong></td>
+                                <td>Sales - E-commerce</td>
+                                <td>&#8377;1,20,000</td>
+                                <td>23%</td>
+                            </tr>
+                            <tr style="background: var(--warning-light);">
+                                <td><strong>Wholesale</strong></td>
+                                <td>Sales - Wholesale</td>
+                                <td>&#8377;3,50,000</td>
+                                <td>67%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tax Accounting -->
+                <div class="policy-box" style="margin-top: 16px; border-color: #8b5cf6;">
+                    <h4 style="color: #8b5cf6;">Tax Accounting</h4>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;">
+                        <div style="background: #f3e8ff; padding: 12px; border-radius: 8px; text-align: center;">
+                            <strong style="color: #7c3aed; font-size: 11px;">Output Tax</strong>
+                            <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Collected on Sales</div>
+                            <div style="font-size: 9px; color: #8b5cf6; margin-top: 4px;">Cr on Sale</div>
+                        </div>
+                        <div style="background: #f3e8ff; padding: 12px; border-radius: 8px; text-align: center;">
+                            <strong style="color: #7c3aed; font-size: 11px;">Input Tax</strong>
+                            <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Paid on Purchases</div>
+                            <div style="font-size: 9px; color: #8b5cf6; margin-top: 4px;">Dr on Purchase</div>
+                        </div>
+                        <div style="background: #ede9fe; padding: 12px; border-radius: 8px; text-align: center;">
+                            <strong style="color: #6d28d9; font-size: 11px;">Net Payable</strong>
+                            <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Output - Input</div>
+                            <div style="font-size: 9px; color: #8b5cf6; margin-top: 4px;">Settled to Govt</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 12px; background: #faf5ff; border-left-color: #8b5cf6;">
+                        <strong style="color: #7c3aed;">Tax Config:</strong> Tax rate from Financial Parameters (HSN/SAC). Store location determines tax type (GST/VAT). Tax-inclusive pricing set at Store level.
+                    </div>
+                </div>
+
+                <!-- Module Boundaries -->
+                <div class="policy-box" style="margin-top: 16px; border-color: #6366f1;">
+                    <h4 style="color: #6366f1;">Module Responsibilities</h4>
+
+                    <table style="font-size: 11px; width: 100%; margin-top: 12px;">
+                        <thead>
+                            <tr style="background: #6366f1;">
+                                <th style="width: 33%;">Accounting App</th>
+                                <th style="width: 33%;">Tax Module</th>
+                                <th>Item Module</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <ul style="margin: 0; padding-left: 16px; font-size: 10px;">
+                                        <li>Ledger setup</li>
+                                        <li>Chart of Accounts</li>
+                                        <li>Account mapping</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul style="margin: 0; padding-left: 16px; font-size: 10px;">
+                                        <li>Tax calculation</li>
+                                        <li>Tax rates & rules</li>
+                                        <li>Compliance</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul style="margin: 0; padding-left: 16px; font-size: 10px;">
+                                        <li>Transaction generation</li>
+                                        <li>Item master data</li>
+                                        <li>Stock movements</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box" style="margin-top: 12px; background: #eff6ff; border-left-color: #3b82f6;">
+                        <strong style="color: #1e40af;">Single vs Multi-Ledger:</strong> Business configures ledger structure in Accounting App. Item module respects that configuration when posting.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 7: STORES -->
+        <!-- ============================================== -->
+        <div class="panel" id="stores">
+            <!-- 7. Stores Intro -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">7</div>
                     <div class="section-title">Stores</div>
                 </div>
                 <p>A <strong>Store</strong> is a sales channel where customers can browse and purchase your items. Each store can have its own pricing, visibility settings, payment options, and policies. A single business can have multiple stores—for example, a retail website, a wholesale portal, and a physical POS location—each configured differently for its target audience.</p>
@@ -2714,12 +3096,12 @@
         </div>
 
         <!-- ============================================== -->
-        <!-- TAB 7: MEDIA / PRODUCT ASSETS -->
+        <!-- TAB 8: MEDIA / PRODUCT ASSETS -->
         <!-- ============================================== -->
         <div class="panel" id="media">
             <div class="section">
                 <div class="section-header">
-                    <div class="section-num">7</div>
+                    <div class="section-num">8</div>
                     <div class="section-title">Product Assets</div>
                 </div>
                 <p>This section defines the image and video standards for displaying products on your website. Each store can control which image formats to enable.</p>
@@ -3488,12 +3870,12 @@
         </div>
 
         <!-- ============================================== -->
-        <!-- TAB 8: DOCUMENTS -->
+        <!-- TAB 9: DOCUMENTS -->
         <!-- ============================================== -->
         <div class="panel" id="documents">
             <div class="section">
                 <div class="section-header">
-                    <div class="section-num">8</div>
+                    <div class="section-num">9</div>
                     <div class="section-title">Documents</div>
                 </div>
                 <p>Documents are files and certifications collected at the item level. These flow through the system and can be displayed to customers or used internally.</p>
@@ -3675,7 +4057,44 @@
             // Scroll content to top
             document.querySelector('.content').scrollTop = 0;
             window.scrollTo(0, 0);
+            // Close mobile menu after selection
+            if (window.innerWidth <= 600) {
+                closeMobileMenu();
+            }
         }
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+
+            // Update toggle button icon
+            if (sidebar.classList.contains('open')) {
+                toggle.innerHTML = '&#10005;'; // X icon
+            } else {
+                toggle.innerHTML = '&#9776;'; // Hamburger icon
+            }
+        }
+
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            toggle.innerHTML = '&#9776;';
+        }
+
+        // Close menu on window resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 600) {
+                closeMobileMenu();
+            }
+        });
     </script>
 </body>
 </html>
