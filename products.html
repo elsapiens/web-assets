@@ -610,7 +610,7 @@
                     <div class="section-num">1.1</div>
                     <div class="section-title">Items (Standalone)</div>
                 </div>
-                <p>Items are the basic unit. Each represents a single product or service.</p>
+                <p>Items are the basic unit. Each represents a single product, service, or utility.</p>
 
                 <div class="cards">
                     <div class="card" style="background: var(--success-light); border-color: var(--success);">
@@ -2442,158 +2442,48 @@
                     </div>
                 </div>
 
-                <!-- Journal Entries - Consolidated -->
-                <div class="policy-box" style="margin-top: 16px; border-color: var(--primary);">
-                    <h4>Transaction Journal Entries</h4>
+                <!-- Item Default Ledgers -->
+                <div class="policy-box" style="margin-top: 16px; border-color: #1e40af;">
+                    <h4 style="color: #1e40af;">Item Default Ledgers</h4>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 4px;">Each Item defines its default accounting ledgers. These are used when transactions are posted.</p>
 
                     <table style="font-size: 11px; width: 100%; margin-top: 12px;">
                         <thead>
-                            <tr>
-                                <th style="width: 18%;">Event</th>
-                                <th style="width: 50%;">Journal Entry</th>
-                                <th>Accounts</th>
+                            <tr style="background: #1e40af;">
+                                <th style="width: 25%;">Ledger Type</th>
+                                <th style="width: 40%;">Purpose</th>
+                                <th>Used In</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="background: var(--success-light);">
-                                <td><strong>Sale (Cash)</strong></td>
-                                <td><code style="font-size: 10px;">Dr Cash, Cr Sales, Cr Output Tax</code><br><code style="font-size: 10px;">Dr COGS, Cr Inventory</code></td>
-                                <td>Cash, Sales, Tax, COGS, Inventory</td>
+                            <tr style="background: var(--warning-light);">
+                                <td><strong style="color: #b45309;">Purchase Ledger</strong></td>
+                                <td>Account for recording purchase costs</td>
+                                <td>Purchase Orders, Bills</td>
                             </tr>
                             <tr style="background: var(--primary-lighter);">
-                                <td><strong>Sale (Credit)</strong></td>
-                                <td><code style="font-size: 10px;">Dr AR, Cr Sales, Cr Output Tax</code><br><code style="font-size: 10px;">Dr COGS, Cr Inventory</code></td>
-                                <td>AR, Sales, Tax, COGS, Inventory</td>
+                                <td><strong style="color: var(--primary-dark);">Inventory Ledger</strong></td>
+                                <td>Account for tracking stock value</td>
+                                <td>Stock movements, Adjustments</td>
                             </tr>
-                            <tr style="background: var(--warning-light);">
-                                <td><strong>Purchase</strong></td>
-                                <td><code style="font-size: 10px;">Dr Inventory, Dr Input Tax, Cr AP</code></td>
-                                <td>Inventory, Tax, AP</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Stock Transfer</strong></td>
-                                <td><code style="font-size: 10px;">Dr Dest Warehouse, Cr Source Warehouse</code></td>
-                                <td>Inventory (location)</td>
-                            </tr>
-                            <tr style="background: var(--error-light);">
-                                <td><strong>Stock Adjustment</strong></td>
-                                <td><code style="font-size: 10px;">Dr/Cr Inventory, Cr/Dr Stock Adj</code></td>
-                                <td>Inventory, Stock Adj</td>
-                            </tr>
-                            <tr style="background: #f3e8ff;">
-                                <td><strong>Tax Settlement</strong></td>
-                                <td><code style="font-size: 10px;">Dr Output Tax, Cr Input Tax, Cr Cash</code></td>
-                                <td>Tax accounts, Cash</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Store-wise Accounting -->
-                <div class="policy-box" style="margin-top: 16px; border-color: var(--success);">
-                    <h4 style="color: var(--success);">Store-wise Sales Accounts</h4>
-                    <p style="font-size: 12px; color: var(--text-light); margin-top: 4px;">Each store posts to its own Sales Account for channel-wise revenue tracking.</p>
-
-                    <table style="font-size: 11px; width: 100%; margin-top: 12px;">
-                        <thead>
-                            <tr>
-                                <th style="width: 30%;">Store</th>
-                                <th style="width: 30%;">Sales Account</th>
-                                <th style="width: 20%;">Sales</th>
-                                <th>% Share</th>
-                            </tr>
-                        </thead>
-                        <tbody>
                             <tr style="background: var(--success-light);">
-                                <td><strong>Retail Store</strong></td>
-                                <td>Sales - Retail</td>
-                                <td>&#8377;50,000</td>
-                                <td>10%</td>
-                            </tr>
-                            <tr style="background: var(--primary-lighter);">
-                                <td><strong>Online Store</strong></td>
-                                <td>Sales - E-commerce</td>
-                                <td>&#8377;1,20,000</td>
-                                <td>23%</td>
-                            </tr>
-                            <tr style="background: var(--warning-light);">
-                                <td><strong>Wholesale</strong></td>
-                                <td>Sales - Wholesale</td>
-                                <td>&#8377;3,50,000</td>
-                                <td>67%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Tax Accounting -->
-                <div class="policy-box" style="margin-top: 16px; border-color: #8b5cf6;">
-                    <h4 style="color: #8b5cf6;">Tax Accounting</h4>
-
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;">
-                        <div style="background: #f3e8ff; padding: 12px; border-radius: 8px; text-align: center;">
-                            <strong style="color: #7c3aed; font-size: 11px;">Output Tax</strong>
-                            <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Collected on Sales</div>
-                            <div style="font-size: 9px; color: #8b5cf6; margin-top: 4px;">Cr on Sale</div>
-                        </div>
-                        <div style="background: #f3e8ff; padding: 12px; border-radius: 8px; text-align: center;">
-                            <strong style="color: #7c3aed; font-size: 11px;">Input Tax</strong>
-                            <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Paid on Purchases</div>
-                            <div style="font-size: 9px; color: #8b5cf6; margin-top: 4px;">Dr on Purchase</div>
-                        </div>
-                        <div style="background: #ede9fe; padding: 12px; border-radius: 8px; text-align: center;">
-                            <strong style="color: #6d28d9; font-size: 11px;">Net Payable</strong>
-                            <div style="font-size: 10px; color: var(--text-light); margin-top: 4px;">Output - Input</div>
-                            <div style="font-size: 9px; color: #8b5cf6; margin-top: 4px;">Settled to Govt</div>
-                        </div>
-                    </div>
-
-                    <div class="info-box" style="margin-top: 12px; background: #faf5ff; border-left-color: #8b5cf6;">
-                        <strong style="color: #7c3aed;">Tax Config:</strong> Tax rate from Financial Parameters (HSN/SAC). Store location determines tax type (GST/VAT). Tax-inclusive pricing set at Store level.
-                    </div>
-                </div>
-
-                <!-- Module Boundaries -->
-                <div class="policy-box" style="margin-top: 16px; border-color: #6366f1;">
-                    <h4 style="color: #6366f1;">Module Responsibilities</h4>
-
-                    <table style="font-size: 11px; width: 100%; margin-top: 12px;">
-                        <thead>
-                            <tr style="background: #6366f1;">
-                                <th style="width: 33%;">Accounting App</th>
-                                <th style="width: 33%;">Tax Module</th>
-                                <th>Item Module</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <ul style="margin: 0; padding-left: 16px; font-size: 10px;">
-                                        <li>Ledger setup</li>
-                                        <li>Chart of Accounts</li>
-                                        <li>Account mapping</li>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <ul style="margin: 0; padding-left: 16px; font-size: 10px;">
-                                        <li>Tax calculation</li>
-                                        <li>Tax rates & rules</li>
-                                        <li>Compliance</li>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <ul style="margin: 0; padding-left: 16px; font-size: 10px;">
-                                        <li>Transaction generation</li>
-                                        <li>Item master data</li>
-                                        <li>Stock movements</li>
-                                    </ul>
-                                </td>
+                                <td><strong style="color: var(--success);">Sales Ledger</strong></td>
+                                <td>Account for recording revenue</td>
+                                <td>Sales Orders, Invoices</td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <div class="info-box" style="margin-top: 12px; background: #eff6ff; border-left-color: #3b82f6;">
+                    <div class="info-box" style="margin-top: 12px; background: #fefce8; border-left-color: #eab308;">
+                        <strong style="color: #a16207;">Key Point:</strong> Default ledgers are defined at the Item level. When a transaction occurs, the system uses the Item's configured ledger unless overridden by the Accounting App's transaction-specific rules.
+                    </div>
+
+                    <div class="info-box" style="margin-top: 8px; background: #eff6ff; border-left-color: #3b82f6;">
                         <strong style="color: #1e40af;">Single vs Multi-Ledger:</strong> Business configures ledger structure in Accounting App. Item module respects that configuration when posting.
+                    </div>
+
+                    <div class="info-box success" style="margin-top: 8px;">
+                        <strong>Store-wise Account Books:</strong> Each store maintains its own account book. This allows you to view store-specific accounting, track revenue and expenses per store, and generate store-level financial reports.
                     </div>
                 </div>
             </div>
