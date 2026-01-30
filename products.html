@@ -612,7 +612,7 @@
                 </div>
                 <p>Items are the basic unit. Each represents a single product, service, or utility.</p>
 
-                <div class="cards">
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
                     <div class="card" style="background: var(--success-light); border-color: var(--success);">
                         <h4 style="color: var(--success);">Goods (Products)</h4>
                         <p>Physical items with inventory tracking. Has stock, can be stored, valued using FIFO/Weighted Avg.</p>
@@ -622,6 +622,11 @@
                         <h4 style="color: var(--primary-dark);">Services</h4>
                         <p>Non-physical items, no inventory. Delivered, not stored. Time or task based.</p>
                         <div style="margin-top: 8px; font-size: 11px; color: var(--text-light);"><em>E.g., Installation, Consulting, Repair</em></div>
+                    </div>
+                    <div class="card" style="background: var(--warning-light); border-color: var(--warning);">
+                        <h4 style="color: #b45309;">Utility</h4>
+                        <p>Consumable resources billed by usage. Metered, no physical stock. Usage-based billing.</p>
+                        <div style="margin-top: 8px; font-size: 11px; color: var(--text-light);"><em>E.g., Electricity, Water, Bandwidth</em></div>
                     </div>
                 </div>
             </div>
@@ -1074,12 +1079,13 @@
                         <tr><td>length, width, height</td><td>Decimal</td><td>Dimensions</td></tr>
                         <tr><td>dimension_unit</td><td>Enum</td><td>cm, m, in, ft</td></tr>
                         <tr><td>manufacturer_id</td><td>UUID</td><td>Manufacturer reference</td></tr>
+                        <tr><td>brand_id</td><td>UUID</td><td>Brand reference</td></tr>
                     </tbody>
                 </table>
 
                 <div class="info-box">
                     <strong>Hidden for Services/Utilities</strong>
-                    These 11 fields are hidden when item_nature is 'service' or 'utility' since they don't apply to intangible items.
+                    These 12 fields are hidden when item_nature is 'service' or 'utility' since they don't apply to intangible items.
                 </div>
             </div>
         </div>
@@ -1735,8 +1741,9 @@
                     <div class="section-num">4.1</div>
                     <div class="section-title">Permission Flags</div>
                 </div>
-                <p>Each item has permission flags that control where it appears in the system.</p>
+                <p>Each item has permission flags that control where it appears and how it behaves in the system.</p>
 
+                <h4 style="margin: 16px 0 12px; color: var(--primary-dark);">Transaction Flags</h4>
                 <div class="cards">
                     <div class="card" style="border-left: 4px solid var(--success);">
                         <h4><code>can_sell = TRUE</code></h4>
@@ -1748,8 +1755,52 @@
                     </div>
                 </div>
 
-                <div class="info-box warning">
-                    <strong>Example:</strong> "Company Laptop" might have <code>can_purchase = TRUE</code> (IT can buy it) but <code>can_sell = FALSE</code> (you don't sell laptops to customers).
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Production Flags (BOM)</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">These flags control how items behave in Bill of Materials and production workflows.</p>
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4><code>can_consume = TRUE</code></h4>
+                        <p>Item can be consumed during production. Used as raw material or component in BOM.</p>
+                        <div style="margin-top: 8px; font-size: 11px; color: var(--text-light);"><em>E.g., Wood, Screws, Fabric, Flour</em></div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--error);">
+                        <h4><code>can_produce = TRUE</code></h4>
+                        <p>Item can be manufactured/produced. Output of a BOM process.</p>
+                        <div style="margin-top: 8px; font-size: 11px; color: var(--text-light);"><em>E.g., Furniture, Assembled PC, Cake</em></div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Inventory Tracking Flags (Goods Only)</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">Choose tracking method based on item nature. These are mutually exclusive.</p>
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="border-top: 3px solid var(--primary);">
+                        <h4><code>can_serialise = TRUE</code></h4>
+                        <p>Each unit has a unique serial number. Track individual items.</p>
+                        <div style="margin-top: 8px; font-size: 11px; background: var(--primary-lighter); padding: 6px; border-radius: 4px;">
+                            <strong>Example:</strong> Computer<br>
+                            Serial: SN-2024-001, SN-2024-002
+                        </div>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--warning);">
+                        <h4><code>can_batch_track = TRUE</code></h4>
+                        <p>Track by batch with expiry dates. Multiple units per batch.</p>
+                        <div style="margin-top: 8px; font-size: 11px; background: var(--warning-light); padding: 6px; border-radius: 4px;">
+                            <strong>Example:</strong> Medicine<br>
+                            Batch: B-2024-05, Expiry: 2026-05, Qty: 500
+                        </div>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--text-light);">
+                        <h4>No Tracking</h4>
+                        <p>Bulk items without individual or batch tracking. Track quantity only.</p>
+                        <div style="margin-top: 8px; font-size: 11px; background: var(--bg); padding: 6px; border-radius: 4px;">
+                            <strong>Example:</strong> Sand, Cement<br>
+                            Just track: 500 kg in stock
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box warning" style="margin-top: 16px;">
+                    <strong>Example:</strong> "Company Laptop" might have <code>can_purchase = TRUE</code> (IT can buy it) but <code>can_sell = FALSE</code> (you don't sell laptops to customers). It would also have <code>can_serialise = TRUE</code> to track each laptop by its unique serial number.
                 </div>
             </div>
 
@@ -1885,6 +1936,11 @@
                 <div class="info-box warning">
                     <strong>Expense Linking (Until BOM)</strong>
                     <p style="margin: 4px 0 0;">Until Bill of Materials (BOM) functionality is available, expenses (shipping, handling, storage) are set at the <strong>item level</strong> in inventory. Users can override these values per transaction if needed.</p>
+                </div>
+
+                <div class="info-box" style="margin-top: 8px; background: var(--error-light); border-left-color: var(--error);">
+                    <strong style="color: var(--error);">Loss Alert</strong>
+                    <p style="margin: 4px 0 0;">If selling price falls below landed cost (negative margin), the system displays an alert. This prevents accidental sales at a loss and requires confirmation to proceed.</p>
                 </div>
 
                 <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Margin Types</h4>
@@ -2499,6 +2555,60 @@
                     </div>
                 </div>
 
+                <!-- Storage Location & Stock -->
+                <div class="policy-box" style="margin-top: 16px; border-color: var(--warning);">
+                    <h4 style="color: #b45309;">Storage Locations & Stock</h4>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 4px;">Each store is linked to one or more storage locations. Available stock is calculated from these linked locations.</p>
+
+                    <div style="background: var(--bg); padding: 16px; border-radius: 8px; margin-top: 12px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                            <div style="background: var(--primary-lighter); padding: 10px 16px; border-radius: 6px; text-align: center;">
+                                <strong style="color: var(--primary-dark); font-size: 12px;">Online Store</strong>
+                            </div>
+                            <span style="color: var(--text-light);">&#8594; linked to &#8594;</span>
+                            <div style="display: flex; gap: 8px;">
+                                <div style="background: var(--warning-light); padding: 8px 12px; border-radius: 6px; font-size: 11px;">
+                                    <strong>Warehouse A</strong><br><span style="color: var(--text-light);">50 units</span>
+                                </div>
+                                <div style="background: var(--warning-light); padding: 8px 12px; border-radius: 6px; font-size: 11px;">
+                                    <strong>Warehouse B</strong><br><span style="color: var(--text-light);">30 units</span>
+                                </div>
+                            </div>
+                            <span style="color: var(--text-light);">=</span>
+                            <div style="background: var(--success-light); padding: 10px 16px; border-radius: 6px; text-align: center;">
+                                <strong style="color: var(--success); font-size: 14px;">80 units</strong><br><span style="font-size: 10px; color: var(--text-light);">available</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table style="font-size: 11px; width: 100%; margin-top: 16px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Stock Status</th>
+                                <th style="width: 25%;">sell_on_out_of_stock</th>
+                                <th>Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: var(--success-light);">
+                                <td><strong>In Stock</strong></td>
+                                <td>Any</td>
+                                <td>Item available for purchase</td>
+                            </tr>
+                            <tr style="background: var(--warning-light);">
+                                <td><strong>Out of Stock</strong></td>
+                                <td style="color: var(--success); font-weight: 600;">TRUE</td>
+                                <td>Item still purchasable (backorder/pre-order)</td>
+                            </tr>
+                            <tr style="background: var(--error-light);">
+                                <td><strong>Out of Stock</strong></td>
+                                <td style="color: var(--error); font-weight: 600;">FALSE</td>
+                                <td>Item shows "Out of Stock", cannot purchase</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="info-box" style="margin-top: 16px; border-left: 4px solid var(--warning);">
                     <strong>Commodity Params Auto-Display</strong>
                     <p style="margin-top: 4px; font-size: 12px;">When an item has a commodity assigned, the commodity-specific parameters automatically appear on the product page (e.g., Green Cardamom shows Moisture %, Grade Distribution).</p>
@@ -2613,7 +2723,7 @@
                             <tr><td>Pre-launch preparation</td><td>Hidden until launch date</td><td>Build complete product pages before going live; coordinate marketing timing</td></tr>
                             <tr><td>Channel-exclusive products</td><td>Visible only in specific stores</td><td>Offer exclusives to B2B partners or loyalty members</td></tr>
                             <tr><td>Seasonal merchandise</td><td>Show/hide by season</td><td>Keep holiday items hidden off-season; quick reactivation when needed</td></tr>
-                            <tr><td>Inventory stock-out</td><td>Temporarily hidden</td><td>Avoid disappointing customers; prevent orders you can't fulfill</td></tr>
+                            <tr><td>Inventory stock-out</td><td>Sold out</td><td>Avoid disappointing customers; prevent orders you can't fulfill</td></tr>
                             <tr><td>End-of-life products</td><td>Hidden from browse, URL active</td><td>Remove from discovery but honor existing links/bookmarks</td></tr>
                             <tr><td>Soft launch / testing</td><td>Visible only to select stores</td><td>Test new products with limited audience before full rollout</td></tr>
                         </tbody>
@@ -3043,6 +3153,10 @@
 
                 <div class="info-box" style="margin-top: 16px;">
                     <strong>Upload Requirement:</strong> Each aspect ratio must be uploaded separately. Prepare images in the required dimensions before uploading. The system validates that uploaded images meet minimum dimension requirements. <strong style="color: var(--error);">Maximum file size: 5MB per image.</strong>
+                </div>
+
+                <div class="info-box" style="margin-top: 8px; background: #fdf4ff; border-left-color: #8b5cf6;">
+                    <strong style="color: #8b5cf6;">OG Image Size Limit:</strong> Keep OG images between <strong>200 KB - 300 KB</strong>. Social platforms may not display images exceeding this limit or may load slowly.
                 </div>
 
                 <div class="policy-box" style="margin-top: 16px; border-color: var(--primary); background: var(--primary-lighter);">
