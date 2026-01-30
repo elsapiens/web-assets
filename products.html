@@ -978,6 +978,88 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- Item Lifecycle Status Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">1.6</div>
+                    <div class="section-title">Item Lifecycle Status</div>
+                </div>
+                <p>Items progress through defined lifecycle states that control visibility, transactability, and reporting.</p>
+
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Lifecycle Flow</h4>
+                <div class="flow">
+                    <div class="flow-box" style="background: var(--text-light);">Draft<small>Setup phase</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box success">Active<small>Normal operations</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box warning">Discontinued<small>Phase out</small></div>
+                    <span class="flow-arrow">&#8594;</span>
+                    <div class="flow-box" style="background: #6b7280;">Archived<small>Historical only</small></div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Status Capabilities Matrix</h4>
+                <table>
+                    <thead>
+                        <tr><th>Status</th><th>Can Sell</th><th>Can Purchase</th><th>In Reports</th><th>Searchable</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span style="background: var(--text-light); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Draft</span></td>
+                            <td>No</td>
+                            <td>No</td>
+                            <td>No</td>
+                            <td>Admin only</td>
+                        </tr>
+                        <tr>
+                            <td><span style="background: var(--success); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Active</span></td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td><span style="background: var(--warning); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Discontinued</span></td>
+                            <td>Yes (with warning)</td>
+                            <td>No</td>
+                            <td>Yes</td>
+                            <td>Yes (flagged)</td>
+                        </tr>
+                        <tr>
+                            <td><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Archived</span></td>
+                            <td>No</td>
+                            <td>No</td>
+                            <td>Historical only</td>
+                            <td>No</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Status Transitions</h4>
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Draft &#8594; Active</h4>
+                        <p>Item setup complete and approved for use. All required fields validated.</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Active &#8594; Discontinued</h4>
+                        <p>Item being phased out. Existing stock can still be sold with a warning displayed at POS.</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #6b7280;">
+                        <h4>Discontinued &#8594; Archived</h4>
+                        <p>No remaining stock. Keep for historical records and old invoice references.</p>
+                    </div>
+                </div>
+
+                <div class="info-box warning" style="margin-top: 16px;">
+                    <strong>Business Rules</strong>
+                    <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px;">
+                        <li><strong>Cannot delete items with transaction history</strong> - Use Archive instead to preserve audit trail</li>
+                        <li><strong>Discontinued items show warning at POS</strong> - Staff alerted when selling phased-out items</li>
+                        <li><strong>Archived items hidden from search</strong> - But remain visible in historical invoices and reports</li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <!-- ============================================== -->
@@ -1060,9 +1142,85 @@
                 </table>
             </div>
 
+            <!-- Unit of Measure (UOM) System Section -->
             <div class="section">
                 <div class="section-header">
                     <div class="section-num">2.3</div>
+                    <div class="section-title">Unit of Measure (UOM) System</div>
+                </div>
+                <p>Items can be bought, sold, and tracked in different units. The UOM system manages these conversions.</p>
+
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="border-top: 3px solid var(--primary); text-align: center;">
+                        <h4>Base UOM</h4>
+                        <p>The default unit for inventory tracking. All stock quantities stored in this unit.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">e.g., Piece, Kilogram, Liter</div>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--warning); text-align: center;">
+                        <h4>Alternate UOMs</h4>
+                        <p>Other units the item can be bought or sold in.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">e.g., Box, Case, Dozen</div>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--success); text-align: center;">
+                        <h4>Conversion Factors</h4>
+                        <p>How alternate units relate to the base unit.</p>
+                        <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">e.g., 1 Box = 12 Pieces</div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">UOM Conversion Example</h4>
+                <table>
+                    <thead>
+                        <tr><th>UOM</th><th>Type</th><th>Conversion</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Piece</strong></td>
+                            <td><span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Base</span></td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Box</strong></td>
+                            <td><span style="background: var(--warning); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Alternate</span></td>
+                            <td>1 Box = 12 Pieces</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Case</strong></td>
+                            <td><span style="background: var(--warning); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Alternate</span></td>
+                            <td>1 Case = 4 Boxes = 48 Pieces</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Use Cases</h4>
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Purchasing</h4>
+                        <p>Buy in Cases from supplier (bulk pricing)</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>B2B Sales</h4>
+                        <p>Sell in Boxes to retailers (wholesale)</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>B2C Sales</h4>
+                        <p>Sell in Pieces to consumers (retail)</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #8b5cf6;">
+                        <h4>Inventory</h4>
+                        <p>Always tracks in base UOM (Pieces)</p>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 16px;">
+                    <strong>How Conversions Work</strong>
+                    <p style="margin-top: 8px; font-size: 12px;">When you sell 2 Boxes, system automatically deducts 24 Pieces (2 x 12) from inventory. When you receive 1 Case, system adds 48 Pieces to stock. All reports and stock levels show base UOM for consistency.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">2.4</div>
                     <div class="section-title">Goods-Only Parameters</div>
                 </div>
                 <p>Physical attributes that only apply to tangible goods.</p>
@@ -1086,6 +1244,130 @@
                 <div class="info-box">
                     <strong>Hidden for Services/Utilities</strong>
                     These 12 fields are hidden when item_nature is 'service' or 'utility' since they don't apply to intangible items.
+                </div>
+            </div>
+
+            <!-- Dimensions & Weight Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-num">2.5</div>
+                    <div class="section-title">Dimensions & Weight</div>
+                </div>
+                <p>Physical measurements for shipping calculations, warehouse slotting, and package optimization. Only applies to Goods.</p>
+
+                <h4 style="margin: 20px 0 12px; color: var(--primary-dark);">Dimension Fields</h4>
+                <div class="cards" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--primary);">
+                        <h4>Length</h4>
+                        <p>Longest side measurement</p>
+                        <div style="font-size: 20px; margin-top: 8px; color: var(--primary);">&#8596;</div>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--warning);">
+                        <h4>Width</h4>
+                        <p>Side-to-side measurement</p>
+                        <div style="font-size: 20px; margin-top: 8px; color: var(--warning);">&#8596;</div>
+                    </div>
+                    <div class="card" style="text-align: center; border-top: 3px solid var(--success);">
+                        <h4>Height</h4>
+                        <p>Top-to-bottom measurement</p>
+                        <div style="font-size: 20px; margin-top: 8px; color: var(--success);">&#8597;</div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">All Physical Measurement Fields</h4>
+                <table>
+                    <thead>
+                        <tr><th>Field</th><th>Purpose</th><th>Units</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Length</strong></td>
+                            <td>Shipping volume calculation</td>
+                            <td rowspan="3">cm, inch, m, ft</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Width</strong></td>
+                            <td>Shipping volume calculation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Height</strong></td>
+                            <td>Shipping volume calculation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weight</strong></td>
+                            <td>Shipping cost calculation</td>
+                            <td>kg, lb, g, oz</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Volume</strong></td>
+                            <td>Cubic measurement (L x W x H)</td>
+                            <td>cm&sup3;, m&sup3;, ft&sup3;</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dimension Unit</strong></td>
+                            <td>Unit for L/W/H values</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weight Unit</strong></td>
+                            <td>Unit for weight value</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 24px 0 12px; color: var(--primary-dark);">Why Dimensions Matter</h4>
+                <div class="cards">
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h4>Shipping Carriers</h4>
+                        <p>Carriers calculate cost by dimensional weight (DIM weight). Large but light items may cost more to ship than their actual weight suggests.</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--warning);">
+                        <h4>Warehouse Slotting</h4>
+                        <p>Determines where items are stored - shelf size, bin allocation, pallet configuration. Proper slotting improves picking efficiency.</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--success);">
+                        <h4>Package Optimization</h4>
+                        <p>System can suggest optimal box sizes for orders. Reduces shipping costs and packaging waste.</p>
+                    </div>
+                </div>
+
+                <div class="policy-box" style="margin-top: 20px; border-color: var(--warning);">
+                    <h4 style="color: #b45309;">DIM Factor Explained</h4>
+                    <p style="font-size: 12px; margin-top: 8px;">DIM Factor (Dimensional Factor) is a number used by shipping carriers to calculate dimensional weight (volumetric weight).</p>
+
+                    <div style="background: var(--bg); padding: 12px 16px; border-radius: 8px; margin: 16px 0; text-align: center;">
+                        <strong style="font-size: 13px; color: var(--primary-dark);">DIM Weight = (Length × Width × Height) ÷ DIM Factor</strong>
+                    </div>
+
+                    <h4 style="font-size: 13px; margin: 16px 0 8px; color: var(--text);">Common DIM Factors</h4>
+                    <table style="font-size: 12px;">
+                        <thead>
+                            <tr><th>Carrier/Context</th><th>DIM Factor</th><th>Unit</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Domestic (US)</td><td><strong>139</strong></td><td>cubic inches</td></tr>
+                            <tr><td>International</td><td><strong>166</strong></td><td>cubic inches</td></tr>
+                            <tr><td>Metric</td><td><strong>5000</strong></td><td>cubic cm</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="font-size: 13px; margin: 16px 0 8px; color: var(--text);">Example Calculation</h4>
+                    <div style="background: var(--warning-light); padding: 12px 16px; border-radius: 8px; font-size: 12px;">
+                        <p>A box measuring <strong>20" × 15" × 10"</strong> with actual weight of <strong>5 lbs</strong>:</p>
+                        <ul style="margin: 8px 0 0 20px; color: var(--text);">
+                            <li>Volume = 20 × 15 × 10 = <strong>3,000 cubic inches</strong></li>
+                            <li>DIM Weight = 3,000 ÷ 139 = <strong>21.6 lbs</strong></li>
+                            <li>Carrier charges for <strong>21.6 lbs</strong> (not 5 lbs) because DIM weight is higher</li>
+                        </ul>
+                    </div>
+
+                    <h4 style="font-size: 13px; margin: 16px 0 8px; color: var(--text);">Why DIM Factor Exists</h4>
+                    <p style="font-size: 12px; color: var(--text-light);">Carriers have limited truck/plane space. A large, light package takes up room that could hold heavier, denser items. DIM pricing ensures they recover revenue from bulky shipments.</p>
+
+                    <div class="info-box" style="margin-top: 12px; margin-bottom: 0;">
+                        <strong>Remember:</strong> Lower DIM factor = higher shipping cost. A DIM factor of 139 results in higher DIM weight than 166 for the same box size.
+                    </div>
                 </div>
             </div>
         </div>
