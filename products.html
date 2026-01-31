@@ -777,11 +777,9 @@
                 <div style="background: var(--bg); padding: 16px; border-radius: 8px; margin-top: 16px;">
                     <div style="text-align: center; margin-bottom: 16px;">
                         <span style="font-family: monospace; font-size: 18px; letter-spacing: 1px;">
-                            <span style="background: #dbeafe; padding: 8px 12px; border-radius: 6px; border: 2px solid #3b82f6;">CDM</span>
-                            <span style="color: var(--text-light); margin: 0 4px;">-</span>
-                            <span style="background: var(--warning-light); padding: 8px 12px; border-radius: 6px; border: 2px solid var(--warning);">001</span>
-                            <span style="color: var(--text-light); margin: 0 4px;">-</span>
-                            <span style="background: var(--success-light); padding: 8px 12px; border-radius: 6px; border: 2px solid var(--success);">AC01</span>
+                            <span style="background: #dbeafe; padding: 8px 12px; border-radius: 6px 0 0 6px; border: 2px solid #3b82f6; border-right: none;">CDM</span>
+                            <span style="background: var(--warning-light); padding: 8px 12px; border-radius: 0; border: 2px solid var(--warning); border-left: none; border-right: none;">001</span>
+                            <span style="background: var(--success-light); padding: 8px 12px; border-radius: 0 6px 6px 0; border: 2px solid var(--success); border-left: none;">AC01</span>
                         </span>
                     </div>
 
@@ -834,22 +832,22 @@
                     </thead>
                     <tbody>
                         <tr style="background: var(--success-light);">
-                            <td><code style="font-weight: bold;">CDM-001-AC01</code></td>
+                            <td><code style="font-weight: bold;">CDM001AC01</code></td>
                             <td>Cardamom 8-8.4MM Normal</td>
-                            <td style="font-size: 10px;"><span style="color: #3b82f6;">CDM</span> + <span style="color: #b45309;">001</span> + <span style="color: var(--success);">AC + 01</span></td>
+                            <td style="font-size: 10px;"><span style="color: #3b82f6;">CDM</span> + <span style="color: #b45309;">001</span> + <span style="color: var(--success);">AC01</span></td>
                         </tr>
                         <tr>
-                            <td><code style="font-weight: bold;">CDM-001-BA02</code></td>
+                            <td><code style="font-weight: bold;">CDM001BA02</code></td>
                             <td>Cardamom 7-8MM Split</td>
-                            <td style="font-size: 10px;"><span style="color: #3b82f6;">CDM</span> + <span style="color: #b45309;">001</span> + <span style="color: var(--success);">BA + 02</span></td>
+                            <td style="font-size: 10px;"><span style="color: #3b82f6;">CDM</span> + <span style="color: #b45309;">001</span> + <span style="color: var(--success);">BA02</span></td>
                         </tr>
                         <tr style="background: var(--warning-light);">
-                            <td><code style="font-weight: bold;">PEP-001</code></td>
+                            <td><code style="font-weight: bold;">PEP001</code></td>
                             <td>Black Pepper (Single Item)</td>
                             <td style="font-size: 10px;"><span style="color: #3b82f6;">PEP</span> + <span style="color: #b45309;">001</span> <span style="color: var(--text-light);">(no variants)</span></td>
                         </tr>
                         <tr>
-                            <td><code style="font-weight: bold;">OIL-003</code></td>
+                            <td><code style="font-weight: bold;">OIL003</code></td>
                             <td>Cardamom Oil (Single Item)</td>
                             <td style="font-size: 10px;"><span style="color: #3b82f6;">OIL</span> + <span style="color: #b45309;">003</span> <span style="color: var(--text-light);">(no variants)</span></td>
                         </tr>
@@ -857,7 +855,7 @@
                 </table>
 
                 <div class="info-box" style="margin-top: 12px;">
-                    <strong>Single Items vs Item Groups:</strong> Single items have no variant suffix (e.g., <code>PEP-001</code>). Item Groups with variants include attribute codes (e.g., <code>CDM-001-AC01</code>).
+                    <strong>Single Items vs Item Groups:</strong> Single items have no variant suffix (e.g., <code>PEP001</code>). Item Groups with variants include attribute codes (e.g., <code>CDM001AC01</code>).
                 </div>
 
                 <div class="info-box warning" style="margin-top: 8px;">
