@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBAC Multi-Tenant Auth System - Role & Capability Flow</title>
+    <style>
+        /* ElAuth Color Scheme Variables */
+        :root {
+            --wisteria-50: #eef1f6;
+            --wisteria-100: #dde3ee;
+            --wisteria-200: #bbc7dd;
+            --wisteria-300: #99abcc;
+            --wisteria-400: #778fbb;
+            --wisteria-500: #5573aa;
+            --wisteria-600: #445c88;
+            --wisteria-700: #334566;
+            --wisteria-800: #222e44;
+            --wisteria-900: #111722;
+            --wisteria-950: #0c1018;
+            --wisteria-hover: rgba(85, 115, 170, 0.08);
+            --wisteria-active: rgba(85, 115, 170, 0.14);
+            --success-600: #16a34a;
+            --warning-600: #d97706;
+            --danger-600: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--wisteria-800);
+            background: var(--wisteria-50);
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: var(--wisteria-900);
+            border-bottom: 3px solid var(--wisteria-500);
+            padding-bottom: 10px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: var(--wisteria-800);
+            margin-top: 50px;
+            margin-bottom: 25px;
+            padding: 10px;
+            background: var(--wisteria-50);
+            border-left: 4px solid var(--wisteria-500);
+        }
+        .system-description {
+            background: var(--wisteria-100);
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--wisteria-600);
+        }
+        .app-section {
+            margin-bottom: 60px;
+        }
+        .app-header {
+            background: linear-gradient(to right, var(--wisteria-600), var(--wisteria-700));
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 50px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th {
+            background: var(--wisteria-700);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--wisteria-200);
+        }
+        tr:hover {
+            background: var(--wisteria-hover);
+        }
+        .table-name {
+            color: var(--wisteria-600);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            margin-top: 40px;
+        }
+        .constraint {
+            color: var(--wisteria-700);
+            font-size: 0.85em;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        .example {
+            background: var(--wisteria-50);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 3px solid var(--wisteria-400);
+        }
+        .example-title {
+            font-weight: bold;
+            color: var(--wisteria-600);
+            margin-bottom: 8px;
+        }
+        pre {
+            background: var(--wisteria-900);
+            color: var(--wisteria-100);
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-top: 8px;
+        }
+        .flow-section {
+            background: var(--wisteria-50);
+            padding: 20px;
+            border-radius: 5px;
+            margin: 30px 0;
+            border-left: 4px solid var(--wisteria-500);
+        }
+        .flow-step {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .flow-step::before {
+            content: "→";
+            color: var(--wisteria-600);
+            font-size: 1.5em;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .glossary {
+            background: var(--wisteria-50);
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--wisteria-400);
+        }
+        .glossary dt {
+            font-weight: bold;
+            color: var(--wisteria-700);
+            margin-top: 10px;
+        }
+        .glossary dd {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RBAC Multi-Tenant Auth System - Role & Capability Flow</h1>
+        
+        <div class="system-description">
+            <strong>Purpose:</strong> Multi-tenant permission management and access control for applications in a reseller-based authentication system with SSO support.
+        </div>
+
+        <div class="glossary">
+            <h2>Key Concepts</h2>
+            <dl>
+                <dt>Module</dt>
+                <dd>Sections of an application (e.g., createuser, holidays, billing)</dd>
+                
+                <dt>Capability</dt>
+                <dd>Specific actions within a module (e.g., read, write, update, delete)</dd>
+                
+                <dt>Reseller</dt>
+                <dd>Partner who sells the company's software under their brand in exchange for commission. Has SSO access and can have their own workspaces.</dd>
+                
+                <dt>Workspace</dt>
+                <dd>Client area where the client and their employees manage various apps</dd>
+                
+                <dt>Role</dt>
+                <dd>Group of capabilities that can be assigned to users</dd>
+                
+                <dt>Person Additional Capabilities</dt>
+                <dd>Optional direct capability assignments to individuals, bypassing roles</dd>
+            </dl>
+        </div>
+
+        <div class="flow-section">
+            <h2>Typical Flow</h2>
+            <div class="flow-step">Admin creates role</div>
+            <div class="flow-step">Admin assigns capabilities to role</div>
+            <div class="flow-step">Admin assigns role to person</div>
+            <div class="flow-step">Person can perform actions based on assigned capabilities</div>
+        </div>
+
+        <div class="app-section">
+            <div class="app-header">App Registry Application</div>
+            <p style="margin-bottom: 20px;"><em>Central registry of all application modules and their capabilities</em></p>
+
+            <div class="table-name">Table: module</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>UUID</td>
+                        <td>Primary key</td>
+                    </tr>
+                    <tr>
+                        <td>app_id</td>
+                        <td>UUID</td>
+                        <td>Application identifier</td>
+                    </tr>
+                    <tr>
+                        <td>name</td>
+                        <td>String</td>
+                        <td>Module name (e.g., "users", "holiday", "billing")</td>
+                    </tr>
+                    <tr>
+                        <td>description</td>
+                        <td>Text</td>
+                        <td>Module purpose description</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="constraint">UNIQUE (app_id, name)</div>
+            
+            <div class="example">
+                <div class="example-title">Example Records:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>app_id</th>
+                            <th>name</th>
+                            <th>description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>uuid-001</td>
+                            <td>app-hrms-001</td>
+                            <td>users</td>
+                            <td>User management module</td>
+                        </tr>
+                        <tr>
+                            <td>uuid-002</td>
+                            <td>app-hrms-001</td>
+                            <td>holiday</td>
+                            <td>Holiday tracking module</td>
+                        </tr>
+                        <tr>
+                            <td>uuid-003</td>
+                            <td>app-hrms-001</td>
+                            <td>payroll</td>
+                            <td>Payroll processing module</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-name">Table: capability</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>UUID</td>
+                        <td>Primary key</td>
+                    </tr>
+                    <tr>
+                        <td>module_id</td>
+                        <td>UUID</td>
+                        <td>Foreign key to module table</td>
+                    </tr>
+                    <tr>
+                        <td>name</td>
+                        <td>String</td>
+                        <td>Capability name (e.g., "read", "write", "delete")</td>
+                    </tr>
+                    <tr>
+                        <td>description</td>
+                        <td>Text</td>
+                        <td>Action description</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="constraint">UNIQUE (module_id, name)</div>
+            
+            <div class="example">
+                <div class="example-title">Example Records:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>module_id</th>
+                            <th>name</th>
+                            <th>description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>cap-001</td>
+                            <td>uuid-001</td>
+                            <td>read</td>
+                            <td>View user information</td>
+                        </tr>
+                        <tr>
+                            <td>cap-002</td>
+                            <td>uuid-001</td>
+                            <td>write</td>
+                            <td>Create new users</td>
+                        </tr>
+                        <tr>
+                            <td>cap-003</td>
+                            <td>uuid-001</td>
+                            <td>update</td>
+                            <td>Modify user details</td>
+                        </tr>
+                        <tr>
+                            <td>cap-004</td>
+                            <td>uuid-002</td>
+                            <td>read</td>
+                            <td>View holiday calendar</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="app-section">
+            <div class="app-header">Elauth Application</div>
+            <p style="margin-bottom: 20px;"><em>Multi-tenant authentication system managing roles and permissions per workspace/reseller</em></p>
+
+            <div class="table-name">Table: roles</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>UUID</td>
+                        <td>Primary key</td>
+                    </tr>
+                    <tr>
+                        <td>reseller_id</td>
+                        <td>UUID</td>
+                        <td>Reseller who owns this role</td>
+                    </tr>
+                    <tr>
+                        <td>workspace_id</td>
+                        <td>UUID</td>
+                        <td>Workspace where role applies</td>
+                    </tr>
+                    <tr>
+                        <td>name</td>
+                        <td>String</td>
+                        <td>Role name (e.g., "Admin", "Manager", "Employee")</td>
+                    </tr>
+                    <tr>
+                        <td>description</td>
+                        <td>Text</td>
+                        <td>Role purpose description</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="constraint">UNIQUE (reseller_id, workspace_id, name)</div>
+            
+            <div class="example">
+                <div class="example-title">Example Records:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>reseller_id</th>
+                            <th>workspace_id</th>
+                            <th>name</th>
+                            <th>description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>role-001</td>
+                            <td>reseller-alpha</td>
+                            <td>ws-acme-corp</td>
+                            <td>HR Admin</td>
+                            <td>Full access to HR system</td>
+                        </tr>
+                        <tr>
+                            <td>role-002</td>
+                            <td>reseller-alpha</td>
+                            <td>ws-acme-corp</td>
+                            <td>Employee</td>
+                            <td>Basic employee access</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-name">Table: role_capability</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>UUID</td>
+                        <td>Primary key</td>
+                    </tr>
+                    <tr>
+                        <td>role_id</td>
+                        <td>UUID</td>
+                        <td>Foreign key to roles table</td>
+                    </tr>
+                    <tr>
+                        <td>app_id</td>
+                        <td>UUID</td>
+                        <td>Application identifier</td>
+                    </tr>
+                    <tr>
+                        <td>capabilities</td>
+                        <td>JSON</td>
+                        <td>Map of module names to capability arrays</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="constraint">UNIQUE (role_id, app_id)</div>
+            
+            <div class="example">
+                <div class="example-title">Example Records:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>role_id</th>
+                            <th>app_id</th>
+                            <th>capabilities (JSON)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>rc-001</td>
+                            <td>role-001</td>
+                            <td>app-hrms-001</td>
+                            <td><pre>{
+  "users": ["read", "write", "update"],
+  "holiday": ["read", "write"],
+  "payroll": ["read", "write", "update"]
+}</pre></td>
+                        </tr>
+                        <tr>
+                            <td>rc-002</td>
+                            <td>role-002</td>
+                            <td>app-hrms-001</td>
+                            <td><pre>{
+  "users": ["read"],
+  "holiday": ["read"]
+}</pre></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-name">Table: person_role_assignment</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>UUID</td>
+                        <td>Primary key</td>
+                    </tr>
+                    <tr>
+                        <td>workspace_id</td>
+                        <td>UUID</td>
+                        <td>Workspace context</td>
+                    </tr>
+                    <tr>
+                        <td>reseller_id</td>
+                        <td>UUID</td>
+                        <td>Reseller context</td>
+                    </tr>
+                    <tr>
+                        <td>person_id</td>
+                        <td>UUID</td>
+                        <td>User being assigned the role</td>
+                    </tr>
+                    <tr>
+                        <td>role_id</td>
+                        <td>UUID</td>
+                        <td>Role being assigned</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="constraint">UNIQUE (workspace_id, person_id, role_id)</div>
+            
+            <div class="example">
+                <div class="example-title">Example Records:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>workspace_id</th>
+                            <th>reseller_id</th>
+                            <th>person_id</th>
+                            <th>role_id</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>pra-001</td>
+                            <td>ws-acme-corp</td>
+                            <td>reseller-alpha</td>
+                            <td>person-john-doe</td>
+                            <td>role-001</td>
+                        </tr>
+                        <tr>
+                            <td>pra-002</td>
+                            <td>ws-acme-corp</td>
+                            <td>reseller-alpha</td>
+                            <td>person-jane-smith</td>
+                            <td>role-002</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-name">Table: person_additional_capabilities</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>UUID</td>
+                        <td>Primary key</td>
+                    </tr>
+                    <tr>
+                        <td>workspace_id</td>
+                        <td>UUID</td>
+                        <td>Workspace context</td>
+                    </tr>
+                    <tr>
+                        <td>reseller_id</td>
+                        <td>UUID</td>
+                        <td>Reseller context</td>
+                    </tr>
+                    <tr>
+                        <td>person_id</td>
+                        <td>UUID</td>
+                        <td>User receiving additional capability</td>
+                    </tr>
+                    <tr>
+                        <td>capability_id</td>
+                        <td>UUID</td>
+                        <td>Specific capability being granted</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="constraint">UNIQUE (workspace_id, person_id, capability_id)</div>
+            
+            <div class="example">
+                <div class="example-title">Example Records:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>workspace_id</th>
+                            <th>reseller_id</th>
+                            <th>person_id</th>
+                            <th>capability_id</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>pac-001</td>
+                            <td>ws-acme-corp</td>
+                            <td>reseller-alpha</td>
+                            <td>person-jane-smith</td>
+                            <td>cap-003</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 10px;"><em>Example: Jane Smith (Employee role) gets additional "update" capability on "users" module</em></p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
